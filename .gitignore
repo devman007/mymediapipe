@@ -1,1 +1,8 @@
 org.eclipse.buildship.core.prefs
+mediapipe_face_detection.aar
+mediapipe_face_effect.aar
+mediapipe_hand_tracking.aar
+bazel-bin
+bazel-mymediapipe
+bazel-out
+bazel-testlogs
