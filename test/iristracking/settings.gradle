@@ -1,0 +1,2 @@
+rootProject.name='iristracking'
+include ':app'
