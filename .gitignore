@@ -4,3 +4,4 @@ mediapipe/MediaPipe.tulsiproj/*.tulsiconf-user
 mediapipe/provisioning_profile.mobileprovision
 org.eclipse.buildship.core.prefs
 *.aar
+app.iml
