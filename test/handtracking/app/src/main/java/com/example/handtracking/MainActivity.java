@@ -239,11 +239,21 @@ public class MainActivity extends AppCompatActivity {
     // 解析关键点
     private static String getLandmarksDebugString(LandmarkProto.NormalizedLandmarkList landmarks) {
         int landmarkIndex = 0;
-        StringBuilder landmarksString = new StringBuilder();
+        String landmarksString = "";
+        float total_z = 0f;
+        float avg_z = 0f;
         for (LandmarkProto.NormalizedLandmark landmark : landmarks.getLandmarkList()) {
-            landmarksString.append("\t\tLandmark[").append(landmarkIndex).append("]: (").append(landmark.getX()).append(", ").append(landmark.getY()).append(", ").append(landmark.getZ()).append(")\n");
+                landmarksString += "\t\tLandmark["
+                                + landmarkIndex + "]: ("
+                                + landmark.getX() + ", "
+                                + landmark.getY() + ", "
+                                + landmark.getZ() + ")\n";
+            total_z += landmark.getZ();
             ++landmarkIndex;
         }
+        avg_z = total_z / landmarks.getLandmarkCount();
+        Log.i(TAG, "getLandmarksDebugString: count = "+landmarks.getLandmarkCount()+", total_z = "+total_z+", avg_z = "+avg_z);
+        //分析得出，全部landmark 21个取其中的12个为，0~3，5，6，9，10，13，14，17，18
         return landmarksString.toString();
     }
 }

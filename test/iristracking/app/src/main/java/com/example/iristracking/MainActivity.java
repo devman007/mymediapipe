@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     //
     private static final String FOCAL_LENGTH_STREAM_NAME = "focal_length_pixel";
     private static final String OUTPUT_LANDMARKS_STREAM_NAME = "face_landmarks_with_iris";
+    private static float mFocalLength = 0f;
 
     //
     // camera
@@ -219,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-	
+
     private void startCamera() {
         cameraHelper = new CameraXPreviewHelper();
         cameraHelper.setOnCameraStartedListener(
@@ -227,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
                     previewFrameTexture = surfaceTexture;
 
                     float focalLength = cameraHelper.getFocalLengthPixels();
+                    mFocalLength = focalLength;
                     if (focalLength != Float.MIN_VALUE) {
                         Packet focalLengthSidePacket = processor.getPacketCreator().createFloat32(focalLength);
                         Map<String, Packet> inputSidePackets = new HashMap<>();
@@ -259,6 +261,152 @@ public class MainActivity extends AppCompatActivity {
                             + landmark.getZ() + ")\n";
             ++landmarkIndex;
         }
+//        //实例数据
+//        Left 0, x(0.302470), y(0.777250), z(0.003873)
+//        Left 1, x(0.301649), y(0.758543), z(0.003890)
+//        Left 2, x(0.303053), y(0.795565), z(0.003930)
+//        Left 3, x(0.282136), y(0.777626), z(0.003890)
+//        Left 4, x(0.322129), y(0.776609), z(0.003916)
+//        Right 0, x(0.518205), y(0.768968), z(0.011022)
+//        Right 1, x(0.517543), y(0.750978), z(0.010942)
+//        Right 2, x(0.518891), y(0.786738), z(0.011089)
+//        Right 3, x(0.499230), y(0.769548), z(0.011063)
+//        Right 4, x(0.537797), y(0.768142), z(0.011016)
+//        left_iris_size(41.609215), right_iris_size(40.163750)
+//        left_iris_depth(336.245605, 0.000000) - right
+//        right_iris_depth(313.534180, 0.000000)
+//        focalLength = 1001.7391
+//        left_iris_depth = 302.6113            - wrong
+//        right_iris_depth = 306.4842
+//        focalLength = 1127.229459
+//        left_iris_depth = 336.24365
+//        right_iris_depth = 342.04236
+//
+//        LandmarkProto.NormalizedLandmarkList.Builder landmarks_l = LandmarkProto.NormalizedLandmarkList.newBuilder();
+//        LandmarkProto.NormalizedLandmark.Builder landmark_l = LandmarkProto.NormalizedLandmark.newBuilder();
+//        LandmarkProto.NormalizedLandmarkList.Builder landmarks_r = LandmarkProto.NormalizedLandmarkList.newBuilder();
+//        LandmarkProto.NormalizedLandmark.Builder landmark_r = LandmarkProto.NormalizedLandmark.newBuilder();
+//        landmark_l.setX((float) 0.302470); landmark_l.setY((float) 0.777250); landmark_l.setZ((float) 0.003873);
+//        landmarks_l.addLandmark(0, landmark_l);
+//        landmark_l.setX((float) 0.301649); landmark_l.setY((float) 0.758543); landmark_l.setZ((float) 0.003890);
+//        landmarks_l.addLandmark(1, landmark_l);
+//        landmark_l.setX((float) 0.303053); landmark_l.setY((float) 0.795565); landmark_l.setZ((float) 0.003930);
+//        landmarks_l.addLandmark(2, landmark_l);
+//        landmark_l.setX((float) 0.282136); landmark_l.setY((float) 0.777626); landmark_l.setZ((float) 0.003890);
+//        landmarks_l.addLandmark(3, landmark_l);
+//        landmark_l.setX((float) 0.322129); landmark_l.setY((float) 0.776609); landmark_l.setZ((float) 0.003916);
+//        landmarks_l.addLandmark(4, landmark_l);
+//
+//        landmark_r.setX((float) 0.518205); landmark_r.setY((float) 0.768968); landmark_r.setZ((float) 0.011022);
+//        landmarks_r.addLandmark(0, landmark_r);
+//        landmark_r.setX((float) 0.517543); landmark_r.setY((float) 0.750978); landmark_r.setZ((float) 0.010942);
+//        landmarks_r.addLandmark(1, landmark_r);
+//        landmark_r.setX((float) 0.518891); landmark_r.setY((float) 0.786738); landmark_r.setZ((float) 0.011089);
+//        landmarks_r.addLandmark(2, landmark_r);
+//        landmark_r.setX((float) 0.499230); landmark_r.setY((float) 0.769548); landmark_r.setZ((float) 0.011063);
+//        landmarks_r.addLandmark(3, landmark_r);
+//        landmark_r.setX((float) 0.537797); landmark_r.setY((float) 0.768142); landmark_r.setZ((float) 0.011016);
+//        landmarks_r.addLandmark(4, landmark_r);
+//
+//        float left_iris_size = CalculateIrisDiameter(left_iris.getLandmark(1).getX(), left_iris.getLandmark(1).getY(),
+//                                                    left_iris.getLandmark(2).getX(), left_iris.getLandmark(2).getY(),
+//                                                    left_iris.getLandmark(3).getX(), left_iris.getLandmark(3).getY(),
+//                                                    left_iris.getLandmark(4).getX(), left_iris.getLandmark(4).getY(),
+//                                                    size);
+//        float right_iris_size = CalculateIrisDiameter(right_iris.getLandmark(1).getX(), right_iris.getLandmark(1).getY(),
+//                                                    right_iris.getLandmark(2).getX(), right_iris.getLandmark(2).getY(),
+//                                                    right_iris.getLandmark(3).getX(), right_iris.getLandmark(3).getY(),
+//                                                    right_iris.getLandmark(4).getX(), right_iris.getLandmark(4).getY(),
+//                                                    size);
+//        mFocalLength = 1127.229459f;  //calculateFocalLengthInPixels(); //847.67444 3/2 = , 5/3 =
+
+        LandmarkProto.NormalizedLandmarkList left_iris = GetLeftIris(landmarks);    //landmarks_l.build();    //
+        LandmarkProto.NormalizedLandmarkList right_iris = GetRightIris(landmarks);   //landmarks_r.build();   //
+
+        Size size = new Size(1080, 1080);
+        float left_iris_size = CalculateIrisDiameter(left_iris, size);
+        float right_iris_size = CalculateIrisDiameter(right_iris, size);
+
+        float left_iris_depth = CalculateDepth(left_iris.getLandmark(0), mFocalLength, left_iris_size, size.getWidth(), size.getHeight());
+        float right_iris_depth = CalculateDepth(right_iris.getLandmark(0), mFocalLength, right_iris_size, size.getWidth(), size.getHeight());
+        Log.i(TAG, "getLandmarkDebug: left_iris_size = "+left_iris_size +", right_iris_size = "+right_iris_size+", left_iris_depth = "+left_iris_depth+", right_iris_depth = "+right_iris_depth);
         return landmarksString;
+    }
+
+    private static LandmarkProto.NormalizedLandmarkList GetLeftIris(LandmarkProto.NormalizedLandmarkList lds) {
+        LandmarkProto.NormalizedLandmarkList.Builder iris = LandmarkProto.NormalizedLandmarkList.newBuilder();
+        iris.addLandmark(lds.getLandmark(0));
+        iris.addLandmark(lds.getLandmark(2));
+        iris.addLandmark(lds.getLandmark(4));
+        iris.addLandmark(lds.getLandmark(3));
+        iris.addLandmark(lds.getLandmark(1));
+//        for(int i = 0; i <= 4; i++) {
+//            Log.i(TAG, "getLandmarkDebug: Left = "+i+", x("+iris.getLandmark(i).getX()+"), y("+iris.getLandmark(i).getY()+")"+", z("+iris.getLandmark(i).getZ()+")");
+//        }
+        return iris.build();
+    }
+
+    private static LandmarkProto.NormalizedLandmarkList GetRightIris(LandmarkProto.NormalizedLandmarkList lds) {
+        LandmarkProto.NormalizedLandmarkList.Builder iris = LandmarkProto.NormalizedLandmarkList.newBuilder();
+        iris.addLandmark(lds.getLandmark(5));
+        iris.addLandmark(lds.getLandmark(7));
+        iris.addLandmark(lds.getLandmark(9));
+        iris.addLandmark(lds.getLandmark(6));
+        iris.addLandmark(lds.getLandmark(8));
+//        for(int i = 0; i <= 4; i++) {
+//            Log.i(TAG, "getLandmarkDebug: Right = "+i+", x("+iris.getLandmark(i).getX()+"), y("+iris.getLandmark(i).getY()+")"+", z("+iris.getLandmark(i).getZ()+")");
+//        }
+        return iris.build();
+    }
+
+    private static float GetDepth(double x0, double y0, double x1, double y1) {
+        float ret = (float)(Math.sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1)));
+        return ret;
+    }
+
+    private static float GetLandmarkDepth(LandmarkProto.NormalizedLandmark ld0,
+                                          LandmarkProto.NormalizedLandmark ld1,
+                                          Size image_size) {
+        float ret = GetDepth(ld0.getX() * image_size.getWidth(), ld0.getY() * image_size.getHeight(),
+                        ld1.getX() * image_size.getWidth(), ld1.getY() * image_size.getHeight());
+        return ret;
+    }
+
+    private static float CalculateIrisDiameter(LandmarkProto.NormalizedLandmarkList lds, Size image_size) {
+        float dist_vert = GetLandmarkDepth(lds.getLandmark(1),
+                                           lds.getLandmark(2), image_size);
+        float dist_hori = GetLandmarkDepth(lds.getLandmark(3),
+                                           lds.getLandmark(4), image_size);
+        return (dist_hori + dist_vert) / 2.0f;
+    }
+
+//    private static float GetLandmarkDepth(float x0, float y0,
+//                                          float x1, float y1,
+//                                          Size image_size) {
+//        float ret = GetDepth(x0 * image_size.getWidth(), y0 * image_size.getHeight(),
+//                x1 * image_size.getWidth(), y1 * image_size.getHeight());
+//        return ret;
+//    }
+//
+//    private static float CalculateIrisDiameter(float x1, float y1,
+//                                               float x2, float y2,
+//                                               float x3, float y3,
+//                                               float x4, float y4,
+//                                               Size image_size) {
+//        float dist_vert = GetLandmarkDepth(x1, y1, x2, y2, image_size);
+//        float dist_hori = GetLandmarkDepth(x3, y3, x4, y4, image_size);
+//        return (dist_hori + dist_vert) / 2.0f;
+//    }
+
+    private static float CalculateDepth(LandmarkProto.NormalizedLandmark center, float focal_length,
+                                        float iris_size,
+                                        float img_w, float img_h) {
+        float origin_x = img_w / 2.f;
+        float origin_y = img_h / 2.f;
+        float y = GetDepth(origin_x, origin_y, center.getX() * img_w, center.getY() * img_h);
+        float x = (float)Math.sqrt(focal_length * focal_length + y * y);
+        float kIrisSizeInMM = 11.8f;
+        float depth = kIrisSizeInMM * x / iris_size;
+        return depth;
     }
 }
