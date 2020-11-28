@@ -24,6 +24,8 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 
+#define DEBUG_PRINT
+
 namespace mediapipe {
 
 namespace {
@@ -38,7 +40,9 @@ constexpr float kFontHeightScale = 1.5f;
 constexpr int kNumIrisLandmarksPerEye = 5;
 // TODO: Source.
 constexpr float kIrisSizeInMM = 11.8;
+#ifdef DEBUG_PRINT
 int _initLog = 0;
+#endif
 
 inline void SetColor(RenderAnnotation* annotation, const Color& color) {
   annotation->mutable_color()->set_r(color.r());
@@ -127,10 +131,12 @@ class IrisToRenderDataCalculator : public CalculatorBase {
 
   ::mediapipe::Status Process(CalculatorContext* cc) override;
 
+#ifdef DEBUG_PRINT
   ~IrisToRenderDataCalculator() {
     _initLog = 0;
     google::ShutdownGoogleLogging();
   }
+#endif
 
  private:
   void RenderIris(const NormalizedLandmarkList& iris_landmarks,
@@ -166,6 +172,7 @@ REGISTER_CALCULATOR(IrisToRenderDataCalculator);
   if (cc->Inputs().Tag(kIrisTag).IsEmpty()) {
     return ::mediapipe::OkStatus();
   }
+#ifdef DEBUG_PRINT
   if(_initLog == 0) {
     FLAGS_logbufsecs = 0;
     google::InitGoogleLogging("irislog");
@@ -176,6 +183,7 @@ REGISTER_CALCULATOR(IrisToRenderDataCalculator);
     FLAGS_timestamp_in_logfile_name = false;
     _initLog = 1;
   }
+#endif
   const auto& options =
       cc->Options<::mediapipe::IrisToRenderDataCalculatorOptions>();
 
@@ -188,6 +196,7 @@ REGISTER_CALCULATOR(IrisToRenderDataCalculator);
   RET_CHECK(!cc->Inputs().Tag(kImageSizeTag).IsEmpty());
   image_size = cc->Inputs().Tag(kImageSizeTag).Get<std::pair<int, int>>();
 
+#ifdef DEBUG_PRINT
   int len = iris_landmarks.landmark_size();
   for(int i = 0; i < len; i++) {
     char str[1024];
@@ -197,10 +206,12 @@ REGISTER_CALCULATOR(IrisToRenderDataCalculator);
                                     iris_landmarks.landmark(i).z());
     LOG(INFO) << str;
   }
+#endif
   auto render_data = absl::make_unique<RenderData>();
   auto left_iris = absl::make_unique<NormalizedLandmarkList>();
   auto right_iris = absl::make_unique<NormalizedLandmarkList>();
   GetLeftIris(iris_landmarks, left_iris.get());
+#ifdef DEBUG_PRINT
   for(int i = 0; i <= 4; i++) {
     char str[1024];
     sprintf(str, "Left LandmarkDebug[%d] x(%f), y(%f), z(%f)\n", i,
@@ -209,8 +220,10 @@ REGISTER_CALCULATOR(IrisToRenderDataCalculator);
                                     left_iris.get()->landmark(i).z());
     LOG(INFO) << str;
   }
+#endif
 
   GetRightIris(iris_landmarks, right_iris.get());
+#ifdef DEBUG_PRINT
   for(int i = 0; i <= 4; i++) {
     char str[1024];
     sprintf(str, "Right LandmarkDebug[%d] x(%f), y(%f), z(%f)\n", i,
@@ -219,14 +232,17 @@ REGISTER_CALCULATOR(IrisToRenderDataCalculator);
                                     right_iris.get()->landmark(i).z());
     LOG(INFO) << str;
   }
+#endif
 
   const auto left_iris_size = CalculateIrisDiameter(*left_iris, image_size);
   const auto right_iris_size = CalculateIrisDiameter(*right_iris, image_size);
+#ifdef DEBUG_PRINT
   {
     char str[1024];
     sprintf(str, "LandmarkDebug left_iris_size(%f), right_iris_size(%f)\n", left_iris_size, right_iris_size);
     LOG(INFO) << str;
   }
+#endif
   RenderIris(*left_iris, options, image_size, left_iris_size,
              render_data.get());
   RenderIris(*right_iris, options, image_size, right_iris_size,
@@ -243,9 +259,11 @@ REGISTER_CALCULATOR(IrisToRenderDataCalculator);
       absl::StrAppend(&line, ":", std::round(left_iris_depth / 10), " cm");
       lines.emplace_back(line);
     }
+#ifdef DEBUG_PRINT
     char str[1024];
     sprintf(str, "LandmarkDebug left_iris_depth(%f, %f)\n", left_iris_depth, 0.0);
     LOG(INFO) << str;
+#endif
   }
   if (cc->Inputs().HasTag(kRightIrisDepthTag) &&
       !cc->Inputs().Tag(kRightIrisDepthTag).IsEmpty()) {
@@ -256,9 +274,11 @@ REGISTER_CALCULATOR(IrisToRenderDataCalculator);
       absl::StrAppend(&line, ":", std::round(right_iris_depth / 10), " cm");
       lines.emplace_back(line);
     }
+#ifdef DEBUG_PRINT
     char str[1024];
     sprintf(str, "LandmarkDebug right_iris_depth(%f, %f)\n", right_iris_depth, 0.0);
     LOG(INFO) << str;
+#endif
   }
   AddTextRenderData(options, image_size, lines, render_data.get());
 

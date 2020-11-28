@@ -31,7 +31,7 @@ private:
         return std::sqrt(dist);
     }
 
-    bool isThumbNearFirstFinger(NormalizedLandmark point1, NormalizedLandmark point2) {
+    bool isThumbConnectFinger_1(NormalizedLandmark point1, NormalizedLandmark point2) {
         float distance = this->get_Euclidean_DistanceAB(point1.x(), point1.y(), point2.x(), point2.y());
         return distance < 0.1;
     }
@@ -67,7 +67,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
 
     if (width < 0.01 || height < 0.01) {
         // LOG(INFO) << "No Hand Detected";
-        recognized_hand_gesture = new std::string("___");
+        recognized_hand_gesture = new std::string("__");
         cc->Outputs()
             .Tag(recognizedHandGestureTag)
             .Add(recognized_hand_gesture, cc->InputTimestamp());
@@ -80,62 +80,52 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
     RET_CHECK_GT(landmarkList.landmark_size(), 0) << "Input landmark vector is empty.";
 
     // finger states
-    bool thumbIsOpen = false;
-    bool firstFingerIsOpen = false;
-    bool secondFingerIsOpen = false;
-    bool thirdFingerIsOpen = false;
-    bool fourthFingerIsOpen = false;
-    //
+    bool isThumb = false;
+    bool isFinger_1 = false;
+    bool isFinger_2 = false;
+    bool isFinger_3 = false;
+    bool isFinger_4 = false;
 
-    float pseudoFixKeyPoint = landmarkList.landmark(2).x();
-    if (landmarkList.landmark(3).x() < pseudoFixKeyPoint && landmarkList.landmark(4).x() < pseudoFixKeyPoint) {
-        thumbIsOpen = true;
+    if (landmarkList.landmark(3).x() < landmarkList.landmark(2).x() && landmarkList.landmark(4).x() < landmarkList.landmark(2).x()) {
+        isThumb = true;
     }
-
-    pseudoFixKeyPoint = landmarkList.landmark(6).y();
-    if (landmarkList.landmark(7).y() < pseudoFixKeyPoint && landmarkList.landmark(8).y() < pseudoFixKeyPoint) {
-        firstFingerIsOpen = true;
+    if (landmarkList.landmark(7).y() < landmarkList.landmark(6).y() && landmarkList.landmark(8).y() < landmarkList.landmark(6).y()) {
+        isFinger_1 = true;
     }
-
-    pseudoFixKeyPoint = landmarkList.landmark(10).y();
-    if (landmarkList.landmark(11).y() < pseudoFixKeyPoint && landmarkList.landmark(12).y() < pseudoFixKeyPoint) {
-        secondFingerIsOpen = true;
+    if (landmarkList.landmark(11).y() < landmarkList.landmark(10).y() && landmarkList.landmark(12).y() < landmarkList.landmark(10).y()) {
+        isFinger_2 = true;
     }
-
-    pseudoFixKeyPoint = landmarkList.landmark(14).y();
-    if (landmarkList.landmark(15).y() < pseudoFixKeyPoint && landmarkList.landmark(16).y() < pseudoFixKeyPoint) {
-        thirdFingerIsOpen = true;
+    if (landmarkList.landmark(15).y() < landmarkList.landmark(14).y() && landmarkList.landmark(16).y() < landmarkList.landmark(14).y()) {
+        isFinger_3 = true;
     }
-
-    pseudoFixKeyPoint = landmarkList.landmark(18).y();
-    if (landmarkList.landmark(19).y() < pseudoFixKeyPoint && landmarkList.landmark(20).y() < pseudoFixKeyPoint) {
-        fourthFingerIsOpen = true;
+    if (landmarkList.landmark(19).y() < landmarkList.landmark(18).y() && landmarkList.landmark(20).y() < landmarkList.landmark(18).y()) {
+        isFinger_4 = true;
     }
 
     // Hand gesture recognition
-    if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen) {
+    if (isThumb && isFinger_1 && isFinger_2 && isFinger_3 && isFinger_4) {
         recognized_hand_gesture = new std::string("FIVE");
-    } else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen) {
+    } else if (!isThumb && isFinger_1 && isFinger_2 && isFinger_3 && isFinger_4) {
         recognized_hand_gesture = new std::string("FOUR");
-    } else if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+    } else if (isThumb && isFinger_1 && isFinger_2 && !isFinger_3 && !isFinger_4) {
         recognized_hand_gesture = new std::string("TREE");
-    } else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+    } else if (isThumb && isFinger_1 && !isFinger_2 && !isFinger_3 && !isFinger_4) {
         recognized_hand_gesture = new std::string("TWO");
-    } else if (!thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+    } else if (!isThumb && isFinger_1 && !isFinger_2 && !isFinger_3 && !isFinger_4) {
         recognized_hand_gesture = new std::string("ONE");
-    } else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+    } else if (!isThumb && isFinger_1 && isFinger_2 && !isFinger_3 && !isFinger_4) {
         recognized_hand_gesture = new std::string("YEAH");
-    } else if (!thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen) {
+    } else if (!isThumb && isFinger_1 && !isFinger_2 && !isFinger_3 && isFinger_4) {
         recognized_hand_gesture = new std::string("ROCK");
-    } else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen) {
+    } else if (isThumb && isFinger_1 && !isFinger_2 && !isFinger_3 && isFinger_4) {
         recognized_hand_gesture = new std::string("SPIDERMAN");
-    } else if (!thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+    } else if (!isThumb && !isFinger_1 && !isFinger_2 && !isFinger_3 && !isFinger_4) {
         recognized_hand_gesture = new std::string("FIST");
-    } else if (!firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && this->isThumbNearFirstFinger(landmarkList.landmark(4), landmarkList.landmark(8))) {
+    } else if (!isFinger_1 && isFinger_2 && isFinger_3 && isFinger_4 && this->isThumbConnectFinger_1(landmarkList.landmark(4), landmarkList.landmark(8))) {
         recognized_hand_gesture = new std::string("OK");
     } else {
-        recognized_hand_gesture = new std::string("___");
-        // LOG(INFO) << "Finger States: " << thumbIsOpen << firstFingerIsOpen << secondFingerIsOpen << thirdFingerIsOpen << fourthFingerIsOpen;       
+        recognized_hand_gesture = new std::string("__");
+        // LOG(INFO) << "Finger States: " << isThumb << isFinger_1 << isFinger_2 << isFinger_3 << isFinger_4;
     }
     // LOG(INFO) << recognized_hand_gesture;
 

@@ -20,6 +20,8 @@
 #include "mediapipe/framework/port/ret_check.h"
 #include "mediapipe/framework/port/status.h"
 
+#define DEBUG_PRINT
+
 namespace mediapipe {
 
 namespace {
@@ -32,7 +34,9 @@ constexpr int kMiddleFingerPIPJoint = 6;
 constexpr int kIndexFingerPIPJoint = 4;
 constexpr int kRingFingerPIPJoint = 8;
 constexpr float kTargetAngle = M_PI * 0.5f;
+#ifdef DEBUG_PRINT
 int _initLog = 0;
+#endif
 
 inline float NormalizeRadians(float angle) {
   return angle - 2 * M_PI * std::floor((angle - (-M_PI)) / (2 * M_PI));
@@ -78,6 +82,7 @@ float ComputeRotation(const NormalizedLandmarkList& landmarks,
   }
   const float axis_aligned_center_x = (max_x + min_x) / 2.f;
   const float axis_aligned_center_y = (max_y + min_y) / 2.f;
+#ifdef DEBUG_PRINT
   {
     char str[1024];
     sprintf(str, "LandmarkDebug max_x(%f), max_y(%f), min_x(%f), min_y(%f), center_x(%f), center_y(%f)\n",
@@ -86,6 +91,7 @@ float ComputeRotation(const NormalizedLandmarkList& landmarks,
                                     axis_aligned_center_x, axis_aligned_center_y);
     LOG(INFO) << str;
   }
+#endif
 
   // Find boundaries of rotated landmarks.
   max_x = std::numeric_limits<float>::min();
@@ -157,6 +163,7 @@ class HandLandmarksToRectCalculator : public CalculatorBase {
     }
     RET_CHECK(!cc->Inputs().Tag(kImageSizeTag).IsEmpty());
 
+#ifdef DEBUG_PRINT
     if(_initLog == 0) {
       FLAGS_logbufsecs = 0;
       google::InitGoogleLogging("irislog");
@@ -167,11 +174,13 @@ class HandLandmarksToRectCalculator : public CalculatorBase {
       FLAGS_timestamp_in_logfile_name = false;
       _initLog = 1;
     }
+#endif
 
     std::pair<int, int> image_size =
         cc->Inputs().Tag(kImageSizeTag).Get<std::pair<int, int>>();
     const auto& landmarks =
         cc->Inputs().Tag(kNormalizedLandmarksTag).Get<NormalizedLandmarkList>();
+#ifdef DEBUG_PRINT
     int len = landmarks.landmark_size();
     for(int i = 0; i < len; i++) {
       char str[1024];
@@ -181,6 +190,7 @@ class HandLandmarksToRectCalculator : public CalculatorBase {
                                       landmarks.landmark(i).z());
       LOG(INFO) << str;
     }
+#endif
     auto output_rect = absl::make_unique<NormalizedRect>();
     MP_RETURN_IF_ERROR(
         NormalizedLandmarkListToRect(landmarks, image_size, output_rect.get()));
@@ -191,10 +201,12 @@ class HandLandmarksToRectCalculator : public CalculatorBase {
     return ::mediapipe::OkStatus();
   }
 
+#ifdef DEBUG_PRINT
   ~HandLandmarksToRectCalculator() {
     _initLog = 0;
     google::ShutdownGoogleLogging();
   }
+#endif
 };
 REGISTER_CALCULATOR(HandLandmarksToRectCalculator);
 
