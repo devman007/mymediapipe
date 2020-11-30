@@ -24,6 +24,8 @@
 #include "mediapipe/framework/port/ret_check.h"
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
+// add by jacky
+// #define ENABLE_FINGER_LINE
 namespace mediapipe {
 
 namespace {
@@ -81,10 +83,17 @@ void AddConnectionToRenderData(const LandmarkType& start,
   auto* connection_annotation = render_data->add_render_annotations();
   RenderAnnotation::GradientLine* line =
       connection_annotation->mutable_gradient_line();
+#ifdef ENABLE_FINGER_LINE      
   line->set_x_start(start.x());
   line->set_y_start(start.y());
   line->set_x_end(end.x());
   line->set_y_end(end.y());
+#else
+  line->set_x_start(0);
+  line->set_y_start(0);
+  line->set_x_end(0);
+  line->set_y_end(0);
+#endif
   line->set_normalized(normalized);
   line->mutable_color1()->set_r(gray_val1);
   line->mutable_color1()->set_g(gray_val1);
@@ -130,10 +139,17 @@ void AddConnectionToRenderData(const LandmarkType& start,
                                bool normalized, RenderData* render_data) {
   auto* connection_annotation = render_data->add_render_annotations();
   RenderAnnotation::Line* line = connection_annotation->mutable_line();
+#ifdef ENABLE_FINGER_LINE
   line->set_x_start(start.x());
   line->set_y_start(start.y());
   line->set_x_end(end.x());
   line->set_y_end(end.y());
+#else
+  line->set_x_start(0);
+  line->set_y_start(0);
+  line->set_x_end(0);
+  line->set_y_end(0);
+#endif  
   line->set_normalized(normalized);
   SetColor(connection_annotation, connection_color);
   connection_annotation->set_thickness(thickness);
@@ -282,8 +298,13 @@ RenderAnnotation* AddPointRenderData(const Color& landmark_color,
       }
       auto* landmark_data = landmark_data_render->mutable_point();
       landmark_data->set_normalized(false);
+#ifdef ENABLE_FINGER_LINE
       landmark_data->set_x(landmark.x());
       landmark_data->set_y(landmark.y());
+#else
+      landmark_data->set_x(0);
+      landmark_data->set_y(0);
+#endif
     }
   }
 
@@ -330,8 +351,13 @@ RenderAnnotation* AddPointRenderData(const Color& landmark_color,
       }
       auto* landmark_data = landmark_data_render->mutable_point();
       landmark_data->set_normalized(true);
+#ifdef ENABLE_FINGER_LINE
       landmark_data->set_x(landmark.x());
       landmark_data->set_y(landmark.y());
+#else
+      landmark_data->set_x(0);
+      landmark_data->set_y(0);
+#endif
     }
   }
 

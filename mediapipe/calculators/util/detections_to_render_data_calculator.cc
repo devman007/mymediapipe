@@ -23,6 +23,8 @@
 #include "mediapipe/framework/port/ret_check.h"
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
+// add by jacky
+// #define ENABLE_DETECT_OBJ
 namespace mediapipe {
 
 namespace {
@@ -207,7 +209,11 @@ void DetectionsToRenderDataCalculator::SetTextCoordinate(
     bool normalized, double left, double baseline,
     RenderAnnotation::Text* text) {
   text->set_normalized(normalized);
+#ifdef ENABLE_DETECT_OBJ
   text->set_left(normalized ? std::max(left, 0.0) : left);
+#else
+  text->set_left(0);
+#endif
   // Normalized coordinates must be between 0.0 and 1.0, if they are used.
   text->set_baseline(normalized ? std::min(baseline, 1.0) : baseline);
 }
@@ -220,6 +226,7 @@ void DetectionsToRenderDataCalculator::SetRectCoordinate(
     if (xmin > 1.0 || ymin > 1.0) return;
   }
   rect->set_normalized(normalized);
+#ifdef ENABLE_DETECT_OBJ
   rect->set_left(normalized ? std::max(xmin, 0.0) : xmin);
   rect->set_top(normalized ? std::max(ymin, 0.0) : ymin);
   // No "xmin + width -1" because the coordinates can be relative, i.e. [0,1],
@@ -229,6 +236,12 @@ void DetectionsToRenderDataCalculator::SetRectCoordinate(
   // 1.0.
   rect->set_right(normalized ? std::min(xmin + width, 1.0) : xmin + width);
   rect->set_bottom(normalized ? std::min(ymin + height, 1.0) : ymin + height);
+#else
+  rect->set_left(0);
+  rect->set_top(0);
+  rect->set_right(0);
+  rect->set_bottom(0);
+#endif
 }
 
 void DetectionsToRenderDataCalculator::AddLabels(
@@ -350,10 +363,15 @@ void DetectionsToRenderDataCalculator::AddLocationData(
         auto* keypoint_data = keypoint_data_annotation->mutable_point();
         keypoint_data->set_normalized(true);
         // See location_data.proto for detail.
+#ifdef ENABLE_DETECT_OBJ
         keypoint_data->set_x(
             detection.location_data().relative_keypoints(i).x());
         keypoint_data->set_y(
             detection.location_data().relative_keypoints(i).y());
+#else
+        keypoint_data->set_x(0);
+        keypoint_data->set_y(0);
+#endif
       }
     }
   }

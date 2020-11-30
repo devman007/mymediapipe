@@ -29,6 +29,8 @@
 #include "mediapipe/framework/port/statusor.h"
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
+// add by jacky
+// #define ENABLE_LABEL_TEXT
 
 namespace mediapipe {
 
@@ -170,10 +172,17 @@ REGISTER_CALCULATOR(LabelsToRenderDataCalculator);
     if (cc->Inputs().HasTag("SCORES")) {
       absl::StrAppend(&display_text, ":", scores[i]);
     }
+#ifdef ENABLE_LABEL_TEXT    
     text->set_display_text(display_text);
     text->set_font_height(options_.font_height_px());
     text->set_left(label_left_px_);
     text->set_baseline(label_baseline_px + i * label_height_px_);
+#else
+    text->set_display_text("");
+    text->set_font_height(0);
+    text->set_left(0);
+    text->set_baseline(0);
+#endif
     text->set_font_face(options_.font_face());
   }
   cc->Outputs()

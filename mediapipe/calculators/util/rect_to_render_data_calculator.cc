@@ -19,6 +19,9 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 
+// add by jacky
+// #define ENABLE_RECT_LINE
+
 namespace mediapipe {
 
 namespace {
@@ -52,10 +55,17 @@ void SetRect(bool normalized, double xmin, double ymin, double width,
     }
   }
   rect->set_normalized(normalized);
+#ifdef ENABLE_RECT_LINE
   rect->set_left(xmin);
   rect->set_top(ymin);
   rect->set_right(xmin + width);
   rect->set_bottom(ymin + height);
+#else
+  rect->set_left(0);
+  rect->set_top(0);
+  rect->set_right(0);
+  rect->set_bottom(0);
+#endif
   rect->set_rotation(rotation);
 }
 
