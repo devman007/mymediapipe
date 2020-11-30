@@ -6,3 +6,4 @@ org.eclipse.buildship.core.prefs
 *.aar
 app.iml
 .vscode
+test/facemesh/app/build
