@@ -20,7 +20,7 @@
 #include "mediapipe/util/render_data.pb.h"
 
 // add by jacky
-// #define ENABLE_RECT_LINE
+#define ENABLE_RECT_LINE
 
 namespace mediapipe {
 

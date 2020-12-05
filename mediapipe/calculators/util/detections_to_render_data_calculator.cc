@@ -24,7 +24,7 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 // add by jacky
-// #define ENABLE_DETECT_OBJ
+#define ENABLE_DETECT_OBJ
 namespace mediapipe {
 
 namespace {
@@ -211,11 +211,13 @@ void DetectionsToRenderDataCalculator::SetTextCoordinate(
   text->set_normalized(normalized);
 #ifdef ENABLE_DETECT_OBJ
   text->set_left(normalized ? std::max(left, 0.0) : left);
-#else
-  text->set_left(0);
-#endif
   // Normalized coordinates must be between 0.0 and 1.0, if they are used.
   text->set_baseline(normalized ? std::min(baseline, 1.0) : baseline);
+#else
+  text->set_left(0);
+  // Normalized coordinates must be between 0.0 and 1.0, if they are used.
+  text->set_baseline(0);
+#endif
 }
 
 void DetectionsToRenderDataCalculator::SetRectCoordinate(

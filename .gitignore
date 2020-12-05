@@ -7,3 +7,6 @@ org.eclipse.buildship.core.prefs
 app.iml
 .vscode
 test/facemesh/app/build
+add.bin
+xcschememanagement.plist
+UserInterfaceState.xcuserstate

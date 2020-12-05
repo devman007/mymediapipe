@@ -30,7 +30,7 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 // add by jacky
-// #define ENABLE_LABEL_TEXT
+#define ENABLE_LABEL_TEXT
 
 namespace mediapipe {
 

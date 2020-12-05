@@ -20,6 +20,7 @@
 #include "mediapipe/framework/port/ret_check.h"
 #include "mediapipe/framework/port/status.h"
 
+// add by jacky
 #define DEBUG_PRINT
 
 namespace mediapipe {
