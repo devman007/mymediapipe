@@ -104,7 +104,7 @@
     
     // Create a VideoDataOutput and add it to the session
     videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
-    videoDataOutput.videoSettings = @{ (id)kCVPixelBufferPixelFormatTypeKey: [NSNumber numberWithInt:kCVPixelFormatType_32BGRA]};
+//    videoDataOutput.videoSettings = @{ (id)kCVPixelBufferPixelFormatTypeKey: [NSNumber numberWithInt:kCVPixelFormatType_32BGRA]};
     [videoDataOutput setSampleBufferDelegate:self queue:videoDataOutputQueue];
     videoDataOutput.alwaysDiscardsLateVideoFrames = NO;
     if ( [captureSession canAddOutput:videoDataOutput] ) {
@@ -131,9 +131,10 @@
 //    videoPreviewer.autoresizesSubviews = YES;
 //    videoPreviewer.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |UIViewAutoresizingFlexibleTopMargin |
 //                                    UIViewAutoresizingFlexibleHeight |UIViewAutoresizingFlexibleWidth;
-    videoPreviewLayer.frame = self.capVideoBACK.frame;
-    videoPreviewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)[UIApplication sharedApplication].statusBarOrientation;
-    [self.capVideoBACK.layer addSublayer:videoPreviewLayer];
+//    //close original video preview
+//    videoPreviewLayer.frame = self.capVideoBACK.frame;
+//    videoPreviewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)[UIApplication sharedApplication].statusBarOrientation;
+//    [self.capVideoBACK.layer addSublayer:videoPreviewLayer];
 
     // Start the session running to start the flow of data
     [captureSession startRunning];
@@ -145,11 +146,13 @@
 }
 
 - (void)handTracker: (HandTracker*)handTracker didOutputPixelBuffer: (CVPixelBufferRef)pixelBuffer {
-    CIImage *ciimage = [CIImage imageWithCVPixelBuffer:pixelBuffer options:nil];
-    CIImage *scaledImage = [ciimage imageByApplyingTransform:(CGAffineTransformMakeScale(0.5, 0.5))];
-    CIContext *context = [CIContext contextWithOptions:nil];
-    CGImageRef cgimage = [context createCGImage:scaledImage fromRect:scaledImage.extent];
-    UIImage *image = [UIImage imageWithCGImage:cgimage];
+//    CIImage *ciimage = [CIImage imageWithCVPixelBuffer:pixelBuffer options:nil];
+//    CIImage *scaledImage = [ciimage imageByApplyingTransform:(CGAffineTransformMakeScale(0.5, 0.5))];
+//    CIContext *context = [CIContext contextWithOptions:nil];
+//    CGImageRef cgimage = [context createCGImage:scaledImage fromRect:scaledImage.extent];
+//    UIImage *image = [UIImage imageWithCGImage:cgimage];
+    
+    UIImage *image = [self getUIImageFromCVPixelBuffer:pixelBuffer];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.capVideoBACK.image = image;
     });
@@ -170,17 +173,19 @@
 //    dispatch_async(dispatch_get_main_queue(), ^{
 //        self.capVideoBACK.image = image;
 //    });
-    CIImage *ciimage = [CIImage imageWithCVPixelBuffer:pixelBuffer options:nil];
-    CIImage *scaledImage = [ciimage imageByApplyingTransform:(CGAffineTransformMakeScale(0.5, 0.5))];
-    CIContext *context = [CIContext contextWithOptions:nil];
-    CGImageRef cgimage = [context createCGImage:scaledImage fromRect:scaledImage.extent];
-    UIImage *image = [UIImage imageWithCGImage:cgimage];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.capVideoBACK.image = image;
-    });
+//    CIImage *ciimage = [CIImage imageWithCVPixelBuffer:pixelBuffer options:nil];
+//    CIImage *scaledImage = [ciimage imageByApplyingTransform:(CGAffineTransformMakeScale(0.5, 0.5))];
+//    CIContext *context = [CIContext contextWithOptions:nil];
+//    CGImageRef cgimage = [context createCGImage:scaledImage fromRect:scaledImage.extent];
+//    UIImage *image = [UIImage imageWithCGImage:cgimage];
+    
+//    UIImage *image = [self getUIImageFromCVPixelBuffer:sampleBuffer];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        self.capVideoBACK.image = image;
+//    });
 }
 
-- (UIImage *)getUIImageFromCVPixelBuffer:(CMSampleBufferRef)sampleBuffer {
+- (UIImage *)getUIImageFromCMSampleBuffer:(CMSampleBufferRef)sampleBuffer {
     CGImageRef newImage = nil;
     @autoreleasepool{
         CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
@@ -205,60 +210,29 @@
     return image;
 }
 
-- (UIImage *)getUIImageFromCVPixelBuffer:(CVPixelBufferRef)cvPixelBuffer uiOrientation:(UIImageOrientation)uiOrientation {
-    UIImage *image;
+- (UIImage *)getUIImageFromCVPixelBuffer:(CVPixelBufferRef)pixelBuffer {
+    UIImage* image;
+    CGImageRef quartzImage = nil;
     @autoreleasepool{
-        CGImageRef quartzImage = [self getCGImageFromCVPixelBuffer:cvPixelBuffer];
-        image = [UIImage imageWithCGImage:quartzImage scale:1.0 orientation:uiOrientation];
-        CGImageRelease(quartzImage);
-    }
-    return (image);
-}
+        CVPixelBufferLockBaseAddress(pixelBuffer, 0);   /*Lock the image buffer*/
+        uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer); /*Get information about the image*/
+        size_t width = CVPixelBufferGetWidth(pixelBuffer);
+        size_t height = CVPixelBufferGetHeight(pixelBuffer);
+        size_t buffersize = CVPixelBufferGetDataSize(pixelBuffer);
+        size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
 
-- (CGImageRef)getCGImageFromCVPixelBuffer:(CVPixelBufferRef)cvPixelBuffer {
-    CGImageRef quartzImage;
-    @autoreleasepool {
-        CVImageBufferRef imageBuffer = cvPixelBuffer;
-        CVPixelBufferLockBaseAddress(imageBuffer, 0);
-        
-        void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
-        size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
-        size_t width = CVPixelBufferGetWidth(imageBuffer);
-        size_t height = CVPixelBufferGetHeight(imageBuffer);
-        
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        CGContextRef context = CGBitmapContextCreate(baseAddress, width, height, 8,
-                                                     bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);//kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast
-        quartzImage = CGBitmapContextCreateImage(context);
-        CGContextRelease(context);
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB(); /*Create a CGImageRef from the CVImageBufferRef*/
+        CGContextRef newContext = CGBitmapContextCreate(baseAddress, width, height, 8,
+                                                        bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+        quartzImage = CGBitmapContextCreateImage(newContext);
+
+        CGContextRelease(newContext);   /*We release some components*/
         CGColorSpaceRelease(colorSpace);
-        CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, 0); /*We unlock the  image buffer*/
     }
-    return quartzImage;
-}
-
--(UIImage*)pixelBufferToImage:(CVPixelBufferRef) pixelBuffer{
-    CVPixelBufferLockBaseAddress(pixelBuffer, 0);// 锁定pixel buffer的基地址
-    void * baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer);// 得到pixel buffer的基地址
-    size_t width = CVPixelBufferGetWidth(pixelBuffer);
-    size_t height = CVPixelBufferGetHeight(pixelBuffer);
-    size_t bufferSize = CVPixelBufferGetDataSize(pixelBuffer);
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);// 得到pixel buffer的行字节数
-    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();// 创建一个依赖于设备的RGB颜色空间
-    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, baseAddress, bufferSize, NULL);
-
-    CGImageRef cgImage = CGImageCreate(width, height, 8, 32, bytesPerRow, rgbColorSpace,
-                                       kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrderDefault,
-                                       provider, NULL, true, kCGRenderingIntentDefault);//这个是建立一个CGImageRef对象的函数
-
-    UIImage *image = [UIImage imageWithCGImage:cgImage];
-    CGImageRelease(cgImage);  //类似这些CG...Ref 在使用完以后都是需要release的，不然内存会有问题
-    CGDataProviderRelease(provider);
-    CGColorSpaceRelease(rgbColorSpace);
-    NSData* imgData = UIImageJPEGRepresentation(image, 1.0);//1代表图片是否压缩
-    image = [UIImage imageWithData:imgData];
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);   // 解锁pixel buffer
-
+    image = [UIImage imageWithCGImage:quartzImage scale:1.0 orientation:UIImageOrientationRight];
+    CGImageRelease(quartzImage);
+    
     return image;
 }
 
