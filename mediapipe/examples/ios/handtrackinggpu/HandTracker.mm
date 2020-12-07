@@ -20,6 +20,17 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 
 @implementation HandTracker {}
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.mediapipeGraph = [[self class] loadGraphFromResource:kGraphName];
+        self.mediapipeGraph.delegate = self;
+        // Set maxFramesInFlight to a small value to avoid memory contention for real-time processing.
+        self.mediapipeGraph.maxFramesInFlight = 2;
+    }
+    return self;
+}
+
 #pragma mark - Cleanup methods
 
 - (void)dealloc {
@@ -57,23 +68,18 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
     return newGraph;
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        self.mediapipeGraph = [[self class] loadGraphFromResource:kGraphName];
-        self.mediapipeGraph.delegate = self;
-        // Set maxFramesInFlight to a small value to avoid memory contention for real-time processing.
-        self.mediapipeGraph.maxFramesInFlight = 2;
-    }
-    return self;
-}
-
 - (void)startGraph {
     // Start running self.mediapipeGraph.
     NSError* error;
     if (![self.mediapipeGraph startWithError:&error]) {
         NSLog(@"Failed to start graph: %@", error);
     }
+}
+
+- (void)processVideoFrame:(CVPixelBufferRef)imageBuffer {
+    [self.mediapipeGraph sendPixelBuffer:imageBuffer
+                              intoStream:kInputStream
+                              packetType:MPPPacketTypePixelBuffer];
 }
 
 #pragma mark - MPPGraphDelegate methods
@@ -108,12 +114,6 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
         }
         [_delegate handTracker: self didOutputLandmarks: result];
     }
-}
-
-- (void)processVideoFrame:(CVPixelBufferRef)imageBuffer {
-    [self.mediapipeGraph sendPixelBuffer:imageBuffer
-                              intoStream:kInputStream
-                              packetType:MPPPacketTypePixelBuffer];
 }
 
 @end
