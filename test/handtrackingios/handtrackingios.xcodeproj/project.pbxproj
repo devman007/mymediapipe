@@ -54,7 +54,6 @@
 		D479B01C25790F8C007DBC3A /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		D479B01D25790F8C007DBC3A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D479B01E25790F8C007DBC3A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		D479B023257A0AE1007DBC3A /* HandTracker.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandTracker.framework; path = handtrackingios/HandTracker.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +110,6 @@
 		D479B0132578E51E007DBC3A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D479B023257A0AE1007DBC3A /* HandTracker.framework */,
 				D479B01D25790F8C007DBC3A /* AVFoundation.framework */,
 				D479B01C25790F8C007DBC3A /* CoreMedia.framework */,
 				D479B01B25790F8C007DBC3A /* CoreVideo.framework */,

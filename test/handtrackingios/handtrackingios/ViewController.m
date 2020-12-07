@@ -12,7 +12,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
-#import <HandTracker/HandTracker.h>
+#import <HandTrackingFramework/HandTracker.h>
 
 @interface ViewController () <AVCaptureVideoDataOutputSampleBufferDelegate, TrackerDelegate> {
     HandTracker               *handTracker;
@@ -145,15 +145,14 @@
 }
 
 - (void)handTracker: (HandTracker*)handTracker didOutputPixelBuffer: (CVPixelBufferRef)pixelBuffer {
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        CIImage *ciimage = [CIImage imageWithCVPixelBuffer:pixelBuffer options:nil];
-//        CIImage *scaledImage = [ciimage imageByApplyingTransform:(CGAffineTransformMakeScale(0.5, 0.5))];
-//        CIContext *context = [CIContext contextWithOptions:nil];
-//        CGImageRef cgimage = [context createCGImage:scaledImage fromRect:scaledImage.extent];
-//        UIImage *uiimage = [UIImage imageWithCGImage:cgimage];
-//        capVideoBACK.image = uiimage;
-//    });
-//    self.capVideoBACK.image = [self pixelBufferToImage:pixelBuffer];
+    CIImage *ciimage = [CIImage imageWithCVPixelBuffer:pixelBuffer options:nil];
+    CIImage *scaledImage = [ciimage imageByApplyingTransform:(CGAffineTransformMakeScale(0.5, 0.5))];
+    CIContext *context = [CIContext contextWithOptions:nil];
+    CGImageRef cgimage = [context createCGImage:scaledImage fromRect:scaledImage.extent];
+    UIImage *image = [UIImage imageWithCGImage:cgimage];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.capVideoBACK.image = image;
+    });
 }
 
 #pragma mark - AVCaptureVideoDataOutputSampleBufferDelegate
@@ -162,11 +161,20 @@
     CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     NSLog(@"captureOutput pixelBuffer = 0x%x", pixelBuffer);
     if(pixelBuffer != nil) {
-//        [handTracker processVideoFrame:pixelBuffer];
+        [handTracker processVideoFrame:pixelBuffer];
     }
     
     /*We display the result on the image view (We need to change the orientation of the image so that the video is displayed correctly)*/
-    UIImage *image = [self getUIImageFromCVPixelBuffer:sampleBuffer]; //[self pixelBufferToImage:pixelBuffer];  //
+//    UIImage *image = [self getUIImageFromCVPixelBuffer:pixelBuffer uiOrientation:UIImageOrientationUp];
+//    UIImage *image = [self pixelBufferToImage:pixelBuffer];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        self.capVideoBACK.image = image;
+//    });
+    CIImage *ciimage = [CIImage imageWithCVPixelBuffer:pixelBuffer options:nil];
+    CIImage *scaledImage = [ciimage imageByApplyingTransform:(CGAffineTransformMakeScale(0.5, 0.5))];
+    CIContext *context = [CIContext contextWithOptions:nil];
+    CGImageRef cgimage = [context createCGImage:scaledImage fromRect:scaledImage.extent];
+    UIImage *image = [UIImage imageWithCGImage:cgimage];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.capVideoBACK.image = image;
     });

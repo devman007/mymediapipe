@@ -803,10 +803,12 @@ template <typename T>
     const std::string& stream_name, T&& packet) {
   std::unique_ptr<GraphInputStream>* stream =
       ::mediapipe::FindOrNull(graph_input_streams_, stream_name);
-  RET_CHECK(stream).SetNoLogging() << absl::Substitute(
-      "AddPacketToInputStream called on input stream \"$0\" which is not a "
-      "graph input stream.",
-      stream_name);
+      //comment by jacky, crash: '*** +[NSString stringWithUTF8String:]: NULL cString'
+  // RET_CHECK(stream).SetNoLogging() << absl::Substitute(
+  //     "AddPacketToInputStream called on input stream \"$0\" which is not a "
+  //     "graph input stream.",
+  //     stream_name);
+  RET_CHECK(stream);
   int node_id =
       ::mediapipe::FindOrDie(graph_input_stream_node_ids_, stream_name);
   CHECK_GE(node_id, validated_graph_->CalculatorInfos().size());

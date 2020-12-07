@@ -24,6 +24,7 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 
+//add by jacky
 #define DEBUG_PRINT
 
 namespace mediapipe {

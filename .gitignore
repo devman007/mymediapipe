@@ -10,3 +10,6 @@ test/facemesh/app/build
 add.bin
 xcschememanagement.plist
 UserInterfaceState.xcuserstate
+test/iristracking/.gradle
+test/facemesh/.gradle
+test/facedetection/.gradle
