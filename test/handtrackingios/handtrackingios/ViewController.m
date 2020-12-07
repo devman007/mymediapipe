@@ -14,7 +14,7 @@
 #import <CoreMedia/CoreMedia.h>
 #import <HandTrackingFramework/HandTracker.h>
 
-@interface ViewController () <AVCaptureVideoDataOutputSampleBufferDelegate, TrackerDelegate> {
+@interface ViewController () <AVCaptureVideoDataOutputSampleBufferDelegate, HandTrackerDelegate> {
     HandTracker               *handTracker;
     AVCaptureSession          *captureSession;
     AVCaptureDevice           *captureDevice;
@@ -139,7 +139,7 @@
     [captureSession startRunning];
 }
 
-#pragma mark - TrackerDelegate
+#pragma mark - HandTrackerDelegate
 - (void)handTracker: (HandTracker*)handTracker didOutputLandmarks: (NSArray<Landmark *> *)landmarks {
     NSLog(@"landmarks");
 }
@@ -160,7 +160,7 @@
 
     CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     NSLog(@"captureOutput pixelBuffer = 0x%x", pixelBuffer);
-    if(pixelBuffer != nil) {
+    if((pixelBuffer != nil) &&(handTracker != nil) &&(handTracker.delegate != 0)) {
         [handTracker processVideoFrame:pixelBuffer];
     }
     

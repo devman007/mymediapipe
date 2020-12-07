@@ -4,7 +4,7 @@
 @class Landmark;
 @class HandTracker;
 
-@protocol TrackerDelegate <NSObject>
+@protocol HandTrackerDelegate <NSObject>
 - (void)handTracker: (HandTracker*)handTracker didOutputLandmarks: (NSArray<Landmark *> *)landmarks;
 - (void)handTracker: (HandTracker*)handTracker didOutputPixelBuffer: (CVPixelBufferRef)pixelBuffer;
 @end
@@ -13,7 +13,7 @@
 - (instancetype)init;
 - (void)startGraph;
 - (void)processVideoFrame:(CVPixelBufferRef)imageBuffer;
-@property (weak, nonatomic) id <TrackerDelegate> delegate;
+@property (weak, nonatomic) id <HandTrackerDelegate> delegate;
 @end
 
 @interface Landmark: NSObject
