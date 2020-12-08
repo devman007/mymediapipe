@@ -140,9 +140,99 @@
     [captureSession startRunning];
 }
 
+double getDistance(double a_x, double a_y, double b_x, double b_y) {
+    double dist = pow(a_x - b_x, 2) + pow(a_y - b_y, 2);
+    return sqrt(dist);
+}
+
+bool IsThumbConnectFinger_1(Landmark* point1, Landmark* point2) {
+    double distance = getDistance(point1.x, point1.y, point2.x, point2.y);
+    return distance < 0.1;
+}
+
 #pragma mark - HandTrackerDelegate
 - (void)handTracker: (HandTracker*)handTracker didOutputLandmarks: (NSArray<Landmark *> *)landmarks {
     NSLog(@"landmarks");
+//    const auto& landmarks = packet.Get<::mediapipe::NormalizedLandmarkList>();
+    NSLog(@"Number of landmarks on hand: %d", landmarks.count);
+//    for (int i = 0; i < landmarks.landmark_size(); ++i) {
+//      NSLog(@"\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
+//            landmarks.landmark(i).y(), landmarks.landmark(i).z());
+//    }
+    
+    bool IsThumb = false;
+    bool IsFinger_1 = false;
+    bool IsFinger_2 = false;
+    bool IsFinger_3 = false;
+    bool IsFinger_4 = false;
+
+    if ([landmarks objectAtIndex:2].x < [landmarks objectAtIndex:9].x) {
+        if ([landmarks objectAtIndex:3].x < [landmarks objectAtIndex:2].x && [landmarks objectAtIndex:4].x < [landmarks objectAtIndex:2].x) {
+            IsThumb = true;
+        }
+    }
+    if ([landmarks objectAtIndex:2].x > [landmarks objectAtIndex:9].x) {
+        if ([landmarks objectAtIndex:3].x > [landmarks objectAtIndex:2].x && [landmarks objectAtIndex:4].x > [landmarks objectAtIndex:2].x) {
+            IsThumb = true;
+        }
+    }
+
+    if ([landmarks objectAtIndex:7].y < [landmarks objectAtIndex:6].y && [landmarks objectAtIndex:7].y > [landmarks objectAtIndex:8].y) {
+        IsFinger_1 = true;
+    }
+    if ([landmarks objectAtIndex:11].y < [landmarks objectAtIndex:10].y && [landmarks objectAtIndex:11].y > [landmarks objectAtIndex:12].y) {
+        IsFinger_2 = true;
+    }
+    if ([landmarks objectAtIndex:15].y < [landmarks objectAtIndex:14].y && [landmarks objectAtIndex:15].y > [landmarks objectAtIndex:16].y) {
+        IsFinger_3 = true;
+    }
+    if ([landmarks objectAtIndex:19].y < [landmarks objectAtIndex:18].y && [landmarks objectAtIndex:19].y > [landmarks objectAtIndex:20].y) {
+        IsFinger_4 = true;
+    }
+
+    if (IsThumb && IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4) {
+        NSString* str = @"handTracker -- Five\n";
+        NSLog(str);
+//        return str;
+    } else if (!IsThumb && IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4) {
+        NSString* str = @"handTracker -- Four\n";
+        NSLog(str);
+//        return str;
+    } else if (IsThumb && IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+        NSString* str = @"handTracker -- Three\n";
+        NSLog(str);
+//        return str;
+    } else if (IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+        NSString* str = @"handTracker -- Two\n";
+        NSLog(str);
+//        return str;
+//    } else if ((!IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) ||
+//                (!IsThumb && !IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) ||
+//                (!IsThumb && !IsFinger_1 && !IsFinger_2 && IsFinger_3 && !IsFinger_4) ||
+//                (!IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4)
+//    ) {
+//        NSString* str = @"handTracker -- One\n";
+//        NSLog(str);
+//        return str;
+    } else if (!IsThumb && IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+        NSString* str = @"handTracker -- Yeah\n";
+        NSLog(str);
+//        return str;
+    } else if (!IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+        NSString* str = @"handTracker -- Fist\n";
+        NSLog(str);
+//        return str;
+    } else if (IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+        NSString* str = @"handTracker -- Wonderful\n";
+        NSLog(str);
+//        return str;
+    } else if (!IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4 && IsThumbConnectFinger_1([landmarks objectAtIndex:4], [landmarks objectAtIndex:8])) {
+        NSString* str = @"handTracker -- OK\n";
+        NSLog(str);
+//        return str;
+    } else {
+//        return @"";
+    }
 }
 
 - (void)handTracker: (HandTracker*)handTracker didOutputPixelBuffer: (CVPixelBufferRef)pixelBuffer {

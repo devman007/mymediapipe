@@ -80,19 +80,19 @@ static const char* kLandmarksOutputStream = "hand_landmarks";
 
     if (IsThumb && IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4) {
         NSString* str = @"Five\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else if (!IsThumb && IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4) {
         NSString* str = @"Four\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else if (IsThumb && IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
         NSString* str = @"Three\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else if (IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
         NSString* str = @"Two\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else if ((!IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) ||
                 (!IsThumb && !IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) ||
@@ -100,23 +100,23 @@ static const char* kLandmarksOutputStream = "hand_landmarks";
                 (!IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4)
     ) {
         NSString* str = @"One\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else if (!IsThumb && IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
         NSString* str = @"Yeah\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else if (!IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
         NSString* str = @"Fist\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else if (IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
         NSString* str = @"Wonderful\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else if (!IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4 && IsThumbConnectFinger_1(landmarks.landmark(4), landmarks.landmark(8))) {
         NSString* str = @"OK\n";
-        NSLog(str);
+        NSLog(@"handTracker -- %s", str);
         return str;
     } else {
         return @"";

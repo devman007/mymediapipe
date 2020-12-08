@@ -18,6 +18,7 @@ This directory contains MediaPipe example applications for iOS. Please see [Solu
 
 `bazel build --config=ios_arm64 --copt=-fembed-bitcode mediapipe/examples/ios/handtrackinggpu:HandTrackingFramework`
 
+### comment: rename BUILD-app with BUILD if build app, else rename BUILD-lib with BUILD then build framework.
 
 # Get Sign
 `python3 mediapipe/examples/ios/link_local_profiles.py`
