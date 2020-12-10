@@ -24,3 +24,6 @@ This directory contains MediaPipe example applications for iOS. Please see [Solu
 `python3 mediapipe/examples/ios/link_local_profiles.py`
 `cd mediapipe`
 `ln -s ~/Downloads/MyProvisioningProfile.mobileprovision mediapipe/provisioning_profile.mobileprovision`
+
+# Clean project
+`bazel clean --expunge`
