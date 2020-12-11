@@ -268,6 +268,17 @@ public class MainActivity extends AppCompatActivity {
         return multiFaceLandmarksStr;
     }
 
+    private static float getAverage(String type, float[] arr) {
+        float avg = 0f, sum = 0f;
+        int len = arr.length;
+        for(int i = 0; i < len; i++) {
+            sum += arr[i];
+        }
+        avg = sum/len;
+//        Log.i(TAG, "faceEC average: "+type+", avg = "+avg);
+        return avg;
+    }
+
     private static void getLandmarkMinMax(String key, float[] arr) {
         int cnt = arr.length;
         float min = 0.0f, max = 0.0f;
@@ -285,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "faceExpressCalculator: "+ key +", min = "+ min +", max = "+ max);
     }
 
+    private static final int AVG_CNT = 10;
     static float M_Array[] = new float[60];
     static float M_MIN = 0.0f, M_MAX = 0.0f;
     static int M_cnt = 0;
@@ -303,6 +315,21 @@ public class MainActivity extends AppCompatActivity {
     static float R_Array[] = new float[60];
     static float R_MIN = 0.0f, R_MAX = 0.0f;
     static int R_cnt = 0;
+    static float brow_width_arr[] = new float[AVG_CNT];
+    static int brow_width_arr_cnt = 0;
+    static float brow_height_arr[] = new float[AVG_CNT];
+    static int brow_height_arr_cnt = 0;
+    static float brow_line_arr[] = new float[AVG_CNT];
+    static int brow_line_arr_cnt = 0;
+    static float eye_height_arr[] = new float[AVG_CNT];
+    static int eye_height_arr_cnt = 0;
+    static float eye_width_arr[] = new float[AVG_CNT];
+    static int eye_width_arr_cnt = 0;
+    static float mouth_width_arr[] = new float[AVG_CNT];
+    static int mouth_width_arr_cnt = 0;
+    static float mouth_height_arr[] = new float[AVG_CNT];
+    static int mouth_height_arr_cnt = 0;
+    static int total_log_cnt = 0;
     private static String faceExpressCalculator(List<LandmarkProto.NormalizedLandmarkList> multiFaceLandmarks) {
 //        boolean laughMotion = true;   // 开心
         boolean smallLaughMotion = true;// 微笑
@@ -316,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
         LandmarkProto.NormalizedLandmarkList landmarkList = multiFaceLandmarks.get(0);
         String faceLandmarksStr = "";
         faceLandmarksStr      += "\t\tLandmark count: " + landmarkList.getLandmarkCount() + "\n";
-        float distanceX[] = new float[10];
+//        float distanceX[] = new float[10];
         float distanceY[] = new float[100];
 //        for (int i = 0; i < landmarkList.getLandmarkCount(); i++) {
 //            faceLandmarksStr  += "\t\tLandmark ["
@@ -325,72 +352,6 @@ public class MainActivity extends AppCompatActivity {
 //                                + landmarkList.getLandmark(i).getY() + ", "
 //                                + landmarkList.getLandmark(i).getZ() + ")\n";
 
-//            // Left eyebrow. 10
-//            46, 53, 53, 52, 52, 65, 65, 55, 70, 63, 63, 105, 105, 66, 66, 107,
-//            // Left eye. 16
-//            33,   7,   7, 163, 163, 144, 144, 145, 145, 153, 153, 154, 154, 155, 155, 133,
-//            33, 246, 246, 161, 161, 160, 160, 159, 159, 158, 158, 157, 157, 173, 173, 133,
-//            其中，159，145 为中间
-
-//            // Right eyebrow. 10
-//            276, 283, 283, 282, 282, 295, 295, 285, 300, 293, 293, 334, 334, 296, 296, 336,
-//            // Right eye. 16
-//            263, 249, 249, 390, 390, 373, 373, 374, 374, 380, 380, 381, 381, 382, 382, 362,
-//            263, 466, 466, 388, 388, 387, 387, 386, 386, 385, 385, 384, 384, 398, 398, 362,
-//            其中，386，374 为中间
-
-//            // Lips. 40
-//            61, 146, 146, 91, 91, 181, 181, 84, 84, 17, 17, 314, 314, 405, 405, 321, 321, 375, 375, 291,
-//            61, 185, 185, 40, 40,  39,  39, 37, 37,  0,  0, 267, 267, 269, 269, 270, 270, 409, 409, 291,
-//            78,  95,  95, 88, 88, 178, 178, 87, 87, 14, 14, 317, 317, 402, 402, 318, 318, 324, 324, 308,
-//            78, 191, 191, 80, 80,  81,  81, 82, 82, 13, 13, 312, 312, 311, 311, 310, 310, 415, 415, 308,
-//            其中，13，14，0，17 为中间
-
-//            // Face oval.
-//            10, 338, 338, 297, 297, 332, 332, 284, 284, 251, 251, 389, 389, 356, 356,
-//            454, 454, 323, 323, 361, 361, 288, 288, 397, 397, 365, 365, 379, 379, 378, 378, 400, 400, 377, 377,
-//            152, 152, 148, 148, 176, 176, 149, 149, 150, 150, 136, 136, 172, 172,  58,  58, 132, 132,  93,  93,
-//            234, 234, 127, 127, 162, 162,  21,  21,  54,  54, 103, 103,  67,  67, 109, 109,  10
-//            其中，377 为中间
-//
-//
-//
-//                                      109        10        338
-//                               67                                  297
-//                        103                                                332
-//                    54                                                             284
-//                21                                                                       251
-//            162                                                                               389
-//
-//        127                                                                                       356
-//            /53-52-65-55-70-63-105-66\                      /296-334-293-300-285-295-282-283\
-//          46           睫毛          107                  336              睫毛              276
-//     234                                                                                           454
-//            246-161-160-159-158-157-173                         398-384-385-386-387-388-466
-//          /                           \                       /                             \
-//     93   33            左眼           133                  362              右眼             263   323
-//            \                           /                       \                             /
-//                7-163-144-145-153-154-155                          382-381-380-374-373-390-249
-//
-//      132                                                                                          361
-//
-//
-//                                  191- 80- 81- 82- 13-312-311-310-415
-//        58                       /                                   \                            288
-//                                /  95- 88-178- 87- 14-317-402-318-324 \
-//                               / /                                   \ \
-//           172                61 78                嘴巴               308 291                   397
-//                               \ \                                   / /
-//                                \ 185- 40- 39- 37-  0-267-269-270-409 /
-//                136              \                                   /                    365
-//                                  146- 91-181- 84- 17-314-405-321-375
-//
-//                      150                                                           379
-//
-//                              149                                           378
-//                                      176                           400
-//                                            148   152    377
-//
             //左眼
             distanceY[0] = (landmarkList.getLandmark(33).getY() - landmarkList.getLandmark(133).getY());
             distanceY[1] = landmarkList.getLandmark(246).getY() - landmarkList.getLandmark(7).getY();
@@ -403,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
             distanceY[7] = landmarkList.getLandmark(173).getY() - landmarkList.getLandmark(155).getY();
 
             //左侧眼角距离
-            distanceX[0] = landmarkList.getLandmark(33).getX() - landmarkList.getLandmark(133).getX();
+            float eye_width_left = landmarkList.getLandmark(133).getX() - landmarkList.getLandmark(33).getX();
 
             //右眼
             distanceY[8] = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(263).getY());
@@ -417,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
             distanceY[15] = landmarkList.getLandmark(466).getY() - landmarkList.getLandmark(249).getY();
 
             //右侧眼角距离
-            distanceX[1] = landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(263).getX();
+            float eye_width_right = landmarkList.getLandmark(263).getX() - landmarkList.getLandmark(362).getX();
 
             //嘴巴（外）
             distanceY[16] = (landmarkList.getLandmark(61).getY() - landmarkList.getLandmark(291).getY())/2;
@@ -453,19 +414,19 @@ public class MainActivity extends AppCompatActivity {
             distanceY[39] = landmarkList.getLandmark(336).getY() - landmarkList.getLandmark(308).getY();
 
             // 4. 两嘴角间距离
-            distanceX[2] = landmarkList.getLandmark(78).getX() - landmarkList.getLandmark(308).getX();
+            float mouth_width = landmarkList.getLandmark(308).getX() - landmarkList.getLandmark(78).getX();
+            float mouth_height = landmarkList.getLandmark(14).getY() - landmarkList.getLandmark(0).getY();
 
             //5. 两眼角距离
-            distanceX[3] = landmarkList.getLandmark(33).getX() - landmarkList.getLandmark(133).getX();
-            distanceX[4] = landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(263).getX();
+            float eye_width_sum = eye_width_left + eye_width_right;
 
             // 归一化
-            float M = (2 * distanceX[2])/(distanceY[36] + distanceY[37]);           // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
-            float N = (2 * distanceX[2])/(distanceY[38] + distanceY[39]);           // 嘴角 / 眉毛嘴角距离
-            float O = (2 * distanceX[2])/(distanceY[4] + distanceY[12]);            // 嘴角 / 上下眼睑距离
-            float P = (distanceX[3] + distanceX[4])/(distanceY[38] + distanceY[39]);// 眼角距离 / 眉毛嘴角距离
-            float Q = (distanceX[3] + distanceX[4])/(distanceY[4] + distanceY[12]); // 眼角距离 / 上下眼睑距离
-            float R = (2 * distanceX[2])/(distanceY[31]);                           // 嘴角 / 上下嘴唇距离
+            float M = (2 * mouth_width)/(distanceY[36] + distanceY[37]);           // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
+            float N = (2 * mouth_width)/(distanceY[38] + distanceY[39]);           // 嘴角 / 眉毛嘴角距离
+            float O = (2 * mouth_width)/(distanceY[4] + distanceY[12]);            // 嘴角 / 上下眼睑距离
+            float P = eye_width_sum/(distanceY[38] + distanceY[39]);               // 眼角距离 / 眉毛嘴角距离
+            float Q = eye_width_sum/(distanceY[4] + distanceY[12]);                // 眼角距离 / 上下眼睑距离
+            float R = 2 * mouth_width/(distanceY[31]);                             // 嘴角 / 上下嘴唇距离
             float MM = 0, NN = 0, OO = 0, PP = 0, QQ = 0, RR = 0;
 
             float eyeLongL = landmarkList.getLandmark(133).getX() - landmarkList.getLandmark(33).getX();
@@ -496,22 +457,216 @@ public class MainActivity extends AppCompatActivity {
 //            正八眉
         float state7 = (landmarkList.getLandmark(105).getY() - landmarkList.getLandmark(78).getY() + landmarkList.getLandmark(334).getY() - landmarkList.getLandmark(308).getY())/(landmarkList.getLandmark(308).getX() - landmarkList.getLandmark(78).getX());
 //            嘴巴特征, 生气(0.26),高兴/大哭(0.23),惊讶(0.17),愤怒(0.07)
-        float state8 = (landmarkList.getLandmark(0).getY()-landmarkList.getLandmark(14).getY())/2/(distanceX[2]);
+        float state8 = (landmarkList.getLandmark(0).getY()-landmarkList.getLandmark(14).getY())/2/(mouth_width);
 //        M与state8综合判断表情
 
 //        参考DLIB
 //        1、计算人脸识别框边长
-        
+        float face_width = landmarkList.getLandmark(361).getX() - landmarkList.getLandmark(132).getX();
+        float face_height = landmarkList.getLandmark(152).getY() - landmarkList.getLandmark(10).getY();
 //        2、计算嘴巴的长度和宽度
+//        float mouth_height = landmarkList.getLandmark(95).getY() - landmarkList.getLandmark(185).getY() +
+//                            landmarkList.getLandmark(88).getY() - landmarkList.getLandmark(40).getY() +
+//                            landmarkList.getLandmark(178).getY() - landmarkList.getLandmark(39).getY() +
+//                            landmarkList.getLandmark(87).getY() - landmarkList.getLandmark(37).getY() +
+//                            landmarkList.getLandmark(14).getY() - landmarkList.getLandmark(0).getY() +
+//                            landmarkList.getLandmark(317).getY() - landmarkList.getLandmark(267).getY() +
+//                            landmarkList.getLandmark(402).getY() - landmarkList.getLandmark(269).getY() +
+//                            landmarkList.getLandmark(318).getY() - landmarkList.getLandmark(270).getY() +
+//                            landmarkList.getLandmark(324).getY() - landmarkList.getLandmark(409).getY();
 //        3、分析挑眉程度和皱眉程度
+        float brow_line_left = (landmarkList.getLandmark(66).getY() - landmarkList.getLandmark(70).getY())/(landmarkList.getLandmark(66).getX() - landmarkList.getLandmark(70).getX());
+        float brow_line_right = (landmarkList.getLandmark(296).getY() - landmarkList.getLandmark(300).getY())/(landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(300).getX());
+        float brow_line_rate = brow_line_left + brow_line_right;
 //                高度之和
+        float brow_hight_sum = //landmarkList.getLandmark(46).getY()+
+//                                landmarkList.getLandmark(53).getY()+
+//                                landmarkList.getLandmark(52).getY()+
+//                                landmarkList.getLandmark(65).getY()+
+                                landmarkList.getLandmark(55).getY()+
+                                landmarkList.getLandmark(70).getY()+
+//                                landmarkList.getLandmark(63).getY()+
+//                                landmarkList.getLandmark(105).getY()+
+//                                landmarkList.getLandmark(66).getY()+
+//                                landmarkList.getLandmark(107).getY()+
+//                                landmarkList.getLandmark(276).getY()+
+//                                landmarkList.getLandmark(283).getY()+
+//                                landmarkList.getLandmark(282).getY()+
+//                                landmarkList.getLandmark(295).getY()+
+                                landmarkList.getLandmark(285).getY()+
+                                landmarkList.getLandmark(300).getY();
+//                                landmarkList.getLandmark(293).getY()+
+//                                landmarkList.getLandmark(334).getY()+
+//                                landmarkList.getLandmark(296).getY()+
+//                                landmarkList.getLandmark(336).getY();
 //        两边眉毛距离之和
+        float frown_distance_sum = //landmarkList.getLandmark(336).getX() - landmarkList.getLandmark(107).getX() +
+//                                landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX() +
+//                                landmarkList.getLandmark(334).getX() - landmarkList.getLandmark(105).getX() +
+//                                landmarkList.getLandmark(293).getX() - landmarkList.getLandmark(63).getX() +
+                                landmarkList.getLandmark(300).getX() - landmarkList.getLandmark(70).getX() +
+                                landmarkList.getLandmark(285).getX() - landmarkList.getLandmark(55).getX();
+//                                landmarkList.getLandmark(295).getX() - landmarkList.getLandmark(65).getX() +
+//                                landmarkList.getLandmark(282).getX() - landmarkList.getLandmark(52).getX() +
+//                                landmarkList.getLandmark(283).getX() - landmarkList.getLandmark(53).getX() +
+//                                landmarkList.getLandmark(276).getX() - landmarkList.getLandmark(46).getX();
 //                眉毛高度与识别框高度之比
+        float brow_hight_rate = (brow_hight_sum/4)/face_width;
 //        眉毛间距与识别框高度之比
+        float brow_width_rate = (frown_distance_sum/2)/face_width;
 //        4、眼睛睁开程度
+        float eye_height_sum = //landmarkList.getLandmark(7).getY() - landmarkList.getLandmark(246).getY() +
+//                            landmarkList.getLandmark(163).getY() - landmarkList.getLandmark(161).getY() +
+//                            landmarkList.getLandmark(144).getY() - landmarkList.getLandmark(160).getY() +
+                            landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(159).getY() +
+//                            landmarkList.getLandmark(153).getY() - landmarkList.getLandmark(158).getY() +
+//                            landmarkList.getLandmark(154).getY() - landmarkList.getLandmark(157).getY() +
+//                            landmarkList.getLandmark(155).getY() - landmarkList.getLandmark(173).getY() +
+//                            landmarkList.getLandmark(382).getY() - landmarkList.getLandmark(398).getY() +
+//                            landmarkList.getLandmark(381).getY() - landmarkList.getLandmark(284).getY() +
+//                            landmarkList.getLandmark(380).getY() - landmarkList.getLandmark(385).getY() +
+                            landmarkList.getLandmark(374).getY() - landmarkList.getLandmark(386).getY();
+//                            landmarkList.getLandmark(373).getY() - landmarkList.getLandmark(387).getY() +
+//                            landmarkList.getLandmark(390).getY() - landmarkList.getLandmark(388).getY() +
+//                            landmarkList.getLandmark(249).getY() - landmarkList.getLandmark(466).getY();
 //                眼睛睁开距离与识别框高度之比
-//        5、张嘴，可能是开心或者惊讶
-//        6、没有张嘴，可能是正常和生气
+        float eye_height_rate = (eye_height_sum/2)/face_width;
+        float eye_width_rate = eye_width_sum/face_width;
+//        5、张开嘴巴程度
+        float mouth_width_rate = mouth_width/face_width;
+        float mouth_height_rate = mouth_height/face_width;
+
+        brow_width_arr[brow_width_arr_cnt] = brow_width_rate;
+        brow_width_arr_cnt++;
+        float brow_width_avg = 0f;
+        if(brow_width_arr_cnt >= AVG_CNT) {
+            brow_width_avg = getAverage("眉宽", brow_width_arr);
+            brow_width_arr_cnt = 0;
+        }
+
+        brow_height_arr[brow_height_arr_cnt] = brow_hight_rate;
+        brow_height_arr_cnt++;
+        float brow_height_avg = 0f;
+        if(brow_height_arr_cnt >= AVG_CNT) {
+            brow_height_avg = getAverage("眉高", brow_height_arr);
+            brow_height_arr_cnt = 0;
+        }
+
+        brow_line_arr[brow_line_arr_cnt] = brow_line_rate;
+        brow_line_arr_cnt++;
+        float brow_line_avg = 0f;
+        if(brow_line_arr_cnt >= AVG_CNT) {
+            brow_line_avg = getAverage("挑眉", brow_line_arr);
+            brow_line_arr_cnt = 0;
+        }
+
+        eye_height_arr[eye_height_arr_cnt] = eye_height_rate;
+        eye_height_arr_cnt++;
+        float eye_height_avg = 0f;
+        if(eye_height_arr_cnt >= AVG_CNT) {
+            eye_height_avg = getAverage("眼睁", eye_height_arr);
+            eye_height_arr_cnt = 0;
+        }
+
+        eye_width_arr[eye_width_arr_cnt] = eye_width_rate;
+        eye_width_arr_cnt++;
+        float eye_width_avg = 0f;
+        if(eye_width_arr_cnt >= AVG_CNT) {
+            eye_width_avg = getAverage("眼宽", eye_width_arr);
+            eye_width_arr_cnt = 0;
+        }
+
+        mouth_width_arr[mouth_width_arr_cnt] = mouth_width_rate;
+        mouth_width_arr_cnt++;
+        float mouth_width_avg = 0f;
+        if(mouth_width_arr_cnt >= AVG_CNT) {
+            mouth_width_avg = getAverage("嘴宽", mouth_width_arr);
+            mouth_width_arr_cnt = 0;
+        }
+
+        mouth_height_arr[mouth_height_arr_cnt] = mouth_height_rate;
+        mouth_height_arr_cnt++;
+        float mouth_height_avg = 0f;
+        if(mouth_height_arr_cnt >= AVG_CNT) {
+            mouth_height_avg = getAverage("嘴张", mouth_height_arr);
+            mouth_height_arr_cnt = 0;
+        }
+
+        if(M <= 0.7) {
+            MM = M * 0;
+        } else if((M > 0.7) &&(M <= 0.75)) {    // 微笑
+            MM = (float)(M * 1.38);
+            smallLaughMotion = true;
+        } else if((M > 0.75) &&(M <= 0.8)) {
+            MM = (float)(M * 2.58);
+            smallLaughMotion = true;
+        } else if((M > 0.8) &&(M <= 0.9)) {
+            MM = (float)(M * 3.54);
+            smallLaughMotion = true;
+        } else if((M > 0.9) &&(M <= 1.0)) {     //大笑
+            MM = (float)(M * 4.22);
+            heaveLaughMotion = true;
+        } else if(M > 1) {
+            MM = (float)(M * 5.0);
+            heaveLaughMotion = true;
+        }
+        float browRate = brow_hight_rate/brow_width_rate;
+        float eyeRate = eye_height_avg/eye_width_avg;
+        float mouthRate = mouth_height_avg/mouth_width_avg;
+        total_log_cnt++;
+        if(total_log_cnt >= AVG_CNT) {
+            Log.i(TAG, "faceEC: \t眉高 = " + brow_hight_rate + ", \t眉宽 = " + brow_width_rate + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_rate + ", \t嘴宽 = " + mouth_width_rate + ", \t嘴张 = " + mouth_height_rate+", M = "+M);
+            total_log_cnt = 0;
+            Log.i(TAG, "faceEC: \t眉高宽比 = "+browRate+", \t眼高宽比 = "+eyeRate+", \t嘴高宽比 = "+mouthRate+", M = "+M+", MM = "+MM);
+        }
+//        眉高宽比 >= 2.5         生气
+//        眉高宽比 + 0.05 >= 2.0  悲伤
+
+//        眼高宽比 >= 2.2         惊讶
+//        眼高宽比 + 0.05 >= 2.0  正常
+//        眼高宽比 - 0.5 <= 1.0   悲伤
+//
+//        嘴高宽比 >= 3.0         高兴, 惊讶
+//        嘴高宽比 - 0.2 <= 1.0   正常
+        if((browRate >= 2.5f) &&(MM <= 0)) {
+//            Log.i(TAG, "faceEC: =====================生气=================");
+        } else if((browRate < 2.5f) &&(browRate + 0.05f >= 2.0f) &&(eyeRate - 0.5f <= 1.0f)) {
+            Log.i(TAG, "faceEC: =====================悲伤=================");
+        }
+        if((eyeRate >= 2.2f) &&(mouthRate >= 3.0f)) {
+            Log.i(TAG, "faceEC: =====================惊讶=================");
+        } else if((eyeRate + 0.05f >= 2.0f) &&(mouthRate - 0.2f <= 1.0f)) {
+            Log.i(TAG, "faceEC: =====================自然=================");
+        }
+        if((mouthRate >= 2.5f) &&(MM >= 2.0f)) {
+            Log.i(TAG, "faceEC: =====================高兴=================");
+        }
+////        张嘴，可能是开心或者惊讶
+//        if(mouth_height_avg >= 1.30) {
+//            if(eye_height_avg >= 1.00){
+//                //惊讶
+//                Log.i(TAG, "faceEC: =====================惊讶=================");
+//            } else {
+//                //高兴
+//                Log.i(TAG, "faceEC: =====================高兴=================");
+//            }
+//        } else if((mouth_height_avg >= 1.0)&&(mouth_height_avg < 1.30)) {
+//            if(eye_height_avg + 0.3f >= 1.00f) {
+//                //生气
+//                Log.i(TAG, "faceEC: =====================生气=================");
+//            } else {
+//                //悲伤
+//                Log.i(TAG, "faceEC: =====================悲伤=================");
+//            }
+//        } else {    //        没有张嘴，可能是正常和生气
+//            if (brow_line_avg <= 0.2) {
+//                //愤怒
+////                Log.i(TAG, "faceEC: =====================愤怒=================");
+//            } else {
+//                //自然
+//                Log.i(TAG, "faceEC: =====================自然=================");
+//            }
+//        }
 
 //        if((M_cnt >= 5) &&(M_cnt <= 60)) {
 //            M_Array[M_cnt-5] = M;
@@ -560,27 +715,8 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }
 //        R_cnt++;
-
-            if(M <= 0.7) {
-                MM = M * 0;
-            } else if((M > 0.7) &&(M <= 0.75)) {    // 微笑
-                MM = (float)(M * 1.38);
-                smallLaughMotion = true;
-            } else if((M > 0.75) &&(M <= 0.8)) {
-                MM = (float)(M * 2.58);
-                smallLaughMotion = true;
-            } else if((M > 0.8) &&(M <= 0.9)) {
-                MM = (float)(M * 3.54);
-                smallLaughMotion = true;
-            } else if((M > 0.9) &&(M <= 1.0)) {     //大笑
-                MM = (float)(M * 4.22);
-                heaveLaughMotion = true;
-            } else if(M > 1) {
-                MM = (float)(M * 5.0);
-                heaveLaughMotion = true;
-            }
-        Log.i(TAG, "faceExpressCalculator: \tM = "+M+", MM = "+MM);
-        Log.i(TAG, "faceExpressCalculator: \ts0 = "+state0+", \ts1 = "+state1+", \ts2 = "+state2+", \ts3 = "+state3+", \ts4 = "+state4+", \ts5 = "+state5+", \ts6 = "+state6+", state7 = "+state7+", state8 = "+state8);
+//        Log.i(TAG, "faceExpressCalculator: \tM = "+M+", MM = "+MM);
+//        Log.i(TAG, "faceExpressCalculator: \ts0 = "+state0+", \ts1 = "+state1+", \ts2 = "+state2+", \ts3 = "+state3+", \ts4 = "+state4+", \ts5 = "+state5+", \ts6 = "+state6+", state7 = "+state7+", state8 = "+state8);
 //            N += 0.5f;
 //            if(N <= 0.7) {
 //                NN = N * 0;
