@@ -297,24 +297,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static final int AVG_CNT = 10;
-    static float M_Array[] = new float[60];
-    static float M_MIN = 0.0f, M_MAX = 0.0f;
-    static int M_cnt = 0;
-    static float N_Array[] = new float[60];
-    static float N_MIN = 0.0f, N_MAX = 0.0f;
-    static int N_cnt = 0;
-    static float O_Array[] = new float[60];
-    static float O_MIN = 0.0f, O_MAX = 0.0f;
-    static int O_cnt = 0;
-    static float P_Array[] = new float[60];
-    static float P_MIN = 0.0f, P_MAX = 0.0f;
-    static int P_cnt = 0;
-    static float Q_Array[] = new float[60];
-    static float Q_MIN = 0.0f, Q_MAX = 0.0f;
-    static int Q_cnt = 0;
-    static float R_Array[] = new float[60];
-    static float R_MIN = 0.0f, R_MAX = 0.0f;
-    static int R_cnt = 0;
+    private static final int DETECT_TIMES = 2;
     static float brow_up_arr[] = new float[AVG_CNT];
     static float brow_width_arr[] = new float[AVG_CNT];
     static float brow_height_arr[] = new float[AVG_CNT];
@@ -324,16 +307,17 @@ public class MainActivity extends AppCompatActivity {
     static float mouth_width_arr[] = new float[AVG_CNT];
     static float mouth_height_arr[] = new float[AVG_CNT];
     static int arr_cnt = 0;
+    static int normal_times = 0, suprise_times = 0, sad_times = 0, happy_times = 0, angry_times = 0;
     static int total_log_cnt = 0;
     private static String faceExpressCalculator(List<LandmarkProto.NormalizedLandmarkList> multiFaceLandmarks) {
-//        boolean laughMotion = true;   // 开心
-        boolean smallLaughMotion = true;// 微笑
-        boolean heaveLaughMotion = true;// 大笑
-        boolean angryMotion = true;     // 生气
-        boolean cryMotion = true;       // 哭啼
-        boolean badMotion = true;       // 伤心
-        boolean emegencyMotion = true;  // 紧张
-        boolean supriseMotion = true;   // 惊讶
+        boolean normalMotion = false;    // 正常
+        boolean supriseMotion = false;   // 惊讶
+        boolean sadMotion = false;       // 伤心
+        boolean happyMotion = false;     // 开心
+        boolean angryMotion = false;     // 生气
+        boolean smallLaughMotion = false;// 微笑
+        boolean heaveLaughMotion = false;// 大笑
+        boolean emegencyMotion = false;  // 紧张
 
         LandmarkProto.NormalizedLandmarkList landmarkList = multiFaceLandmarks.get(0);
         String faceLandmarksStr = "";
@@ -587,36 +571,64 @@ public class MainActivity extends AppCompatActivity {
         }
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            Log.i(TAG, "faceEC: \t眉高 = " + brow_height_avg + ", \t眉宽 = " + brow_width_avg + ", \t眉上扬 = "+brow_up_avg*100 + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_rate + ", \t嘴宽 = " + mouth_width_rate + ", \t嘴张 = " + mouth_height_rate);
-            total_log_cnt = 0;
-            Log.i(TAG, "faceEC: \t眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+", \tM = "+M+", \tMM = "+MM+"\t,  头部偏 = "+head_line_rate);
-        }
-//        眉高宽比 >= 6           正常
+//            眉上扬 <= 0.03          正常
+//            眉上扬 >= 0.04          高兴,悲伤,惊讶,愤怒
 //
-//        眼宽高比 >= 4           悲伤
-//        眼宽高比 3 ~ 4          高兴,愤怒
+//            眉高宽比 >= 6           正常
 //
-//        嘴宽高比 >= 6           正常
-//        嘴宽高比 >= 4           愤怒
-//        嘴宽高比 2 ~ 3          高兴,悲伤
-//        嘴宽高比 < 2            惊讶
-//        MM >= 3                高兴
-        // 张嘴，可能是开心/惊讶/大哭(悲伤)
-        // 没有张嘴，可能是正常(自然)/生气
-        if((mouth_width_height_rate >= 6.0f) &&(MM == 0f)) {
-            Log.i(TAG, "faceEC: =====================自然=================");
-        } else if((mouth_width_height_rate < 2.0f) &&(MM == 0f)) {
-            Log.i(TAG, "faceEC: =====================惊讶=================");
-        } else {
-            if(eye_width_height_rate >= 4.5f) {
-                Log.i(TAG, "faceEC: =====================悲伤=================");
+//            眼宽高比 >= 4           悲伤
+//            眼宽高比 3 ~ 4          高兴,愤怒
+//
+//            嘴宽高比 >= 6           正常
+//            嘴宽高比 >= 4           愤怒
+//            嘴宽高比 2 ~ 3          高兴,悲伤
+//            嘴宽高比 < 2            惊讶
+//            MM >= 3                高兴
+            // 张嘴，可能是开心/惊讶/大哭(悲伤)
+            // 没有张嘴，可能是正常(自然)/生气
+            if((mouth_width_height_rate >= 6.0f) &&(MM == 0f)) {
+                normal_times++;
+                if(normal_times >= DETECT_TIMES) {
+                    normalMotion = true;
+                    Log.i(TAG, "faceEC: =====================自然=================");
+                    normal_times = 0;
+                }
+            } else if((mouth_width_height_rate < 2.0f) &&(MM == 0f)) {
+                suprise_times++;
+                if(suprise_times >= DETECT_TIMES) {
+                    supriseMotion = true;
+                    Log.i(TAG, "faceEC: =====================惊讶=================");
+                    suprise_times = 0;
+                }
             } else {
-                if(MM < 2.0f) {
-//                    Log.i(TAG, "faceEC: =====================愤怒=================");
+                if((eye_width_height_rate >= 4.5f) &&(mouth_line_rate >= 1.0f)) {
+                    sad_times++;
+                    if(sad_times >= DETECT_TIMES) {
+                        sadMotion = true;
+                        Log.i(TAG, "faceEC: =====================悲伤=================");
+                        sad_times = 0;
+                    }
                 } else {
-                    Log.i(TAG, "faceEC: =====================高兴=================");
+                    if(MM < 2.0f) {
+                        angry_times++;
+                        if(angry_times >= DETECT_TIMES) {
+                            angryMotion = true;
+                            Log.i(TAG, "faceEC: =====================愤怒=================");
+                            angry_times = 0;
+                        }
+                    } else {
+                        happy_times++;
+                        if(happy_times >= DETECT_TIMES) {
+                            happyMotion = true;
+                            Log.i(TAG, "faceEC: =====================高兴=================");
+                            happy_times = 0;
+                        }
+                    }
                 }
             }
+            Log.i(TAG, "faceEC: \t眉高 = " + brow_height_avg + ", \t眉宽 = " + brow_width_avg + ", \t眉上扬 = "+brow_up_avg*100 + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_rate + ", \t嘴宽 = " + mouth_width_rate + ", \t嘴张 = " + mouth_height_rate);
+            Log.i(TAG, "faceEC: \t眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+", \tM = "+M+", \tMM = "+MM+"\t,  头部偏 = "+head_line_rate);
+            total_log_cnt = 0;
         }
 //        Log.i(TAG, "faceExpressCalculator: \tM = "+M+", MM = "+MM);
 //        Log.i(TAG, "faceExpressCalculator: \ts0 = "+state0+", \ts1 = "+state1+", \ts2 = "+state2+", \ts3 = "+state3+", \ts4 = "+state4+", \ts5 = "+state5+", \ts6 = "+state6+", state7 = "+state7+", state8 = "+state8);
