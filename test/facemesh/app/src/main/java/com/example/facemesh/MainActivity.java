@@ -500,8 +500,8 @@ public class MainActivity extends AppCompatActivity {
         distance_eye_mouth = distance_eye_left_mouth + distance_eye_right_mouth;
 
         // 两侧睫毛到同侧嘴角距离
-        distance_brow_left_mouth = landmarkList.getLandmark(107).getY() - landmarkList.getLandmark(78).getY();
-        distance_brow_right_mouth = landmarkList.getLandmark(336).getY() - landmarkList.getLandmark(308).getY();
+        distance_brow_left_mouth = landmarkList.getLandmark(78).getY() - landmarkList.getLandmark(107).getY();
+        distance_brow_right_mouth = landmarkList.getLandmark(308).getY() - landmarkList.getLandmark(336).getY();
         distance_brow_mouth = distance_brow_left_mouth + distance_brow_right_mouth;
 
         // 归一化
@@ -516,10 +516,10 @@ public class MainActivity extends AppCompatActivity {
         // M与state8综合判断表情
 
         // 眉毛上扬与识别框宽度之比
-        float brow_up_rate = (brow_left_up + brow_right_up)/2*face_width;
+        float brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
         // 眼睛睁开距离与识别框高度之比
-        float eye_height_rate = eye_height_sum/2*face_width;
-        float eye_width_rate = eye_width_sum/2*face_width;
+        float eye_height_rate = eye_height_sum/(2*face_width);
+        float eye_width_rate = eye_width_sum/(2*face_width);
         // 张开嘴巴距离与识别框高度之比
         float mouth_width_rate = mouth_width_in/face_width;
         float mouth_height_rate = mouth_height_sum/face_width;
@@ -586,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
 //            MM >= 3                高兴
             // 张嘴，可能是开心/惊讶/大哭(悲伤)
             // 没有张嘴，可能是正常(自然)/生气
-            if((mouth_width_height_rate >= 6.0f) &&(MM == 0f)) {
+            if((mouth_width_height_rate >= 6.0f) /*&&(MM == 0f)*/) {
                 normal_times++;
                 if(normal_times >= DETECT_TIMES) {
                     normalMotion = true;
@@ -609,19 +609,19 @@ public class MainActivity extends AppCompatActivity {
                         sad_times = 0;
                     }
                 } else {
-                    if(MM < 2.0f) {
-                        angry_times++;
-                        if(angry_times >= DETECT_TIMES) {
-                            angryMotion = true;
-                            Log.i(TAG, "faceEC: =====================愤怒=================");
-                            angry_times = 0;
-                        }
-                    } else {
+                    if((brow_up_avg * 10 >= 2.6) &&(MM >= 3.0f)){
                         happy_times++;
                         if(happy_times >= DETECT_TIMES) {
                             happyMotion = true;
                             Log.i(TAG, "faceEC: =====================高兴=================");
                             happy_times = 0;
+                        }
+                    } else if(MM < 2.0f) {
+                        angry_times++;
+                        if(angry_times >= DETECT_TIMES) {
+                            angryMotion = true;
+                            Log.i(TAG, "faceEC: =====================愤怒=================");
+                            angry_times = 0;
                         }
                     }
                 }
