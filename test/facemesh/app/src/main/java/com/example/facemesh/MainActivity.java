@@ -316,21 +316,14 @@ public class MainActivity extends AppCompatActivity {
     static float R_MIN = 0.0f, R_MAX = 0.0f;
     static int R_cnt = 0;
     static float brow_up_arr[] = new float[AVG_CNT];
-    static int brow_up_arr_cnt = 0;
     static float brow_width_arr[] = new float[AVG_CNT];
-    static int brow_width_arr_cnt = 0;
     static float brow_height_arr[] = new float[AVG_CNT];
-    static int brow_height_arr_cnt = 0;
     static float brow_line_arr[] = new float[AVG_CNT];
-    static int brow_line_arr_cnt = 0;
     static float eye_height_arr[] = new float[AVG_CNT];
-    static int eye_height_arr_cnt = 0;
     static float eye_width_arr[] = new float[AVG_CNT];
-    static int eye_width_arr_cnt = 0;
     static float mouth_width_arr[] = new float[AVG_CNT];
-    static int mouth_width_arr_cnt = 0;
     static float mouth_height_arr[] = new float[AVG_CNT];
-    static int mouth_height_arr_cnt = 0;
+    static int arr_cnt = 0;
     static int total_log_cnt = 0;
     private static String faceExpressCalculator(List<LandmarkProto.NormalizedLandmarkList> multiFaceLandmarks) {
 //        boolean laughMotion = true;   // 开心
@@ -547,87 +540,42 @@ public class MainActivity extends AppCompatActivity {
         float mouth_width_rate = mouth_width_in/face_width;
         float mouth_height_rate = mouth_height_sum/face_width;
 
-        brow_up_arr[brow_up_arr_cnt] = brow_up_rate;
-        brow_up_arr_cnt++;
-        float brow_up_avg = 0f;
-        if(brow_up_arr_cnt >= AVG_CNT) {
+        brow_up_arr[arr_cnt] = brow_up_rate;
+        brow_width_arr[arr_cnt] = brow_width_rate;
+        brow_height_arr[arr_cnt] = brow_hight_rate;
+        brow_line_arr[arr_cnt] = brow_line_rate;
+        eye_height_arr[arr_cnt] = eye_height_rate;
+        eye_width_arr[arr_cnt] = eye_width_rate;
+        mouth_width_arr[arr_cnt] = mouth_width_rate;
+        mouth_height_arr[arr_cnt] = mouth_height_rate;
+        float brow_up_avg = 0f, brow_width_avg = 0f, brow_height_avg = 0f, brow_line_avg = 0f;
+        float eye_height_avg = 0f, eye_width_avg = 0f;
+        float mouth_width_avg = 0f, mouth_height_avg = 0f;
+        arr_cnt++;
+        if(arr_cnt >= AVG_CNT) {
             brow_up_avg = getAverage("眉上扬", brow_up_arr);
-            brow_up_arr_cnt = 0;
-        }
-
-        brow_width_arr[brow_width_arr_cnt] = brow_width_rate;
-        brow_width_arr_cnt++;
-        float brow_width_avg = 0f;
-        if(brow_width_arr_cnt >= AVG_CNT) {
             brow_width_avg = getAverage("眉宽", brow_width_arr);
-            brow_width_arr_cnt = 0;
-        }
-
-        brow_height_arr[brow_height_arr_cnt] = brow_hight_rate;
-        brow_height_arr_cnt++;
-        float brow_height_avg = 0f;
-        if(brow_height_arr_cnt >= AVG_CNT) {
             brow_height_avg = getAverage("眉高", brow_height_arr);
-            brow_height_arr_cnt = 0;
-        }
-
-        brow_line_arr[brow_line_arr_cnt] = brow_line_rate;
-        brow_line_arr_cnt++;
-        float brow_line_avg = 0f;
-        if(brow_line_arr_cnt >= AVG_CNT) {
             brow_line_avg = getAverage("挑眉", brow_line_arr);
-            brow_line_arr_cnt = 0;
-        }
-
-        eye_height_arr[eye_height_arr_cnt] = eye_height_rate;
-        eye_height_arr_cnt++;
-        float eye_height_avg = 0f;
-        if(eye_height_arr_cnt >= AVG_CNT) {
             eye_height_avg = getAverage("眼睁", eye_height_arr);
-            eye_height_arr_cnt = 0;
-        }
-
-        eye_width_arr[eye_width_arr_cnt] = eye_width_rate;
-        eye_width_arr_cnt++;
-        float eye_width_avg = 0f;
-        if(eye_width_arr_cnt >= AVG_CNT) {
             eye_width_avg = getAverage("眼宽", eye_width_arr);
-            eye_width_arr_cnt = 0;
-        }
-
-        mouth_width_arr[mouth_width_arr_cnt] = mouth_width_rate;
-        mouth_width_arr_cnt++;
-        float mouth_width_avg = 0f;
-        if(mouth_width_arr_cnt >= AVG_CNT) {
             mouth_width_avg = getAverage("嘴宽", mouth_width_arr);
-            mouth_width_arr_cnt = 0;
-        }
-
-        mouth_height_arr[mouth_height_arr_cnt] = mouth_height_rate;
-        mouth_height_arr_cnt++;
-        float mouth_height_avg = 0f;
-        if(mouth_height_arr_cnt >= AVG_CNT) {
             mouth_height_avg = getAverage("嘴张", mouth_height_arr);
-            mouth_height_arr_cnt = 0;
+            arr_cnt = 0;
         }
 
         if(M <= 0.7) {
             MM = M * 0;
         } else if((M > 0.7) &&(M <= 0.75)) {    // 微笑
             MM = (float)(M * 1.38);
-            smallLaughMotion = true;
         } else if((M > 0.75) &&(M <= 0.8)) {
             MM = (float)(M * 2.58);
-            smallLaughMotion = true;
         } else if((M > 0.8) &&(M <= 0.9)) {
             MM = (float)(M * 3.54);
-            smallLaughMotion = true;
         } else if((M > 0.9) &&(M <= 1.0)) {     //大笑
             MM = (float)(M * 4.22);
-            heaveLaughMotion = true;
         } else if(M > 1) {
             MM = (float)(M * 5.0);
-            heaveLaughMotion = true;
         }
         float brow_height_width_rate = brow_height_avg/brow_width_avg;
         float eye_width_height_rate = eye_width_avg/eye_height_avg;
@@ -639,7 +587,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "faceEC: \t眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+", \tM = "+M+", \tMM = "+MM);
         }
 //        眉高宽比 >= 6           正常
-
+//
 //        眼宽高比 >= 4           悲伤
 //        眼宽高比 3 ~ 4          高兴,愤怒
 //
@@ -659,172 +607,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "faceEC: =====================悲伤=================");
             } else {
                 if(MM < 2.0f) {
-                    Log.i(TAG, "faceEC: =====================愤怒=================");
+//                    Log.i(TAG, "faceEC: =====================愤怒=================");
                 } else {
                     Log.i(TAG, "faceEC: =====================高兴=================");
                 }
             }
         }
-//        if((browRate >= 2.5f) &&(MM <= 0)) {
-////            Log.i(TAG, "faceEC: =====================生气=================");
-//        } else if((browRate < 2.5f) &&(browRate + 0.05f >= 2.0f) &&(eyeRate - 0.5f <= 1.0f)) {
-//            Log.i(TAG, "faceEC: =====================悲伤=================");
-//        }
-//        if((eyeRate >= 2.2f) &&(mouthRate >= 3.0f)) {
-//            Log.i(TAG, "faceEC: =====================惊讶=================");
-//        } else if((eyeRate + 0.05f >= 2.0f) &&(mouthRate - 0.2f <= 1.0f)) {
-//            Log.i(TAG, "faceEC: =====================自然=================");
-//        }
-//        if((mouthRate >= 2.5f) &&(MM >= 2.0f)) {
-//            Log.i(TAG, "faceEC: =====================高兴=================");
-//        }
-//
-//        if(mouth_height_avg >= 1.30) {
-//            if(eye_height_avg >= 1.00){
-//                //惊讶
-//                Log.i(TAG, "faceEC: =====================惊讶=================");
-//            } else {
-//                //高兴
-//                Log.i(TAG, "faceEC: =====================高兴=================");
-//            }
-//        } else if((mouth_height_avg >= 1.0)&&(mouth_height_avg < 1.30)) {
-//            if(eye_height_avg + 0.3f >= 1.00f) {
-//                //生气
-//                Log.i(TAG, "faceEC: =====================生气=================");
-//            } else {
-//                //悲伤
-//                Log.i(TAG, "faceEC: =====================悲伤=================");
-//            }
-//        } else {
-//            if (brow_line_avg <= 0.2) {
-//                //愤怒
-////                Log.i(TAG, "faceEC: =====================愤怒=================");
-//            } else {
-//                //自然
-//                Log.i(TAG, "faceEC: =====================自然=================");
-//            }
-//        }
-
-//        if((M_cnt >= 5) &&(M_cnt <= 60)) {
-//            M_Array[M_cnt-5] = M;
-//            if(M_cnt >= 49) {
-//                getLandmarkMinMax("M", M_Array);
-//            }
-//        }
-//        M_cnt++;
-//
-//        if((N_cnt >= 5) &&(N_cnt <= 60)) {
-//            N_Array[N_cnt-5] = N;
-//            if(N_cnt >= 49) {
-//                getLandmarkMinMax("N", N_Array);
-//            }
-//        }
-//        N_cnt++;
-//
-//        if((O_cnt >= 5) &&(O_cnt <= 60)) {
-//            O_Array[O_cnt-5] = O;
-//            if(O_cnt >= 49) {
-//                getLandmarkMinMax("O", O_Array);
-//            }
-//        }
-//        O_cnt++;
-//
-//        if((P_cnt >= 5) &&(P_cnt <= 60)) {
-//            P_Array[P_cnt-5] = P;
-//            if(P_cnt >= 49) {
-//                getLandmarkMinMax("P", P_Array);
-//            }
-//        }
-//        P_cnt++;
-//
-//        if((Q_cnt >= 5) &&(Q_cnt <= 60)) {
-//            Q_Array[Q_cnt-5] = Q;
-//            if(Q_cnt >= 49) {
-//                getLandmarkMinMax("Q", Q_Array);
-//            }
-//        }
-//        Q_cnt++;
-//
-//        if((R_cnt >= 5) &&(R_cnt <= 60)) {
-//            R_Array[R_cnt-5] = R;
-//            if(R_cnt >= 49) {
-//                getLandmarkMinMax("R", R_Array);
-//            }
-//        }
-//        R_cnt++;
 //        Log.i(TAG, "faceExpressCalculator: \tM = "+M+", MM = "+MM);
 //        Log.i(TAG, "faceExpressCalculator: \ts0 = "+state0+", \ts1 = "+state1+", \ts2 = "+state2+", \ts3 = "+state3+", \ts4 = "+state4+", \ts5 = "+state5+", \ts6 = "+state6+", state7 = "+state7+", state8 = "+state8);
-//            N += 0.5f;
-//            if(N <= 0.7) {
-//                NN = N * 0;
-//            } else if((N > 0.7) &&(N <= 0.75)) {    // 微笑
-//                NN = (float)(N * 1.38);
-//            } else if((N > 0.75) &&(N <= 0.8)) {
-//                NN = (float)(N * 2.58);
-//            } else if((N > 0.8) &&(N <= 0.9)) {
-//                NN = (float)(N * 3.54);
-//            } else if((N > 0.9) &&(N <= 1.0)) {     //大笑
-//                NN = (float)(N * 4.22);
-//            } else if(N > 1) {
-//                NN = (float)(N * 5.0);
-//            }
-//            O -= 5;
-//            if(O <= 0.7) {
-//                OO = O * 0;
-//            } else if((O > 0.7) &&(O <= 0.75)) {    // 微笑
-//                OO = (float)(O * 1.38);
-//            } else if((O > 0.75) &&(O <= 0.8)) {
-//                OO = (float)(O * 2.58);
-//            } else if((O > 0.8) &&(O <= 0.9)) {
-//                OO = (float)(O * 3.54);
-//            } else if((O > 0.9) &&(O <= 1.0)) {     //大笑
-//                OO = (float)(O * 4.22);
-//            } else if(O > 1) {
-//                OO = (float)(O * 5.0);
-//            }
-//            P += 0.5f;
-//            if(P <= 0.7) {
-//                PP = P * 0;
-//            } else if((P > 0.7) &&(P <= 0.75)) {    // 微笑
-//                PP = (float)(P * 1.38);
-//            } else if((P > 0.75) &&(P <= 0.8)) {
-//                PP = (float)(P * 2.58);
-//            } else if((P > 0.8) &&(P <= 0.9)) {
-//                PP = (float)(P * 3.54);
-//            } else if((P > 0.9) &&(P <= 1.0)) {     //大笑
-//                PP = (float)(P * 4.22);
-//            } else if(P > 1) {
-//                PP = (float)(P * 5.0);
-//            }
-//            Q = 5 - Q;
-//            if(Q <= 0.7) {
-//                QQ = Q * 0;
-//            } else if((Q > 0.7) &&(Q <= 0.75)) {    // 微笑
-//                QQ = (float)(Q * 1.38);
-//            } else if((Q > 0.75) &&(Q <= 0.8)) {
-//                QQ = (float)(Q * 2.58);
-//            } else if((Q > 0.8) &&(Q <= 0.9)) {
-//                QQ = (float)(Q * 3.54);
-//            } else if((Q > 0.9) &&(M <= 1.0)) {     //大笑
-//                QQ = (float)(Q * 4.22);
-//            } else if(Q > 1) {
-//                QQ = (float)(Q * 5.0);
-//            }
-//            R = Math.abs(R);
-//            R -= 5;
-//            if(R <= 0.7) {
-//                RR = R * 0;
-//            } else if((R > 0.7) &&(R <= 0.75)) {    // 微笑
-//                RR = (float)(R * 1.38);
-//            } else if((R > 0.75) &&(R <= 0.8)) {
-//                RR = (float)(R * 2.58);
-//            } else if((R > 0.8) &&(R <= 0.9)) {
-//                RR = (float)(R * 3.54);
-//            } else if((R > 0.9) &&(R <= 1.0)) {     //大笑
-//                RR = (float)(R * 4.22);
-//            } else if(R > 1) {
-//                RR = (float)(R * 5.0);
-//            }
 //        }
 //        for(int i = 0; i < 36; i++) {
 //            Log.i(TAG, "faceExpressCalculator: distanceY["+i+"] = "+distanceY[i]+", M = "+M+", MM = "+MM);
