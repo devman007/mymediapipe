@@ -315,6 +315,8 @@ public class MainActivity extends AppCompatActivity {
     static float R_Array[] = new float[60];
     static float R_MIN = 0.0f, R_MAX = 0.0f;
     static int R_cnt = 0;
+    static float brow_up_arr[] = new float[AVG_CNT];
+    static int brow_up_arr_cnt = 0;
     static float brow_width_arr[] = new float[AVG_CNT];
     static int brow_width_arr_cnt = 0;
     static float brow_height_arr[] = new float[AVG_CNT];
@@ -353,6 +355,8 @@ public class MainActivity extends AppCompatActivity {
         float brow_line_right = 0f;
         float brow_width = 0f;
         float distance_brow_left_right_sum = 0f;
+        float brow_left_up = 0f;
+        float brow_right_up = 0f;
         //眼睛
         float eye_left_height[] = new float[7];
         float eye_left_width = 0f;
@@ -440,7 +444,9 @@ public class MainActivity extends AppCompatActivity {
         float brow_right_right_rate = (landmarkList.getLandmark(285).getY()-landmarkList.getLandmark(283).getY())/(landmarkList.getLandmark(285).getX()-landmarkList.getLandmark(283).getX());
         float brow_left_rate = brow_left_left_rate + brow_right_left_rate;   //  >0
         float brow_right_rate = brow_left_right_rate + brow_right_right_rate;   //  <0
-        Log.i(TAG, "faceEC: brow_left_rate = "+brow_left_rate+", brow_right_rate = "+brow_right_rate);
+//        Log.i(TAG, "faceEC: brow_left_rate = "+brow_left_rate+", brow_right_rate = "+brow_right_rate);
+        brow_left_up = landmarkList.getLandmark(70).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(66).getY()-landmarkList.getLandmark(10).getY()*/;
+        brow_right_up = landmarkList.getLandmark(300).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(283).getY()-landmarkList.getLandmark(10).getY()*/;
 
         // 注: 眼睛Y坐标 下 > 上, X坐标 右 > 左
         //左侧上下眼睑距离
@@ -476,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
         // 眼内角抬高(悲伤) - Solution 1(7-5)
         float eye_left_line_rate = (landmarkList.getLandmark(133).getY()-landmarkList.getLandmark(33).getY())/eye_left_width;
         float eye_right_line_rate = (landmarkList.getLandmark(263).getY() - landmarkList.getLandmark(362).getY())/eye_right_width;
-        Log.i(TAG, "faceEC: eye_left_line_rate = "+eye_left_line_rate+", eye_right_line_rate = "+eye_right_line_rate);
+//        Log.i(TAG, "faceEC: eye_left_line_rate = "+eye_left_line_rate+", eye_right_line_rate = "+eye_right_line_rate);
 
         // 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左
         //  两嘴角间距离- 用于计算嘴巴的宽度
@@ -532,12 +538,22 @@ public class MainActivity extends AppCompatActivity {
 
         // M与state8综合判断表情
 
+        // 眉毛上扬与识别框宽度之比
+        float brow_up_rate = (brow_left_up + brow_right_up)/2*face_width;
         // 眼睛睁开距离与识别框高度之比
-        float eye_height_rate = eye_height_sum/face_width;
-        float eye_width_rate = eye_width_sum/face_width;
+        float eye_height_rate = eye_height_sum/2*face_width;
+        float eye_width_rate = eye_width_sum/2*face_width;
         // 张开嘴巴距离与识别框高度之比
         float mouth_width_rate = mouth_width_in/face_width;
         float mouth_height_rate = mouth_height_sum/face_width;
+
+        brow_up_arr[brow_up_arr_cnt] = brow_up_rate;
+        brow_up_arr_cnt++;
+        float brow_up_avg = 0f;
+        if(brow_up_arr_cnt >= AVG_CNT) {
+            brow_up_avg = getAverage("眉上扬", brow_up_arr);
+            brow_up_arr_cnt = 0;
+        }
 
         brow_width_arr[brow_width_arr_cnt] = brow_width_rate;
         brow_width_arr_cnt++;
@@ -613,14 +629,14 @@ public class MainActivity extends AppCompatActivity {
             MM = (float)(M * 5.0);
             heaveLaughMotion = true;
         }
-        float brow_height_width_rate = brow_hight_rate/brow_width_rate;
+        float brow_height_width_rate = brow_height_avg/brow_width_avg;
         float eye_width_height_rate = eye_width_avg/eye_height_avg;
         float mouth_width_height_rate = mouth_width_avg/mouth_height_avg;
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            Log.i(TAG, "faceEC: \t眉高 = " + brow_hight_rate + ", \t眉宽 = " + brow_width_rate + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_rate + ", \t嘴宽 = " + mouth_width_rate + ", \t嘴张 = " + mouth_height_rate+", M = "+M);
+            Log.i(TAG, "faceEC: \t眉高 = " + brow_height_avg + ", \t眉宽 = " + brow_width_avg + ", \t眉上扬 = "+brow_up_avg*100 + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_rate + ", \t嘴宽 = " + mouth_width_rate + ", \t嘴张 = " + mouth_height_rate);
             total_log_cnt = 0;
-            Log.i(TAG, "faceEC: \t眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+", M = "+M+", MM = "+MM);
+            Log.i(TAG, "faceEC: \t眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+", \tM = "+M+", \tMM = "+MM);
         }
 //        眉高宽比 >= 6           正常
 
@@ -634,20 +650,18 @@ public class MainActivity extends AppCompatActivity {
 //        MM >= 3                高兴
         // 张嘴，可能是开心/惊讶/大哭(悲伤)
         // 没有张嘴，可能是正常(自然)/生气
-        if(mouth_width_height_rate >= 6) {
+        if((mouth_width_height_rate >= 6.0f) &&(MM == 0f)) {
             Log.i(TAG, "faceEC: =====================自然=================");
-        } else if((mouth_width_height_rate >= 4) &&(mouth_width_height_rate < 6) &&(mouth_line_rate <= 1)) {
-            Log.i(TAG, "faceEC: =====================愤怒=================");
-        } else if(mouth_width_height_rate < 2) {
+        } else if((mouth_width_height_rate < 2.0f) &&(MM == 0f)) {
             Log.i(TAG, "faceEC: =====================惊讶=================");
         } else {
-            if(eye_width_height_rate >= 4) {
+            if(eye_width_height_rate >= 4.5f) {
                 Log.i(TAG, "faceEC: =====================悲伤=================");
             } else {
-                if(MM > 4.0f) {
-                    Log.i(TAG, "faceEC: =====================高兴=================");
+                if(MM < 2.0f) {
+                    Log.i(TAG, "faceEC: =====================愤怒=================");
                 } else {
-//                    Log.i(TAG, "faceEC: =====================愤怒=================");
+                    Log.i(TAG, "faceEC: =====================高兴=================");
                 }
             }
         }
