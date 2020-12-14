@@ -580,11 +580,16 @@ public class MainActivity extends AppCompatActivity {
         float brow_height_width_rate = brow_height_avg/brow_width_avg;
         float eye_width_height_rate = eye_width_avg/eye_height_avg;
         float mouth_width_height_rate = mouth_width_avg/mouth_height_avg;
+//        判断头部倾斜度
+        float head_line_rate = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
+        if(Math.abs(head_line_rate) >= 0.5f) {
+            Log.i(TAG, "faceEC: ============头部太偏=============");
+        }
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
             Log.i(TAG, "faceEC: \t眉高 = " + brow_height_avg + ", \t眉宽 = " + brow_width_avg + ", \t眉上扬 = "+brow_up_avg*100 + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_rate + ", \t嘴宽 = " + mouth_width_rate + ", \t嘴张 = " + mouth_height_rate);
             total_log_cnt = 0;
-            Log.i(TAG, "faceEC: \t眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+", \tM = "+M+", \tMM = "+MM);
+            Log.i(TAG, "faceEC: \t眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+", \tM = "+M+", \tMM = "+MM+"\t,  头部偏 = "+head_line_rate);
         }
 //        眉高宽比 >= 6           正常
 //
