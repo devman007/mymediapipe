@@ -348,6 +348,7 @@ public class MainActivity extends AppCompatActivity {
     static int arr_cnt = 0;
     static int normal_times = 0, suprise_times = 0, sad_times = 0, happy_times = 0, angry_times = 0;
     static int total_log_cnt = 0;
+    static String showString = "";
     private static String faceExpressCalculator(List<LandmarkProto.NormalizedLandmarkList> multiFaceLandmarks) {
         boolean normalMotion = false;    // 正常
         boolean supriseMotion = false;   // 惊讶
@@ -637,6 +638,7 @@ public class MainActivity extends AppCompatActivity {
         float head_line_rate = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
         if(Math.abs(head_line_rate) >= 0.5f) {
             Log.i(TAG, "faceEC: ============头部太偏=============");
+            showString = "头部太偏";
         }
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
@@ -669,6 +671,7 @@ public class MainActivity extends AppCompatActivity {
                         normalMotion = true;
                         Log.i(TAG, "faceEC: =====================自然=================");
                         normal_times = 0;
+                        showString = "自然";
                     }
 //                } else {
 //                    suprise_times++;
@@ -684,6 +687,7 @@ public class MainActivity extends AppCompatActivity {
                     supriseMotion = true;
                     Log.i(TAG, "faceEC: =====================惊讶=================");
                     suprise_times = 0;
+                    showString = "惊讶";
                 }
             } else {
                 if((eye_width_height_rate >= 4.5f) &&(mouth_line_rate >= 1.0f)) {
@@ -692,6 +696,7 @@ public class MainActivity extends AppCompatActivity {
                         sadMotion = true;
                         Log.i(TAG, "faceEC: =====================悲伤=================");
                         sad_times = 0;
+                        showString = "悲伤";
                     }
                 } else {
                     if((brow_up_avg * 10 >= 2.6) &&(MM >= 3.0f) &&((dis_brow_height_mouth_rate >= 6.0f)||(eye_width_height_rate >= 8.0f))){
@@ -700,6 +705,7 @@ public class MainActivity extends AppCompatActivity {
                             happyMotion = true;
                             Log.i(TAG, "faceEC: =====================高兴=================");
                             happy_times = 0;
+                            showString = "高兴";
                         }
                     } else if(MM < 2.0f) {
                         angry_times++;
@@ -707,6 +713,7 @@ public class MainActivity extends AppCompatActivity {
                             angryMotion = true;
                             Log.i(TAG, "faceEC: =====================愤怒=================");
                             angry_times = 0;
+                            showString = "愤怒";
                         }
                     }
                 }
@@ -728,6 +735,6 @@ public class MainActivity extends AppCompatActivity {
 //        Log.i(TAG, "faceExpressCalculator: 眉嘴角眼比 左 = "+distanceX[3]+", 右 = "+distanceX[4]);
 //        Log.i(TAG, "faceExpressCalculator: \tM = "+M+", \tN = "+N+", \tO = "+O+", \tP = "+P+", \tQ = "+Q+", \tR = "+R);
 //        Log.i(TAG, "faceExpressCalculator: \tMM = "+MM+", \tNN = "+NN+", \tOO = "+OO+", \tPP = "+PP+", \tQQ = "+QQ+", \tRR = "+RR);
-        return "";
+        return showString;
     }
 }
