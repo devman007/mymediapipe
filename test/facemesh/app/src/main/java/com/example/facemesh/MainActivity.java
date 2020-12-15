@@ -26,6 +26,9 @@ import com.google.mediapipe.framework.Packet;
 import com.google.mediapipe.framework.PacketGetter;
 import com.google.mediapipe.glutil.EglManager;
 
+import org.apache.commons.math3.fitting.PolynomialCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoints;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -331,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
         float brow_line_left = 0f;
         float brow_line_right = 0f;
         float brow_width = 0f;
-        float distance_brow_left_right_sum = 0f;
+//        float distance_brow_left_right_sum = 0f;
         float brow_left_up = 0f;
         float brow_right_up = 0f;
         //眼睛
@@ -376,40 +379,66 @@ public class MainActivity extends AppCompatActivity {
         brow_left_width = landmarkList.getLandmark(66).getX()-landmarkList.getLandmark(53).getX();
         brow_right_width = landmarkList.getLandmark(283).getX()-landmarkList.getLandmark(296).getX();
         // 眉毛变短程度: 皱变短(恐惧、愤怒、悲伤) - Solution 1(7-3)
-        brow_width = brow_left_width + brow_right_width;
+        brow_width = landmarkList.getLandmark(296).getX()-landmarkList.getLandmark(53).getX() +
+                     landmarkList.getLandmark(334).getX()-landmarkList.getLandmark(52).getX() +
+                     landmarkList.getLandmark(293).getX()-landmarkList.getLandmark(65).getX() +
+                     landmarkList.getLandmark(300).getX()-landmarkList.getLandmark(55).getX() +
+                     landmarkList.getLandmark(285).getX()-landmarkList.getLandmark(70).getX() +
+                     landmarkList.getLandmark(295).getX()-landmarkList.getLandmark(63).getX() +
+                     landmarkList.getLandmark(282).getX()-landmarkList.getLandmark(105).getX() +
+                     landmarkList.getLandmark(283).getX()-landmarkList.getLandmark(66).getX();
 
-//        //眉毛高度之和 - 临时关闭(未使用)
-//        brow_left_height =      landmarkList.getLandmark(53).getY()+
-//                                landmarkList.getLandmark(52).getY()+
-//                                landmarkList.getLandmark(65).getY()+
-//                                landmarkList.getLandmark(55).getY()+
-//                                landmarkList.getLandmark(70).getY()+
-//                                landmarkList.getLandmark(63).getY()+
-//                                landmarkList.getLandmark(105).getY()+
-//                                landmarkList.getLandmark(66).getY();
-//        brow_right_height =     landmarkList.getLandmark(283).getY()+
-//                                landmarkList.getLandmark(282).getY()+
-//                                landmarkList.getLandmark(295).getY()+
-//                                landmarkList.getLandmark(285).getY()+
-//                                landmarkList.getLandmark(300).getY()+
-//                                landmarkList.getLandmark(293).getY()+
-//                                landmarkList.getLandmark(334).getY()+
-//                                landmarkList.getLandmark(296).getY();
-//        brow_hight_sum = brow_left_height + brow_right_height;
-        // 两边眉毛距离之和
-        distance_brow_left_right_sum = landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX() +
-                                        landmarkList.getLandmark(334).getX() - landmarkList.getLandmark(105).getX() +
-                                        landmarkList.getLandmark(293).getX() - landmarkList.getLandmark(63).getX() +
-                                        landmarkList.getLandmark(300).getX() - landmarkList.getLandmark(70).getX() +
-                                        landmarkList.getLandmark(285).getX() - landmarkList.getLandmark(55).getX() +
-                                        landmarkList.getLandmark(295).getX() - landmarkList.getLandmark(65).getX() +
-                                        landmarkList.getLandmark(282).getX() - landmarkList.getLandmark(52).getX() +
-                                        landmarkList.getLandmark(283).getX() - landmarkList.getLandmark(53).getX();
+        //眉毛高度之和
+        brow_left_height =      landmarkList.getLandmark(53).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(52).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(65).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(55).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(70).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(63).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(105).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(66).getY() - landmarkList.getLandmark(10).getY();
+        brow_right_height =     landmarkList.getLandmark(283).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(282).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(295).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(285).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(300).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(293).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(334).getY() - landmarkList.getLandmark(10).getY() +
+                                landmarkList.getLandmark(296).getY() - landmarkList.getLandmark(10).getY();
+        brow_hight_sum = brow_left_height + brow_right_height;
+//        // 两边眉毛距离之和
+//        distance_brow_left_right_sum = landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX() +
+//                                        landmarkList.getLandmark(334).getX() - landmarkList.getLandmark(105).getX() +
+//                                        landmarkList.getLandmark(293).getX() - landmarkList.getLandmark(63).getX() +
+//                                        landmarkList.getLandmark(300).getX() - landmarkList.getLandmark(70).getX() +
+//                                        landmarkList.getLandmark(285).getX() - landmarkList.getLandmark(55).getX() +
+//                                        landmarkList.getLandmark(295).getX() - landmarkList.getLandmark(65).getX() +
+//                                        landmarkList.getLandmark(282).getX() - landmarkList.getLandmark(52).getX() +
+//                                        landmarkList.getLandmark(283).getX() - landmarkList.getLandmark(53).getX();
         //  眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒) - Solution 1(7-1)
-        float brow_hight_rate = brow_width/face_width;
+        float brow_hight_rate = (brow_hight_sum/16)/face_width;
         //  眉毛间距与识别框高度之比
-        float brow_width_rate = (distance_brow_left_right_sum/8)/face_width;
-        // 分析挑眉程度和皱眉程度
+        float brow_width_rate = (brow_width/8)/face_width;
+//        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
+//        float line_brow_x[] = new float[3];
+//        line_brow_x[0] = landmarkList.getLandmark(52).getX();
+//        line_brow_x[1] = landmarkList.getLandmark(70).getX();
+//        line_brow_x[2] = landmarkList.getLandmark(105).getX();
+//        float line_brow_y[] = new float[3];
+//        line_brow_y[0] = landmarkList.getLandmark(52).getY();
+//        line_brow_y[1] = landmarkList.getLandmark(70).getY();
+//        line_brow_y[2] = landmarkList.getLandmark(105).getY();
+//        WeightedObservedPoints points = new WeightedObservedPoints();
+//        for(int i = 0; i < line_brow_x.length; i++) {
+//            points.add(line_brow_x[i], line_brow_y[i]);
+//        }
+//        PolynomialCurveFitter fitter = PolynomialCurveFitter.create(1); //指定为1阶数
+//        double[] result = fitter.fit(points.toList());
+//        if(result[1]*(-10) < 1.0f) { //倒八眉
+//
+//        } else {                     //八字眉 或平眉
+//
+//        }
         brow_line_left = (landmarkList.getLandmark(105).getY() - landmarkList.getLandmark(52).getY())/(landmarkList.getLandmark(105).getX() - landmarkList.getLandmark(52).getX());
         brow_line_right = (landmarkList.getLandmark(282).getY() - landmarkList.getLandmark(334).getY())/(landmarkList.getLandmark(282).getX() - landmarkList.getLandmark(334).getX());
         float brow_line_rate = brow_line_left;  // + brow_line_right;
