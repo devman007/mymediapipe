@@ -624,45 +624,24 @@ public class MainActivity extends AppCompatActivity {
         }
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-//            眉上扬 <= 0.03          正常
-//            眉上扬 >= 0.04          高兴,悲伤,惊讶,愤怒
-//
-//            眉高宽比 >= 6           正常
-//
-//            眼宽高比 >= 4           悲伤
-//            眼宽高比 3 ~ 4          高兴,愤怒
-//
-//            嘴宽高比 >= 6           正常
-//            嘴宽高比 >= 4           愤怒
-//            嘴宽高比 2 ~ 3          高兴,悲伤
-//            嘴宽高比 < 2            惊讶
-//            MM >= 3                高兴
-            // 张嘴，可能是开心/惊讶/大哭(悲伤)
-            // 没有张嘴，可能是正常(自然)/生气
             if((mouth_width_height_rate >= 6.0f) /*&&(MM == 0f)*/) {
-//                if(dis_eye_height_mouth_avg >= 6.5f) {
-//                    angry_times++;
-//                    if(angry_times >= DETECT_TIMES) {
-//                        angryMotion = true;
-//                        Log.i(TAG, "faceEC: =====================愤怒=================");
-//                        angry_times = 0;
-//                    }
-//                } else if((dis_eye_height_mouth_avg >= 5.7f)&&(dis_eye_height_mouth_avg < 6.5f)){
+                if(MM >= 2.5f) {
+                    sad_times++;
+                    if(sad_times >= DETECT_TIMES) {
+                        sadMotion = true;
+                        Log.i(TAG, "faceEC: =====================悲伤=================");
+                        sad_times = 0;
+                        showString = "悲伤";
+                    }
+                } else {
                     normal_times++;
-                    if(normal_times >= DETECT_TIMES) {
+                    if (normal_times >= DETECT_TIMES) {
                         normalMotion = true;
                         Log.i(TAG, "faceEC: =====================自然=================");
                         normal_times = 0;
                         showString = "自然";
                     }
-//                } else {
-//                    suprise_times++;
-//                    if(suprise_times >= DETECT_TIMES) {
-//                        supriseMotion = true;
-//                        Log.i(TAG, "faceEC: =====================惊讶=================");
-//                        suprise_times = 0;
-//                    }
-//                }
+                }
             } else if((mouth_width_height_rate < 4.0f) &&(MM <= 2.0f)) {
                 suprise_times++;
                 if(suprise_times >= DETECT_TIMES) {
