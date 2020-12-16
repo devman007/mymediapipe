@@ -25,7 +25,7 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 // add by jacky
-#define ENABLE_FINGER_LINE
+// #define ENABLE_FINGER_LINE
 namespace mediapipe {
 
 namespace {

@@ -24,7 +24,7 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 // add by jacky
-#define ENABLE_DETECT_OBJ
+// #define ENABLE_DETECT_OBJ
 namespace mediapipe {
 
 namespace {

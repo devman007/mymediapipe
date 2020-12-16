@@ -317,6 +317,56 @@ public class MainActivity extends AppCompatActivity {
         return ret;
     }
 
+    private static void setExpression_happy() {
+        happy_times++;
+        if(happy_times >= DETECT_TIMES) {
+//            happyMotion = true;
+            Log.i(TAG, "faceEC: =====================高兴=================");
+            happy_times = 0;
+            showString = "高兴";
+        }
+    }
+
+    private static void setExpression_normal() {
+        normal_times++;
+        if (normal_times >= DETECT_TIMES) {
+//            normalMotion = true;
+            Log.i(TAG, "faceEC: =====================自然=================");
+            normal_times = 0;
+            showString = "自然";
+        }
+    }
+
+    private static void setExpression_sad() {
+        sad_times++;
+        if(sad_times >= DETECT_TIMES) {
+//            sadMotion = true;
+            Log.i(TAG, "faceEC: =====================悲伤=================");
+            sad_times = 0;
+            showString = "悲伤";
+        }
+    }
+
+    private static void setExpression_angry() {
+        angry_times++;
+        if(angry_times >= DETECT_TIMES) {
+//            angryMotion = true;
+            Log.i(TAG, "faceEC: =====================愤怒=================");
+            angry_times = 0;
+            showString = "愤怒";
+        }
+    }
+
+    private static void setExpression_surprise() {
+        suprise_times++;
+        if(suprise_times >= DETECT_TIMES) {
+//            supriseMotion = true;
+            Log.i(TAG, "faceEC: =====================惊讶=================");
+            suprise_times = 0;
+            showString = "惊讶";
+        }
+    }
+
     private static void getLandmarkMinMax(String key, float[] arr) {
         int cnt = arr.length;
         float min = 0.0f, max = 0.0f;
@@ -616,6 +666,14 @@ public class MainActivity extends AppCompatActivity {
         } else if(brow_height_width_rate > 0.455f) {
             NN = getRound((brow_height_width_rate * 5), 4);
         }
+
+        if(eye_width_height_rate <= 3.10f) {
+            PP = getRound((eye_width_height_rate * 0f), 4);
+        } else if((eye_width_height_rate > 3.10f ) &&(eye_width_height_rate <= 4.10f)){
+            PP = getRound((eye_width_height_rate * 3.58f), 4);
+        } else {
+            PP = getRound((eye_width_height_rate * 4.58f), 4);
+        }
 //        判断头部倾斜度
         float head_line_rate = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
         if(Math.abs(head_line_rate) >= 0.5f) {
@@ -626,62 +684,30 @@ public class MainActivity extends AppCompatActivity {
         if(total_log_cnt >= AVG_CNT) {
             if((mouth_width_height_rate >= 6.0f) /*&&(MM == 0f)*/) {
                 if(MM >= 2.5f) {
-                    sad_times++;
-                    if(sad_times >= DETECT_TIMES) {
-                        sadMotion = true;
-                        Log.i(TAG, "faceEC: =====================悲伤=================");
-                        sad_times = 0;
-                        showString = "悲伤";
-                    }
+                    setExpression_sad();
                 } else {
-                    normal_times++;
-                    if (normal_times >= DETECT_TIMES) {
-                        normalMotion = true;
-                        Log.i(TAG, "faceEC: =====================自然=================");
-                        normal_times = 0;
-                        showString = "自然";
+                    if(PP >= 11.0f) {
+//                        setExpression_angry();
+//                    } else {
+                        setExpression_normal();
                     }
                 }
             } else if((mouth_width_height_rate < 4.0f) &&(MM <= 2.0f)) {
-                suprise_times++;
-                if(suprise_times >= DETECT_TIMES) {
-                    supriseMotion = true;
-                    Log.i(TAG, "faceEC: =====================惊讶=================");
-                    suprise_times = 0;
-                    showString = "惊讶";
-                }
+                setExpression_surprise();
             } else {
                 if((eye_width_height_rate >= 4.5f) &&(mouth_line_rate >= 1.0f)) {
-                    sad_times++;
-                    if(sad_times >= DETECT_TIMES) {
-                        sadMotion = true;
-                        Log.i(TAG, "faceEC: =====================悲伤=================");
-                        sad_times = 0;
-                        showString = "悲伤";
-                    }
+                    setExpression_sad();
                 } else {
                     if((brow_up_avg * 10 >= 2.6) &&(MM >= 3.0f) &&((dis_brow_height_mouth_rate >= 4.0f)||(eye_width_height_rate >= 6.0f))){
-                        happy_times++;
-                        if(happy_times >= DETECT_TIMES) {
-                            happyMotion = true;
-                            Log.i(TAG, "faceEC: =====================高兴=================");
-                            happy_times = 0;
-                            showString = "高兴";
-                        }
+                        setExpression_happy();
                     } else if(MM < 2.0f) {
-                        angry_times++;
-                        if(angry_times >= DETECT_TIMES) {
-                            angryMotion = true;
-                            Log.i(TAG, "faceEC: =====================愤怒=================");
-                            angry_times = 0;
-                            showString = "愤怒";
-                        }
+                        setExpression_angry();
                     }
                 }
             }
             Log.i(TAG, "faceEC: 眉高 = " + brow_height_avg + ", \t眉宽 = " + brow_width_avg + ", \t眉上扬 = "+brow_up_avg*100 + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_avg + ", \t嘴宽 = " + mouth_width_avg + ", \t嘴张 = " + mouth_height_avg);
             Log.i(TAG, "faceEC: 眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+"\t,  眼高嘴 = "+eye_height_mouth_avg+", 眉角嘴 = "+brow_mouth_avg+", 眉高嘴 = "+brow_height_mouth_avg);
-            Log.i(TAG, "faceEC: M = "+dis_eye_mouth_rate+", \tMM = "+MM+", \tN = "+brow_height_width_rate+", \tNN = "+NN);
+            Log.i(TAG, "faceEC: M = "+dis_eye_mouth_rate+", \tMM = "+MM+", \tN = "+brow_height_width_rate+", \tNN = "+NN+", \tP = "+eye_width_height_rate+", PP = "+PP);
             total_log_cnt = 0;
         }
         return showString;

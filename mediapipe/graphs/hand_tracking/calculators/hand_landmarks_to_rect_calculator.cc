@@ -21,7 +21,7 @@
 #include "mediapipe/framework/port/status.h"
 
 // add by jacky
-#define DEBUG_PRINT
+// #define DEBUG_PRINT
 
 namespace mediapipe {
 
