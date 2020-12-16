@@ -336,13 +336,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int AVG_CNT = 10;
     private static final int DETECT_TIMES = 2;
-    static float dis_eye_height_mouth_arr[] = new float[AVG_CNT];
     static float brow_up_arr[] = new float[AVG_CNT];
     static float brow_width_arr[] = new float[AVG_CNT];
     static float brow_height_arr[] = new float[AVG_CNT];
     static float brow_line_arr[] = new float[AVG_CNT];
+    static float brow_mouth_arr[] = new float[AVG_CNT];
+    static float brow_height_mouth_arr[] = new float[AVG_CNT];
     static float eye_height_arr[] = new float[AVG_CNT];
     static float eye_width_arr[] = new float[AVG_CNT];
+    static float eye_height_mouth_arr[] = new float[AVG_CNT];
     static float mouth_width_arr[] = new float[AVG_CNT];
     static float mouth_height_arr[] = new float[AVG_CNT];
     static int arr_cnt = 0;
@@ -577,12 +579,14 @@ public class MainActivity extends AppCompatActivity {
         float MM = 0, NN = 0, PP = 0, QQ = 0;
         float dis_eye_mouth_rate = getRound((2 * mouth_width_in)/distance_eye_mouth, 4);             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
         float distance_brow = landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX();
-        float dis_brow_mouth_rate = mouth_width_in/distance_brow;                       // 嘴角 / 两眉间距
-        float dis_eye_height_mouth_rate = (1 * mouth_width_in)/((eye_height_sum)/2);    // 嘴角 / 上下眼睑距离
-        float dis_brow_height_mouth_rate = (2 * mouth_width_in)/(landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(70).getY());
+        float dis_brow_mouth_rate = getRound(mouth_width_in/distance_brow, 4);                       // 嘴角 / 两眉间距
+        float dis_eye_height_mouth_rate = getRound((1 * mouth_width_in)/((eye_height_sum)/2), 4);    // 嘴角 / 上下眼睑距离
+        float dis_brow_height_mouth_rate = getRound((2 * mouth_width_in)/(landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(70).getY()), 4);
 //        Log.i(TAG, "faceEC: 眼角嘴 = "+dis_eye_mouth_rate+", \t眉角嘴 = "+dis_brow_mouth_rate+", \t眼高嘴 = "+dis_eye_height_mouth_rate+", \t眉高嘴 = "+dis_brow_height_mouth_rate);
 
-        dis_eye_height_mouth_arr[arr_cnt] = dis_eye_height_mouth_rate;
+        brow_mouth_arr[arr_cnt] = dis_brow_mouth_rate;
+        brow_height_mouth_arr[arr_cnt] = dis_brow_height_mouth_rate;
+        eye_height_mouth_arr[arr_cnt] = dis_eye_height_mouth_rate;
 
         // 眉毛上扬与识别框宽度之比
         float brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
@@ -601,18 +605,21 @@ public class MainActivity extends AppCompatActivity {
         eye_width_arr[arr_cnt] = eye_width_rate;
         mouth_width_arr[arr_cnt] = mouth_width_rate;
         mouth_height_arr[arr_cnt] = mouth_height_rate;
+        float brow_mouth_avg = 0f, brow_height_mouth_avg = 0f;
         float brow_up_avg = 0f, brow_width_avg = 0f, brow_height_avg = 0f, brow_line_avg = 0f;
-        float eye_height_avg = 0f, eye_width_avg = 0f, dis_eye_height_mouth_avg = 0f;
+        float eye_height_avg = 0f, eye_width_avg = 0f, eye_height_mouth_avg = 0f;
         float mouth_width_avg = 0f, mouth_height_avg = 0f;
         arr_cnt++;
         if(arr_cnt >= AVG_CNT) {
-            dis_eye_height_mouth_avg = getAverage("眼高嘴", dis_eye_height_mouth_arr, 4);
+            brow_mouth_avg = getAverage("眉角嘴", brow_mouth_arr, 4);
+            brow_height_mouth_avg = getAverage("眉高嘴", brow_height_mouth_arr, 4);
             brow_up_avg = getAverage("眉上扬", brow_up_arr, 4);
             brow_width_avg = getAverage("眉宽", brow_width_arr, 4);
             brow_height_avg = getAverage("眉高", brow_height_arr, 4);
             brow_line_avg = getAverage("挑眉", brow_line_arr, 4);
             eye_height_avg = getAverage("眼睁", eye_height_arr, 4);
             eye_width_avg = getAverage("眼宽", eye_width_arr, 4);
+            eye_height_mouth_avg = getAverage("眼高嘴", eye_height_mouth_arr, 4);
             mouth_width_avg = getAverage("嘴宽", mouth_width_arr, 4);
             mouth_height_avg = getAverage("嘴张", mouth_height_arr, 4);
             arr_cnt = 0;
@@ -718,8 +725,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            Log.i(TAG, "faceEC: \t眉高 = " + brow_height_avg + ", \t眉宽 = " + brow_width_avg + ", \t眉上扬 = "+brow_up_avg*100 + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_avg + ", \t嘴宽 = " + mouth_width_avg + ", \t嘴张 = " + mouth_height_avg);
-            Log.i(TAG, "faceEC: \t眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+", \tM = "+dis_eye_mouth_rate+", \tMM = "+MM+"\t,  眼高嘴 = "+dis_eye_height_mouth_avg);
+            Log.i(TAG, "faceEC: 眉高 = " + brow_height_avg + ", \t眉宽 = " + brow_width_avg + ", \t眉上扬 = "+brow_up_avg*100 + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_avg + ", \t嘴宽 = " + mouth_width_avg + ", \t嘴张 = " + mouth_height_avg);
+            Log.i(TAG, "faceEC: 眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+"\t,  眼高嘴 = "+eye_height_mouth_avg+", 眉角嘴 = "+brow_mouth_avg+", 眉高嘴 = "+brow_height_mouth_avg+", \tM = "+dis_eye_mouth_rate+", \tMM = "+MM);
             total_log_cnt = 0;
         }
 //        Log.i(TAG, "faceExpressCalculator: \tM = "+M+", MM = "+MM);
