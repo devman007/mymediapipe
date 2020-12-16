@@ -445,15 +445,6 @@ public class MainActivity extends AppCompatActivity {
                                 landmarkList.getLandmark(334).getY() - landmarkList.getLandmark(10).getY() +
                                 landmarkList.getLandmark(296).getY() - landmarkList.getLandmark(10).getY();
         brow_hight_sum = brow_left_height + brow_right_height;
-//        // 两边眉毛距离之和
-//        distance_brow_left_right_sum = landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX() +
-//                                        landmarkList.getLandmark(334).getX() - landmarkList.getLandmark(105).getX() +
-//                                        landmarkList.getLandmark(293).getX() - landmarkList.getLandmark(63).getX() +
-//                                        landmarkList.getLandmark(300).getX() - landmarkList.getLandmark(70).getX() +
-//                                        landmarkList.getLandmark(285).getX() - landmarkList.getLandmark(55).getX() +
-//                                        landmarkList.getLandmark(295).getX() - landmarkList.getLandmark(65).getX() +
-//                                        landmarkList.getLandmark(282).getX() - landmarkList.getLandmark(52).getX() +
-//                                        landmarkList.getLandmark(283).getX() - landmarkList.getLandmark(53).getX();
         //  眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒) - Solution 1(7-1)
         float brow_hight_rate = (brow_hight_sum/16)/face_width;
         //  眉毛间距与识别框高度之比
@@ -483,13 +474,6 @@ public class MainActivity extends AppCompatActivity {
         float brow_line_rate = brow_line_left;  // + brow_line_right;
 
         // 眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
-//        float brow_left_left_rate = (landmarkList.getLandmark(55).getY()-landmarkList.getLandmark(53).getY())/(landmarkList.getLandmark(55).getX()-landmarkList.getLandmark(53).getX());
-//        float brow_right_left_rate = (landmarkList.getLandmark(300).getY()-landmarkList.getLandmark(296).getY())/(landmarkList.getLandmark(300).getX()-landmarkList.getLandmark(296).getX());
-//        float brow_left_right_rate = (landmarkList.getLandmark(70).getY()-landmarkList.getLandmark(66).getY())/(landmarkList.getLandmark(70).getX()-landmarkList.getLandmark(66).getX());
-//        float brow_right_right_rate = (landmarkList.getLandmark(285).getY()-landmarkList.getLandmark(283).getY())/(landmarkList.getLandmark(285).getX()-landmarkList.getLandmark(283).getX());
-//        float brow_left_rate = brow_left_left_rate + brow_right_left_rate;   //  >0
-//        float brow_right_rate = brow_left_right_rate + brow_right_right_rate;   //  <0
-//        Log.i(TAG, "faceEC: brow_left_rate = "+brow_left_rate+", brow_right_rate = "+brow_right_rate);
         brow_left_up = landmarkList.getLandmark(70).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(66).getY()-landmarkList.getLandmark(10).getY()*/;
         brow_right_up = landmarkList.getLandmark(300).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(283).getY()-landmarkList.getLandmark(10).getY()*/;
 
@@ -524,26 +508,10 @@ public class MainActivity extends AppCompatActivity {
         // 两眼角距离
         float eye_width_sum = eye_left_width + eye_right_width;
 
-//        // 眼内角抬高(悲伤) - Solution 1(7-5) - 临时关闭(未使用)
-//        float eye_left_line_rate = (landmarkList.getLandmark(133).getY()-landmarkList.getLandmark(33).getY())/eye_left_width;
-//        float eye_right_line_rate = (landmarkList.getLandmark(263).getY() - landmarkList.getLandmark(362).getY())/eye_right_width;
-//        Log.i(TAG, "faceEC: eye_left_line_rate = "+eye_left_line_rate+", eye_right_line_rate = "+eye_right_line_rate);
-
         // 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左
         //  两嘴角间距离- 用于计算嘴巴的宽度
         mouth_width_out = landmarkList.getLandmark(291).getX() - landmarkList.getLandmark(61).getX();
         mouth_width_in = landmarkList.getLandmark(308).getX() - landmarkList.getLandmark(78).getX();
-
-//        //上下嘴唇间距离 - 嘴巴（外） - 临时关闭(未使用)
-//        mouth_height_out[0] = landmarkList.getLandmark(191).getY() - landmarkList.getLandmark(146).getY();
-//        mouth_height_out[1] = landmarkList.getLandmark(80).getY() - landmarkList.getLandmark(91).getY();
-//        mouth_height_out[2] = landmarkList.getLandmark(81).getY() - landmarkList.getLandmark(181).getY();
-//        mouth_height_out[3] = landmarkList.getLandmark(82).getY() - landmarkList.getLandmark(84).getY();
-//        mouth_height_out[4] = landmarkList.getLandmark(13).getY() - landmarkList.getLandmark(17).getY();  // 中心
-//        mouth_height_out[5] = landmarkList.getLandmark(312).getY() - landmarkList.getLandmark(314).getY();
-//        mouth_height_out[6] = landmarkList.getLandmark(311).getY() - landmarkList.getLandmark(405).getY();
-//        mouth_height_out[7] = landmarkList.getLandmark(310).getY() - landmarkList.getLandmark(321).getY();
-//        mouth_height_out[8] = landmarkList.getLandmark(415).getY() - landmarkList.getLandmark(375).getY();
 
         //上下嘴唇间距离 - 嘴巴（内）
         mouth_height_in[0] = landmarkList.getLandmark(95).getY() - landmarkList.getLandmark(185).getY();
@@ -573,9 +541,6 @@ public class MainActivity extends AppCompatActivity {
         distance_brow_mouth = distance_brow_left_mouth + distance_brow_right_mouth;
 
         // 归一化
-        float N = (2 * mouth_width_in)/distance_brow_mouth;          // 嘴角 / 眉毛嘴角距离
-        float P = eye_width_sum/distance_brow_mouth;                 // 眼角距离 / 眉毛嘴角距离
-        float Q = eye_width_sum/eye_height_sum;                      // 眼角距离 / 上下眼睑距离
         float MM = 0, NN = 0, PP = 0, QQ = 0;
         float dis_eye_mouth_rate = getRound((2 * mouth_width_in)/distance_eye_mouth, 4);             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
         float distance_brow = landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX();
@@ -641,6 +606,16 @@ public class MainActivity extends AppCompatActivity {
         float brow_height_width_rate = getRound(brow_height_avg/brow_width_avg, 4);
         float eye_width_height_rate = getRound(eye_width_avg/eye_height_avg, 4);
         float mouth_width_height_rate = getRound(mouth_width_avg/mouth_height_avg, 4);
+
+        if(brow_height_width_rate <= 0.365f) {
+            NN = getRound((brow_height_width_rate * 0f), 4);
+        } else if((brow_height_width_rate > 0.365f)&&(brow_height_width_rate <= 0.405f)) {
+            NN = getRound((brow_height_width_rate * 3.58f), 4);
+        } else if((brow_height_width_rate > 0.405f)&&(brow_height_width_rate <= 0.455f)) {
+            NN = getRound((brow_height_width_rate * 4.22f), 4);
+        } else if(brow_height_width_rate > 0.455f) {
+            NN = getRound((brow_height_width_rate * 5), 4);
+        }
 //        判断头部倾斜度
         float head_line_rate = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
         if(Math.abs(head_line_rate) >= 0.5f) {
@@ -706,7 +681,7 @@ public class MainActivity extends AppCompatActivity {
                         showString = "悲伤";
                     }
                 } else {
-                    if((brow_up_avg * 10 >= 2.6) &&(MM >= 3.0f) &&((dis_brow_height_mouth_rate >= 6.0f)||(eye_width_height_rate >= 8.0f))){
+                    if((brow_up_avg * 10 >= 2.6) &&(MM >= 3.0f) &&((dis_brow_height_mouth_rate >= 4.0f)||(eye_width_height_rate >= 6.0f))){
                         happy_times++;
                         if(happy_times >= DETECT_TIMES) {
                             happyMotion = true;
@@ -726,22 +701,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             Log.i(TAG, "faceEC: 眉高 = " + brow_height_avg + ", \t眉宽 = " + brow_width_avg + ", \t眉上扬 = "+brow_up_avg*100 + ", \t挑眉 = " + brow_line_avg + ", \t眼睁 = " + eye_height_avg + ", \t嘴宽 = " + mouth_width_avg + ", \t嘴张 = " + mouth_height_avg);
-            Log.i(TAG, "faceEC: 眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+"\t,  眼高嘴 = "+eye_height_mouth_avg+", 眉角嘴 = "+brow_mouth_avg+", 眉高嘴 = "+brow_height_mouth_avg+", \tM = "+dis_eye_mouth_rate+", \tMM = "+MM);
+            Log.i(TAG, "faceEC: 眉高宽比 = "+brow_height_width_rate+", \t眼宽高比 = "+eye_width_height_rate+", \t嘴宽高比 = "+mouth_width_height_rate+"\t,  眼高嘴 = "+eye_height_mouth_avg+", 眉角嘴 = "+brow_mouth_avg+", 眉高嘴 = "+brow_height_mouth_avg);
+            Log.i(TAG, "faceEC: M = "+dis_eye_mouth_rate+", \tMM = "+MM+", \tN = "+brow_height_width_rate+", \tNN = "+NN);
             total_log_cnt = 0;
         }
-//        Log.i(TAG, "faceExpressCalculator: \tM = "+M+", MM = "+MM);
-//        Log.i(TAG, "faceExpressCalculator: \ts0 = "+state0+", \ts1 = "+state1+", \ts2 = "+state2+", \ts3 = "+state3+", \ts4 = "+state4+", \ts5 = "+state5+", \ts6 = "+state6+", state7 = "+state7+", state8 = "+state8);
-//        }
-//        for(int i = 0; i < 36; i++) {
-//            Log.i(TAG, "faceExpressCalculator: distanceY["+i+"] = "+distanceY[i]+", M = "+M+", MM = "+MM);
-//        }
-//        Log.i(TAG, "faceExpressCalculator: 眼角到嘴角 左 = "+distanceY[36]+", 右 = "+distanceY[37]);
-//        Log.i(TAG, "faceExpressCalculator: 睫毛到眼角 左 = "+distanceY[38]+", 右 = "+distanceY[39]);
-//        Log.i(TAG, "faceExpressCalculator: 上下眼帘 左 = "+distanceY[4]+", 右 = "+distanceY[12]);
-//        Log.i(TAG, "faceExpressCalculator: 两嘴角 = "+distanceX[2]);
-//        Log.i(TAG, "faceExpressCalculator: 眉嘴角眼比 左 = "+distanceX[3]+", 右 = "+distanceX[4]);
-//        Log.i(TAG, "faceExpressCalculator: \tM = "+M+", \tN = "+N+", \tO = "+O+", \tP = "+P+", \tQ = "+Q+", \tR = "+R);
-//        Log.i(TAG, "faceExpressCalculator: \tMM = "+MM+", \tNN = "+NN+", \tOO = "+OO+", \tPP = "+PP+", \tQQ = "+QQ+", \tRR = "+RR);
         return showString;
     }
 }

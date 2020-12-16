@@ -147,6 +147,52 @@
 //高兴:变弯                                  上下嘴唇拉大距离
 //悲伤:眉毛抬高,皱变短    眼内角抬高            嘴角下拉
 
+//            if( MM >= 3.0f) {   // 张嘴，可能是开心(大笑)/大哭(悲伤)
+//                if(BB >= 1.0f) {
+//                    happy_times++;
+//                    if(happy_times >= DETECT_TIMES) {
+//                        happyMotion = true;
+//                        Log.i(TAG, "faceEC: =====================高兴=================");
+//                        happy_times = 0;
+//                        showString = "高兴";
+//                    }
+//                } else {
+//                    sad_times++;
+//                    if(sad_times >= DETECT_TIMES) {
+//                        sadMotion = true;
+//                        Log.i(TAG, "faceEC: =====================悲伤=================");
+//                        sad_times = 0;
+//                        showString = "悲伤";
+//                    }
+//                }
+//            } else {    // 没有张嘴，可能是正常(自然)/生气
+//                if(mouth_width_height_rate >= 6.0f) {
+//                    normal_times++;
+//                    if(normal_times >= DETECT_TIMES) {
+//                        normalMotion = true;
+//                        Log.i(TAG, "faceEC: =====================自然=================");
+//                        normal_times = 0;
+//                        showString = "自然";
+//                    }
+//                } else if(mouth_width_height_rate <= 2f) {
+//                    suprise_times++;
+//                    if(suprise_times >= DETECT_TIMES) {
+//                        supriseMotion = true;
+//                        Log.i(TAG, "faceEC: =====================惊讶=================");
+//                        suprise_times = 0;
+//                        showString = "惊讶";
+//                    }
+//                } else /*if((mouth_width_height_rate >= 4.0f) &&(mouth_width_height_rate < 6.0f))*/{
+//                    angry_times++;
+//                    if(angry_times >= DETECT_TIMES) {
+//                        angryMotion = true;
+//                        Log.i(TAG, "faceEC: =====================愤怒=================");
+//                        angry_times = 0;
+//                        showString = "愤怒";
+//                    }
+//                }
+//            }
+
 1、计算人脸识别框边长
 2、计算嘴巴的长度和宽度
 3、分析挑眉程度和皱眉程度
