@@ -415,9 +415,7 @@ public class MainActivity extends AppCompatActivity {
         String faceLandmarksStr = "";
         faceLandmarksStr += "\t\tLandmark count: " + landmarkList.getLandmarkCount() + "\n";
         //眉毛
-        float brow_left_width = 0f;
         float brow_left_height = 0f;
-        float brow_right_width = 0f;
         float brow_right_height = 0f;
         float brow_hight_sum = 0f;
         float brow_line_left = 0f;
@@ -427,15 +425,15 @@ public class MainActivity extends AppCompatActivity {
         float brow_left_up = 0f;
         float brow_right_up = 0f;
         //眼睛
-        float eye_left_height[] = new float[7];
+        float eye_left_height = 0f;
         float eye_left_width = 0f;
-        float eye_right_height[] = new float[7];
+        float eye_right_height = 0f;
         float eye_right_width = 0f;
         float eye_height_sum = 0f;
         //嘴巴
-        float mouth_height_out[] = new float[9];
+        float mouth_height_out = 0f;
         float mouth_width_out = 0f;
-        float mouth_height_in[] = new float[9];
+        float mouth_height_in = 0f;
         float mouth_width_in = 0f;
         float mouth_height_sum = 0f;
 
@@ -457,7 +455,6 @@ public class MainActivity extends AppCompatActivity {
 //                                + landmarkList.getLandmark(i).getZ() + ")\n";
 //            Log.i(TAG, faceLandmarksStr);
 //        }
-        // 参考DLIB
         // 1、计算人脸识别框边长
         // 注: 脸Y坐标 下 > 上, X坐标 右 > 左
         float face_width = landmarkList.getLandmark(361).getX() - landmarkList.getLandmark(132).getX();
@@ -465,8 +462,6 @@ public class MainActivity extends AppCompatActivity {
 
         //眉毛宽度
         // 注: 脸Y坐标 下 > 上, X坐标 右 > 左
-        brow_left_width = landmarkList.getLandmark(66).getX()-landmarkList.getLandmark(53).getX();
-        brow_right_width = landmarkList.getLandmark(283).getX()-landmarkList.getLandmark(296).getX();
         // 眉毛变短程度: 皱变短(恐惧、愤怒、悲伤) - Solution 1(7-3)
         brow_width = landmarkList.getLandmark(296).getX()-landmarkList.getLandmark(53).getX() +
                      landmarkList.getLandmark(334).getX()-landmarkList.getLandmark(52).getX() +
@@ -529,31 +524,19 @@ public class MainActivity extends AppCompatActivity {
 
         // 注: 眼睛Y坐标 下 > 上, X坐标 右 > 左
         //左侧上下眼睑距离
-        eye_left_height[0] = landmarkList.getLandmark(7).getY() - landmarkList.getLandmark(246).getY();
-        eye_left_height[1] = landmarkList.getLandmark(163).getY() - landmarkList.getLandmark(161).getY();
-        eye_left_height[2] = landmarkList.getLandmark(144).getY() - landmarkList.getLandmark(160).getY();
-        eye_left_height[3] = landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(159).getY();   //中心
-        eye_left_height[4] = landmarkList.getLandmark(153).getY() - landmarkList.getLandmark(158).getY();
-        eye_left_height[5] = landmarkList.getLandmark(154).getY() - landmarkList.getLandmark(157).getY();
-        eye_left_height[6] = landmarkList.getLandmark(155).getY() - landmarkList.getLandmark(173).getY();
+        eye_left_height = landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(159).getY();   //中心
 
         // 左侧眼角距离
         eye_left_width = landmarkList.getLandmark(133).getX() - landmarkList.getLandmark(33).getX();
 
         // 右侧上下眼睑距离
-        eye_right_height[0] = landmarkList.getLandmark(382).getY() - landmarkList.getLandmark(398).getY();
-        eye_right_height[1] = landmarkList.getLandmark(381).getY() - landmarkList.getLandmark(384).getY();
-        eye_right_height[2] = landmarkList.getLandmark(380).getY() - landmarkList.getLandmark(385).getY();
-        eye_right_height[3] = landmarkList.getLandmark(374).getY() - landmarkList.getLandmark(386).getY();  // 中心
-        eye_right_height[4] = landmarkList.getLandmark(373).getY() - landmarkList.getLandmark(387).getY();
-        eye_right_height[5] = landmarkList.getLandmark(390).getY() - landmarkList.getLandmark(388).getY();
-        eye_right_height[6] = landmarkList.getLandmark(249).getY() - landmarkList.getLandmark(466).getY();
+        eye_right_height = landmarkList.getLandmark(374).getY() - landmarkList.getLandmark(386).getY();  // 中心
 
         // 右侧眼角距离
         eye_right_width = landmarkList.getLandmark(263).getX() - landmarkList.getLandmark(362).getX();
 
         // 眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
-        eye_height_sum = eye_left_height[3] + eye_right_height[3];
+        eye_height_sum = eye_left_height + eye_right_height;
 
         // 两眼角距离
         float eye_width_sum = eye_left_width + eye_right_width;
@@ -564,18 +547,10 @@ public class MainActivity extends AppCompatActivity {
         mouth_width_in = landmarkList.getLandmark(308).getX() - landmarkList.getLandmark(78).getX();
 
         //上下嘴唇间距离 - 嘴巴（内）
-        mouth_height_in[0] = landmarkList.getLandmark(95).getY() - landmarkList.getLandmark(185).getY();
-        mouth_height_in[1] = landmarkList.getLandmark(88).getY() - landmarkList.getLandmark(40).getY();
-        mouth_height_in[2] = landmarkList.getLandmark(178).getY() - landmarkList.getLandmark(39).getY();
-        mouth_height_in[3] = landmarkList.getLandmark(87).getY() - landmarkList.getLandmark(37).getY();
-        mouth_height_in[4] = landmarkList.getLandmark(14).getY() - landmarkList.getLandmark(0).getY();  // 中心
-        mouth_height_in[5] = landmarkList.getLandmark(317).getY() - landmarkList.getLandmark(267).getY();
-        mouth_height_in[6] = landmarkList.getLandmark(402).getY() - landmarkList.getLandmark(269).getY();
-        mouth_height_in[7] = landmarkList.getLandmark(318).getY() - landmarkList.getLandmark(270).getY();
-        mouth_height_in[8] = landmarkList.getLandmark(324).getY() - landmarkList.getLandmark(409).getY();
+        mouth_height_in = landmarkList.getLandmark(14).getY() - landmarkList.getLandmark(0).getY();  // 中心
 
         //嘴巴睁开程度- 用于计算嘴巴的高度: 上下嘴唇拉大距离(惊奇、恐惧、愤怒、高兴) - Solution 1(7-6)
-        mouth_height_sum = mouth_height_in[4];
+        mouth_height_sum = mouth_height_in;
         // 嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
         float mouth_line_rate = ((landmarkList.getLandmark(78).getY() + landmarkList.getLandmark(308).getY()))/(landmarkList.getLandmark(14).getY() + landmarkList.getLandmark(0).getY());
 //        Log.i(TAG, "faceEC: mouth_line_rate = "+mouth_line_rate);
