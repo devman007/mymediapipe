@@ -812,6 +812,8 @@
 		57E48872FF16BFD200000000 /* profiler_resource_util_ios.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = profiler_resource_util_ios.cc; path = mediapipe/framework/profiler/profiler_resource_util_ios.cc; sourceTree = "<group>"; };
 		57E48872FF4B155900000000 /* source_location.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = source_location.h; path = mediapipe/framework/port/source_location.h; sourceTree = "<group>"; };
 		57E48872FF84466600000000 /* circular_buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = circular_buffer.h; path = mediapipe/framework/profiler/circular_buffer.h; sourceTree = "<group>"; };
+		D42A43CE258B357800D28CBE /* FaceMeshGpuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FaceMeshGpuViewController.h; path = mediapipe/examples/ios/facemeshgpu/FaceMeshGpuViewController.h; sourceTree = "<group>"; };
+		D42A43CF258B357800D28CBE /* FaceMeshGpuViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FaceMeshGpuViewController.mm; path = mediapipe/examples/ios/facemeshgpu/FaceMeshGpuViewController.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -1548,6 +1550,8 @@
 		052FFF3FC04EABC200000001 /* facemeshgpu */ = {
 			isa = PBXGroup;
 			children = (
+				D42A43CE258B357800D28CBE /* FaceMeshGpuViewController.h */,
+				D42A43CF258B357800D28CBE /* FaceMeshGpuViewController.mm */,
 				57E48872856734C400000000 /* BUILD */,
 			);
 			name = facemeshgpu;
