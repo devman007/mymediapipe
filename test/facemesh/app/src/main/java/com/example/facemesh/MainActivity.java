@@ -431,6 +431,7 @@ public class MainActivity extends AppCompatActivity {
         float eye_right_height = 0f;
         float eye_right_width = 0f;
         float eye_height = 0f;
+        float eye_width = 0f;
         //嘴巴
         float mouth_width = 0f;
         float mouth_height = 0f;
@@ -519,11 +520,11 @@ public class MainActivity extends AppCompatActivity {
         //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
         eye_height = eye_left_height + eye_right_height;
         // 两眼角距离
-        float eye_width_sum = eye_left_width + eye_right_width;
+        eye_width = eye_left_width + eye_right_width;
 
         //4、嘴巴宽高(两嘴角间距离- 用于计算嘴巴的宽度 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左 嘴巴睁开程度- 用于计算嘴巴的高度: 上下嘴唇拉大距离(惊奇、恐惧、愤怒、高兴))
         mouth_width = landmarkList.getLandmark(308).getX() - landmarkList.getLandmark(78).getX();
-        mouth_height = landmarkList.getLandmark(14).getY() - landmarkList.getLandmark(0).getY();  // 中心
+        mouth_height = landmarkList.getLandmark(17).getY() - landmarkList.getLandmark(0).getY();  // 中心
 
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
         float mouth_line_rate = ((landmarkList.getLandmark(78).getY() + landmarkList.getLandmark(308).getY()))/(landmarkList.getLandmark(14).getY() + landmarkList.getLandmark(0).getY());
@@ -545,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
         float brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
         // 眼睛睁开距离与识别框高度之比
         float eye_height_rate = eye_height/(2*face_width);
-        float eye_width_rate = eye_width_sum/(2*face_width);
+        float eye_width_rate = eye_width/(2*face_width);
         // 张开嘴巴距离与识别框高度之比
         float mouth_width_rate = mouth_width/face_width;
         float mouth_height_rate = mouth_height/face_width;
@@ -630,17 +631,17 @@ public class MainActivity extends AppCompatActivity {
         //10、抛出表情结果
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            if((mouth_width_height_rate >= 6.0f) /*&&(MM == 0f)*/) {
-                if(MM >= 2.5f) {
+            if((mouth_width_height_rate >= 2.60f) /*&&(MM == 0f)*/) {
+                if(MM >= 2.0f) {
                     setExpression_sad();
                 } else {
                     if(PP >= 11.0f) {
-//                        setExpression_angry();
-//                    } else {
+                        setExpression_angry();
+                    } else {
                         setExpression_normal();
                     }
                 }
-            } else if((mouth_width_height_rate < 4.0f) &&(MM <= 2.0f)) {
+            } else if((mouth_width_height_rate < 1.5f) &&(MM <= 2.0f)) {
                 setExpression_surprise();
             } else {
                 if((eye_width_height_rate >= 4.5f) &&(mouth_line_rate >= 1.0f)) {
@@ -673,7 +674,6 @@ public class MainActivity extends AppCompatActivity {
                               "), \tMM(" + MM +
                               "), \tN (" + brow_height_width_rate +
                               "), \tNN(" + NN +
-                              "), \tP (" + eye_width_height_rate +
                               "), \tPP(" + PP +
                               ")");
             total_log_cnt = 0;

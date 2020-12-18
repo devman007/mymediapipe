@@ -202,6 +202,7 @@ UILabel* expreLabel = nil;
         float eye_right_height = 0;
         float eye_right_width = 0;
         float eye_height = 0;
+        float eye_width = 0;
         //嘴巴
         float mouth_width = 0;
         float mouth_height = 0;
@@ -290,11 +291,11 @@ UILabel* expreLabel = nil;
         //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
         eye_height = eye_left_height + eye_right_height;
         // 两眼角距离
-        float eye_width_sum = eye_left_width + eye_right_width;
+        eye_width = eye_left_width + eye_right_width;
 
         //4、嘴巴宽高(两嘴角间距离- 用于计算嘴巴的宽度 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左 嘴巴睁开程度- 用于计算嘴巴的高度: 上下嘴唇拉大距离(惊奇、恐惧、愤怒、高兴))
         mouth_width = landmarks.landmark(308).x() - landmarks.landmark(78).x();
-        mouth_height = landmarks.landmark(14).y() - landmarks.landmark(0).y();  // 中心
+        mouth_height = landmarks.landmark(17).y() - landmarks.landmark(0).y();  // 中心
 
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
         float mouth_line_rate = ((landmarks.landmark(78).y() + landmarks.landmark(308).y()))/(landmarks.landmark(14).y() + landmarks.landmark(0).y());
@@ -316,7 +317,7 @@ UILabel* expreLabel = nil;
         float brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
         // 眼睛睁开距离与识别框高度之比
         float eye_height_rate = eye_height/(2*face_width);
-        float eye_width_rate = eye_width_sum/(2*face_width);
+        float eye_width_rate = eye_width/(2*face_width);
         // 张开嘴巴距离与识别框高度之比
         float mouth_width_rate = mouth_width/face_width;
         float mouth_height_rate = mouth_height/face_width;
@@ -401,17 +402,17 @@ UILabel* expreLabel = nil;
         //10、抛出表情结果
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            if((mouth_width_height_rate >= 6.0) /*&&(MM == 0)*/) {
-                if(MM >= 2.5f) {
+            if((mouth_width_height_rate >= 2.60) /*&&(MM == 0)*/) {
+                if(MM >= 2.0f) {
                     [self setExpression_sad];
                 } else {
                     if(PP >= 11.0) {
-//                        [self setExpression_angry];
-//                    } else {
+                        [self setExpression_angry];
+                    } else {
                         [self setExpression_normal];
                     }
                 }
-            } else if((mouth_width_height_rate < 4.0) &&(MM <= 2.0)) {
+            } else if((mouth_width_height_rate <= 1.5) &&(MM <= 2.0)) {
                 [self setExpression_surprise];
             } else {
                 if((eye_width_height_rate >= 4.5f) &&(mouth_line_rate >= 1.0)) {
@@ -435,10 +436,10 @@ UILabel* expreLabel = nil;
                   eye_width_height_rate,
                   eye_height_mouth_avg,
                   mouth_width_height_rate);
-            NSLog(@"faceEC: M(%f), \tMM(%f), \tN(%f), \tNN(%f), \tP(%f), \tPP(%f)\n",
+            NSLog(@"faceEC: M(%f), \tMM(%f), \tN(%f), \tNN(%f), \tPP(%f)\n",
                   dis_eye_mouth_rate, MM,
                   brow_height_width_rate, NN,
-                  eye_width_height_rate, PP);
+                  PP);
             total_log_cnt = 0;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
