@@ -85,11 +85,11 @@ UILabel* expreLabel = nil;
  * @param num - 保留有效数
  * @return
  */
-- (float)getAverage:(NSString*)type Arr:(NSMutableArray*)arr Num:(int)num {
-    float avg = 0, sum = 0;
+- (double)getAverage:(NSString*)type Arr:(NSMutableArray*)arr Num:(int)num {
+    double avg = 0, sum = 0;
     int len = [arr count];
     for(int i = 0; i < len; i++) {
-        float tmp = [[arr objectAtIndex:i] floatValue];
+        double tmp = [[arr objectAtIndex:i] floatValue];
         sum += tmp;
     }
     avg = sum/len;
@@ -103,7 +103,7 @@ UILabel* expreLabel = nil;
  @param numberString 数字 eg 0.125678
  @return 四舍五入之后的 eg: 0.1257
  */
-- (float)getRound:(float)val Num:(int)round {
+- (double)getRound:(double)val Num:(int)round {
     NSString* valString = [NSString stringWithFormat:@"%f", val];
     if (valString == nil) {
         return 0;
@@ -186,31 +186,31 @@ UILabel* expreLabel = nil;
 //              landmarks.landmark(i).y(), landmarks.landmark(i).z());
 //      }
         //脸宽
-        float face_width = 0;
-        float face_height = 0;
+        double face_width = 0;
+        double face_height = 0;
         //眉毛
-        float brow_left_height = 0;
-        float brow_right_height = 0;
-        float brow_hight = 0;
-        float brow_line_left = 0;
-        float brow_width = 0;
-        float brow_left_up = 0;
-        float brow_right_up = 0;
+        double brow_left_height = 0;
+        double brow_right_height = 0;
+        double brow_hight = 0;
+        double brow_line_left = 0;
+        double brow_width = 0;
+        double brow_left_up = 0;
+        double brow_right_up = 0;
         //眼睛
-        float eye_left_height = 0;
-        float eye_left_width = 0;
-        float eye_right_height = 0;
-        float eye_right_width = 0;
-        float eye_height = 0;
-        float eye_width = 0;
+        double eye_left_height = 0;
+        double eye_left_width = 0;
+        double eye_right_height = 0;
+        double eye_right_width = 0;
+        double eye_height = 0;
+        double eye_width = 0;
         //嘴巴
-        float mouth_width = 0;
-        float mouth_height = 0;
+        double mouth_width = 0;
+        double mouth_height = 0;
 
         //眼角嘴角距离
-        float distance_eye_left_mouth = 0;
-        float distance_eye_right_mouth = 0;
-        float distance_eye_mouth = 0;
+        double distance_eye_left_mouth = 0;
+        double distance_eye_right_mouth = 0;
+        double distance_eye_mouth = 0;
 
 //        for (int i = 0; i < landmarkList.getLandmarkCount(); i++) {
 //            faceLandmarksStr  += "\t\tLandmark ["
@@ -253,14 +253,14 @@ UILabel* expreLabel = nil;
                                 landmarks.landmark(296).y() - landmarks.landmark(10).y();
         brow_hight = brow_left_height + brow_right_height;
         //2.2、眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒) - Solution 1(7-1)
-        float brow_hight_rate = (brow_hight/16)/face_width;
-        float brow_width_rate = (brow_width/8)/face_width;
+        double brow_hight_rate = (brow_hight/16)/face_width;
+        double brow_width_rate = (brow_width/8)/face_width;
 //        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
-//        float line_brow_x[] = new float[3];
+//        double line_brow_x[] = new double[3];
 //        line_brow_x[0] = landmarks.landmark(52).x();
 //        line_brow_x[1] = landmarks.landmark(70).x();
 //        line_brow_x[2] = landmarks.landmark(105).x();
-//        float line_brow_y[] = new float[3];
+//        double line_brow_y[] = new double[3];
 //        line_brow_y[0] = landmarks.landmark(52).y();
 //        line_brow_y[1] = landmarks.landmark(70).y();
 //        line_brow_y[2] = landmarks.landmark(105).y();
@@ -278,7 +278,7 @@ UILabel* expreLabel = nil;
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
         brow_line_left = (landmarks.landmark(105).y() - landmarks.landmark(52).y())/(landmarks.landmark(105).x() - landmarks.landmark(52).x());
-        float brow_line_rate = brow_line_left;  // + brow_line_right;
+        double brow_line_rate = brow_line_left;  // + brow_line_right;
         brow_left_up = landmarks.landmark(70).y()-landmarks.landmark(10).y()/* + landmarks.landmark(66).y()-landmarks.landmark(10).y()*/;
         brow_right_up = landmarks.landmark(300).y()-landmarks.landmark(10).y()/* + landmarks.landmark(283).y()-landmarks.landmark(10).y()*/;
 
@@ -298,7 +298,7 @@ UILabel* expreLabel = nil;
         mouth_height = landmarks.landmark(17).y() - landmarks.landmark(0).y();  // 中心
 
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
-        float mouth_line_rate = ((landmarks.landmark(78).y() + landmarks.landmark(308).y()))/(landmarks.landmark(14).y() + landmarks.landmark(0).y());
+        double mouth_line_rate = ((landmarks.landmark(78).y() + landmarks.landmark(308).y()))/(landmarks.landmark(14).y() + landmarks.landmark(0).y());
 //        Log.i(TAG, "faceEC: mouth_line_rate = "+mouth_line_rate);
 
         //5、两侧眼角到同侧嘴角距离
@@ -307,20 +307,20 @@ UILabel* expreLabel = nil;
         distance_eye_mouth = distance_eye_left_mouth + distance_eye_right_mouth;
 
         //6、归一化
-        float MM = 0, NN = 0, PP = 0, QQ = 0;
-        float dis_eye_mouth_rate = (2 * mouth_width)/distance_eye_mouth;             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
-        float distance_brow = landmarks.landmark(296).x() - landmarks.landmark(66).x();
-        float dis_brow_mouth_rate = mouth_width/distance_brow;                       // 嘴角 / 两眉间距
-        float dis_eye_height_mouth_rate = (1 * mouth_width)/((eye_height)/2);        // 嘴角 / 上下眼睑距离
-        float dis_brow_height_mouth_rate = (2 * mouth_width)/(landmarks.landmark(145).y() - landmarks.landmark(70).y());
+        double MM = 0, NN = 0, PP = 0, QQ = 0;
+        double dis_eye_mouth_rate = (2 * mouth_width)/distance_eye_mouth;             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
+        double distance_brow = landmarks.landmark(296).x() - landmarks.landmark(66).x();
+        double dis_brow_mouth_rate = mouth_width/distance_brow;                       // 嘴角 / 两眉间距
+        double dis_eye_height_mouth_rate = (1 * mouth_width)/((eye_height)/2);        // 嘴角 / 上下眼睑距离
+        double dis_brow_height_mouth_rate = (2 * mouth_width)/(landmarks.landmark(145).y() - landmarks.landmark(70).y());
         // 眉毛上扬与识别框宽度之比
-        float brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
+        double brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
         // 眼睛睁开距离与识别框高度之比
-        float eye_height_rate = eye_height/(2*face_width);
-        float eye_width_rate = eye_width/(2*face_width);
+        double eye_height_rate = eye_height/(2*face_width);
+        double eye_width_rate = eye_width/(2*face_width);
         // 张开嘴巴距离与识别框高度之比
-        float mouth_width_rate = mouth_width/face_width;
-        float mouth_height_rate = mouth_height/face_width;
+        double mouth_width_rate = mouth_width/face_width;
+        double mouth_height_rate = mouth_height/face_width;
 //        Log.i(TAG, "faceEC: 眼角嘴 = "+dis_eye_mouth_rate+", \t眉角嘴 = "+dis_brow_mouth_rate+", \t眼高嘴 = "+dis_eye_height_mouth_rate+", \t眉高嘴 = "+dis_brow_height_mouth_rate);
 
         //7、 求连续多次的平均值
@@ -335,10 +335,10 @@ UILabel* expreLabel = nil;
         [eye_width_arr addObject:[NSNumber numberWithFloat:eye_width_rate]];
         [mouth_width_arr addObject:[NSNumber numberWithFloat:mouth_width_rate]];
         [mouth_height_arr addObject:[NSNumber numberWithFloat:mouth_height_rate]];
-        float brow_mouth_avg = 0, brow_height_mouth_avg = 0;
-        float brow_up_avg = 0, brow_width_avg = 0, brow_height_avg = 0, brow_line_avg = 0;
-        float eye_height_avg = 0, eye_width_avg = 0, eye_height_mouth_avg = 0;
-        float mouth_width_avg = 0, mouth_height_avg = 0;
+        double brow_mouth_avg = 0, brow_height_mouth_avg = 0;
+        double brow_up_avg = 0, brow_width_avg = 0, brow_height_avg = 0, brow_line_avg = 0;
+        double eye_height_avg = 0, eye_width_avg = 0, eye_height_mouth_avg = 0;
+        double mouth_width_avg = 0, mouth_height_avg = 0;
         arr_cnt++;
         if(arr_cnt >= AVG_CNT) {
             brow_mouth_avg = [self getAverage:@"眉角嘴" Arr:brow_mouth_arr Num:4];
@@ -356,22 +356,22 @@ UILabel* expreLabel = nil;
         }
 
         //8、表情算法
-        float brow_height_width_rate = brow_height_avg/brow_width_avg;
-        float eye_width_height_rate = eye_width_avg/eye_height_avg;
-        float mouth_width_height_rate = mouth_width_avg/mouth_height_avg;
+        double brow_height_width_rate = brow_height_avg/brow_width_avg;
+        double eye_width_height_rate = eye_width_avg/eye_height_avg;
+        double mouth_width_height_rate = mouth_width_avg/mouth_height_avg;
 
         if(dis_eye_mouth_rate <= 0.7) {
             MM = dis_eye_mouth_rate * 0;
         } else if((dis_eye_mouth_rate > 0.7) &&(dis_eye_mouth_rate <= 0.75)) {    // 微笑
-            MM = (float)(dis_eye_mouth_rate * 1.38);
+            MM = (double)(dis_eye_mouth_rate * 1.38);
         } else if((dis_eye_mouth_rate > 0.75) &&(dis_eye_mouth_rate <= 0.8)) {
-            MM = (float)(dis_eye_mouth_rate * 2.58);
+            MM = (double)(dis_eye_mouth_rate * 2.58);
         } else if((dis_eye_mouth_rate > 0.8) &&(dis_eye_mouth_rate <= 0.9)) {
-            MM = (float)(dis_eye_mouth_rate * 3.54);
+            MM = (double)(dis_eye_mouth_rate * 3.54);
         } else if((dis_eye_mouth_rate > 0.9) &&(dis_eye_mouth_rate <= 1.0)) {     //大笑
-            MM = (float)(dis_eye_mouth_rate * 4.22);
+            MM = (double)(dis_eye_mouth_rate * 4.22);
         } else if(dis_eye_mouth_rate > 1) {
-            MM = (float)(dis_eye_mouth_rate * 5.0);
+            MM = (double)(dis_eye_mouth_rate * 5.0);
         }
 
         if(brow_height_width_rate <= 0.365f) {
@@ -393,7 +393,7 @@ UILabel* expreLabel = nil;
         }
 
         //9、判断头部倾斜度
-        float head_line_rate = (landmarks.landmark(362).y() - landmarks.landmark(133).y())/(landmarks.landmark(362).x() - landmarks.landmark(133).x());
+        double head_line_rate = (landmarks.landmark(362).y() - landmarks.landmark(133).y())/(landmarks.landmark(362).x() - landmarks.landmark(133).x());
         if(abs(head_line_rate) >= 0.5f) {
             NSLog(@"faceEC: ============头部太偏=============");
             showString = @"头部太偏";
