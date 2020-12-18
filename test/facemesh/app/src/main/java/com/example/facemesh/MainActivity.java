@@ -654,28 +654,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             Log.i(TAG, "faceEC: 眉高(" + brow_height_avg +
-                                    "), \t眉宽(" + brow_width_avg +
-                                    "), \t眉扬("+brow_up_avg*10 +
-                                    "), \t挑眉(" + brow_line_avg +
-                                    "), \t眼睁(" + eye_height_avg +
-                                    "), \t嘴宽(" + mouth_width_avg +
-                                    "), \t嘴张(" + mouth_height_avg +
-                                    "), \t嘴角下拉(" + mouth_line_rate +
+                                "), \t眉宽(" + brow_width_avg +
+                                "), \t眉扬(" + brow_up_avg*10 +
+                                "), \t挑眉(" + brow_line_avg +
+                                "), \t眼睁(" + eye_height_avg +
+                                "), \t嘴宽(" + mouth_width_avg +
+                                "), \t嘴张(" + mouth_height_avg +
+                                "), \t嘴角下拉(" + mouth_line_rate +
                                     ")");
             Log.i(TAG, "faceEC: 眉高宽比(" + brow_height_width_rate +
-                                    "), \t眉角嘴(" + brow_mouth_avg +
-                                    "), \t眉高嘴(" + brow_height_mouth_avg +
-                                    "), \t眼宽高比(" + eye_width_height_rate +
-                                    "), \t眼高嘴(" + eye_height_mouth_avg +
-                                    "), \t嘴宽高比(" + mouth_width_height_rate +
-                                    ")");
+                                 "), \t眉角嘴(" + brow_mouth_avg +
+                                 "), \t眉高嘴(" + brow_height_mouth_avg +
+                                 "), \t眼宽高比(" + eye_width_height_rate +
+                                 "), \t眼高嘴(" + eye_height_mouth_avg +
+                                 "), \t嘴宽高比(" + mouth_width_height_rate +
+                                 ")");
             Log.i(TAG, "faceEC: M(" + dis_eye_mouth_rate +
-                                    "), \tMM(" + MM +
-                                    "), \tN (" + brow_height_width_rate +
-                                    "), \tNN(" + NN +
-                                    "), \tP (" + eye_width_height_rate +
-                                    "), \tPP(" + PP +
-                                    ")");
+                              "), \tMM(" + MM +
+                              "), \tN (" + brow_height_width_rate +
+                              "), \tNN(" + NN +
+                              "), \tP (" + eye_width_height_rate +
+                              "), \tPP(" + PP +
+                              ")");
             total_log_cnt = 0;
         }
         return showString;
