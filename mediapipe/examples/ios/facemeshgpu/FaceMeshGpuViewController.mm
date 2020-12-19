@@ -426,7 +426,7 @@ UILabel* expreLabel = nil;
                 }
             }
             NSLog(@"faceEC: 眉高(%f), \t眉宽(%f), \t眉扬(%f), \t挑眉(%f), \t眼睁(%f), \t嘴宽(%f), \t嘴张(%f), \t嘴角下拉(%f)\n",
-                  brow_height_avg, brow_width_avg, brow_up_avg*100, brow_line_avg,
+                  brow_height_avg, brow_width_avg, brow_up_avg*10, brow_line_avg,
                   eye_height_avg,
                   mouth_width_avg, mouth_height_avg, mouth_line_rate);
             NSLog(@"faceEC: 眉高宽比(%f), \t眉角嘴(%f), \t眉高嘴(%f), \t眼宽高比(%f), \t眼高嘴(%f), \t嘴宽高比(%f)\n",
