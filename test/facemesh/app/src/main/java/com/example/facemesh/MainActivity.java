@@ -512,9 +512,9 @@ public class MainActivity extends AppCompatActivity {
         brow_right_up = landmarkList.getLandmark(300).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(283).getY()-landmarkList.getLandmark(10).getY()*/;
 
         //3、眼睛高度 (注: 眼睛Y坐标 下 > 上, X坐标 右 > 左)
-        eye_left_height = landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(159).getY();   //中心
+        eye_left_height = landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(159).getY();   //中心 以后尝试修改为Y(23) - Y(27)
         eye_left_width = landmarkList.getLandmark(133).getX() - landmarkList.getLandmark(33).getX();
-        eye_right_height = landmarkList.getLandmark(374).getY() - landmarkList.getLandmark(386).getY();  // 中心
+        eye_right_height = landmarkList.getLandmark(374).getY() - landmarkList.getLandmark(386).getY();  // 中心 以后尝试修改为Y(253) - Y(257)
         eye_right_width = landmarkList.getLandmark(263).getX() - landmarkList.getLandmark(362).getX();
 
         //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
