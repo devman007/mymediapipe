@@ -27,7 +27,7 @@ static const int kNumFaces = 1;
 #define AVG_CNT 10
 #define DETECT_TIMES 2
 
-NSMutableArray* brow_up_arr;
+//NSMutableArray* brow_up_arr;
 NSMutableArray* brow_width_arr;
 NSMutableArray* brow_height_arr;
 NSMutableArray* brow_line_arr;
@@ -38,6 +38,7 @@ NSMutableArray* eye_width_arr;
 NSMutableArray* eye_height_mouth_arr;
 NSMutableArray* mouth_width_arr;
 NSMutableArray* mouth_height_arr;
+NSMutableArray* mouth_pull_down_arr;
 static int arr_cnt = 0;
 static int normal_times = 0, suprise_times = 0, sad_times = 0, happy_times = 0, angry_times = 0;
 static int total_log_cnt = 0;
@@ -56,7 +57,7 @@ UILabel* expreLabel = nil;
                                named:kNumFacesInputSidePacket];
   [self.mediapipeGraph addFrameOutputStream:kLandmarksOutputStream
                            outputPacketType:MPPPacketTypeRaw];
-    brow_up_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
+//    brow_up_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
     brow_width_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
     brow_height_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
     brow_line_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
@@ -67,6 +68,7 @@ UILabel* expreLabel = nil;
     eye_height_mouth_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
     mouth_width_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
     mouth_height_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
+    mouth_pull_down_arr = [NSMutableArray arrayWithCapacity:AVG_CNT];
     
     CGRect frame = CGRectMake(100, 50, 200, 50);
     expreLabel = [[UILabel alloc]initWithFrame:frame];
@@ -164,6 +166,43 @@ UILabel* expreLabel = nil;
     }
 }
 
+#define POINT_NUM  4  //输入线性拟和点
+typedef struct POINT  //点的结构
+{
+    double x;
+    double y;
+} POINTS;
+POINTS points[POINT_NUM];
+
+/*
+ 要求的方程为: y=ax+b。
+          N∑xy-∑x∑y
+ 其中：a= ----------------        b = y - ax
+          N∑(x^2)-(∑x)^2
+ 设：A=∑xy  B=∑x  C=∑y  D=∑(x^2)
+ 注：N为要拟合的点数量
+ 
+参数说明：
+P[POINT_NUM]：传入要线性拟合的点数据（结构体数组）
+N：线性拟合的点的数量
+K0:直线斜率参数存放地址
+b0:直线截距参数存放地址
+*/
+double getNiheLine(POINTS P[], int N/*, double *b0*/) {
+    double K = 0, b = 0, A = 0, B = 0, C = 0, D = 0;
+    for(int i = 0; i < N; i++){
+        A += P[i].x * P[i].y;
+        B += P[i].x;
+        C += P[i].y;
+        D += P[i].x * P[i].x;
+    }
+    K=(N*A-B*C)/(N*D-B*B);
+    b=C/N-K*B/N;
+//    //将计算得到的直线参数通过指针传递和返回值到函数外部
+//    *b0 = b;  暂时常数不需要外传
+    return K;
+}
+
 #pragma mark - MPPGraphDelegate methods
 
 // Receives a raw packet from the MediaPipe graph. Invoked on a MediaPipe worker thread.
@@ -194,8 +233,8 @@ UILabel* expreLabel = nil;
         double brow_hight = 0;
         double brow_line_left = 0;
         double brow_width = 0;
-        double brow_left_up = 0;
-        double brow_right_up = 0;
+//        double brow_left_up = 0;
+//        double brow_right_up = 0;
         //眼睛
         double eye_left_height = 0;
         double eye_left_width = 0;
@@ -279,8 +318,8 @@ UILabel* expreLabel = nil;
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
         brow_line_left = (landmarks.landmark(105).y() - landmarks.landmark(52).y())/(landmarks.landmark(105).x() - landmarks.landmark(52).x());
         double brow_line_rate = brow_line_left;  // + brow_line_right;
-        brow_left_up = landmarks.landmark(70).y()-landmarks.landmark(10).y()/* + landmarks.landmark(66).y()-landmarks.landmark(10).y()*/;
-        brow_right_up = landmarks.landmark(300).y()-landmarks.landmark(10).y()/* + landmarks.landmark(283).y()-landmarks.landmark(10).y()*/;
+//        brow_left_up = landmarks.landmark(70).y()-landmarks.landmark(10).y()/* + landmarks.landmark(66).y()-landmarks.landmark(10).y()*/;
+//        brow_right_up = landmarks.landmark(300).y()-landmarks.landmark(10).y()/* + landmarks.landmark(283).y()-landmarks.landmark(10).y()*/;
 
         //3、眼睛高度 (注: 眼睛Y坐标 下 > 上, X坐标 右 > 左)
         eye_left_height = landmarks.landmark(23).y() - landmarks.landmark(27).y();   //中心
@@ -299,6 +338,18 @@ UILabel* expreLabel = nil;
 
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
         double mouth_pull_down = (landmarks.landmark(14).y() - landmarks.landmark(324).y())/(landmarks.landmark(14).y() + landmarks.landmark(324).x());
+        //对嘴角进行一阶拟合，曲线斜率
+        double k, b;
+        points[0].x = landmarks.landmark(318).x();
+        points[1].x = landmarks.landmark(324).x();
+        points[2].x = landmarks.landmark(308).x();
+        points[3].x = landmarks.landmark(291).x();
+        
+        points[0].y = landmarks.landmark(318).y();
+        points[1].y = landmarks.landmark(324).y();
+        points[2].y = landmarks.landmark(308).y();
+        points[3].y = landmarks.landmark(291).y();
+        double mouth_pull_down_rate = (-10) * getNiheLine(points, 4); //调函数拟合直线
 //        Log.i(TAG, "faceEC: mouth_pull_down = "+mouth_pull_down);
 
         //5、两侧眼角到同侧嘴角距离
@@ -314,7 +365,7 @@ UILabel* expreLabel = nil;
         double dis_eye_height_mouth_rate = (1 * mouth_width)/((eye_height)/2);        // 嘴角 / 上下眼睑距离
         double dis_brow_height_mouth_rate = (2 * mouth_width)/(landmarks.landmark(145).y() - landmarks.landmark(70).y());
         // 眉毛上扬与识别框宽度之比
-        double brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
+//        double brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
         // 眼睛睁开距离与识别框高度之比
         double eye_height_rate = eye_height/(2*face_width);
         double eye_width_rate = eye_width/(2*face_width);
@@ -328,7 +379,7 @@ UILabel* expreLabel = nil;
             [brow_mouth_arr addObject:[NSNumber numberWithFloat:dis_brow_mouth_rate]];
             [brow_height_mouth_arr addObject:[NSNumber numberWithFloat:dis_brow_height_mouth_rate]];
             [eye_height_mouth_arr addObject:[NSNumber numberWithFloat:dis_eye_height_mouth_rate]];
-            [brow_up_arr addObject:[NSNumber numberWithFloat:brow_up_rate]];
+            [mouth_pull_down_arr addObject:[NSNumber numberWithFloat:mouth_pull_down_rate]];
             [brow_width_arr addObject:[NSNumber numberWithFloat:brow_width_rate]];
             [brow_height_arr addObject:[NSNumber numberWithFloat:brow_hight_rate]];
             [brow_line_arr addObject:[NSNumber numberWithFloat:brow_line_rate]];
@@ -338,14 +389,14 @@ UILabel* expreLabel = nil;
             [mouth_height_arr addObject:[NSNumber numberWithFloat:mouth_height_rate]];
         }
         double brow_mouth_avg = 0, brow_height_mouth_avg = 0;
-        double brow_up_avg = 0, brow_width_avg = 0, brow_height_avg = 0, brow_line_avg = 0;
+        double brow_width_avg = 0, brow_height_avg = 0, brow_line_avg = 0;
         double eye_height_avg = 0, eye_width_avg = 0, eye_height_mouth_avg = 0;
-        double mouth_width_avg = 0, mouth_height_avg = 0;
+        double mouth_width_avg = 0, mouth_height_avg = 0, mouth_pull_down_avg = 0;
         arr_cnt++;
         if(arr_cnt >= AVG_CNT) {
             brow_mouth_avg = [self getAverage:@"眉角嘴" Arr:brow_mouth_arr Num:4];
             brow_height_mouth_avg = [self getAverage:@"眉高嘴" Arr:brow_height_mouth_arr Num:4];
-            brow_up_avg = [self getAverage:@"眉上扬" Arr:brow_up_arr Num:4];
+            mouth_pull_down_avg = [self getAverage:@"眉上扬" Arr:mouth_pull_down_arr Num:4];
             brow_width_avg = [self getAverage:@"眉宽" Arr:brow_width_arr Num:4];
             brow_height_avg = [self getAverage:@"眉高" Arr:brow_height_arr Num:4];
             brow_line_avg = [self getAverage:@"挑眉" Arr:brow_line_arr Num:4];
@@ -361,7 +412,7 @@ UILabel* expreLabel = nil;
                 if([brow_mouth_arr count] > 0) {
                     [brow_mouth_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [brow_height_mouth_arr removeObjectAtIndex:(AVG_CNT-1-i)];
-                    [brow_up_arr removeObjectAtIndex:(AVG_CNT-1-i)];
+                    [mouth_pull_down_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [brow_width_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [brow_height_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [brow_line_arr removeObjectAtIndex:(AVG_CNT-1-i)];
@@ -425,7 +476,7 @@ UILabel* expreLabel = nil;
                 if(MM >= 7.5f) {
                     [self setExpression_sad];
                 } else {
-                    if(mouth_pull_down >= 1.0) {
+                    if(mouth_pull_down_avg >= 0.55) {
                         [self setExpression_angry];
                     } else {
                         [self setExpression_normal];
@@ -435,7 +486,7 @@ UILabel* expreLabel = nil;
                 [self setExpression_surprise];
             } else {    //张嘴：高兴、气愤、悲伤
                 if(eye_width_height_rate >= 3.0) {
-                    if((MM >= 7.0) &&(mouth_pull_down < 1.0)) {
+                    if((MM >= 7.0) &&(mouth_pull_down_avg < 1.0)) {
                         [self setExpression_happy];
                     } else {
                         [self setExpression_angry];
@@ -444,19 +495,18 @@ UILabel* expreLabel = nil;
                     [self setExpression_sad];
                 }
             }
-            NSLog(@"faceEC: 眉高(%f), \t眉宽(%f), \t眉扬(%f), \t挑眉(%f), \t眼睁(%f), \t嘴宽(%f), \t嘴张(%f), \t嘴角下拉(%f)\n",
-                  brow_height_avg, brow_width_avg, brow_up_avg*10, brow_line_avg,
-                  eye_height_avg,
-                  mouth_width_avg, mouth_height_avg, mouth_pull_down);
-            NSLog(@"faceEC: 眉高宽比(%f), \t眉角嘴(%f), \t眉高嘴(%f), \t眼宽高比(%f), \t眼高嘴(%f), \t嘴宽高比(%f)\n",
+            NSLog(@"faceEC: 挑眉(%f), \t嘴角下拉(%f), \tM(%f), \tMM(%f)\n",
+                  brow_line_avg,
+                  mouth_pull_down_avg,
+                  dis_eye_mouth_rate,
+                  MM);
+            NSLog(@"faceEC: 眉高宽比(%f), \t眼宽高比(%f), \t嘴宽高比(%f), \t眉角嘴(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
                   brow_height_width_rate,
+                  eye_width_height_rate,
+                  mouth_width_height_rate,
                   brow_mouth_avg,
                   brow_height_mouth_avg,
-                  eye_width_height_rate,
-                  eye_height_mouth_avg,
-                  mouth_width_height_rate);
-            NSLog(@"faceEC: M(%f), \tMM(%f)\n",
-                  dis_eye_mouth_rate, MM);
+                  eye_height_mouth_avg);
             total_log_cnt = 0;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
