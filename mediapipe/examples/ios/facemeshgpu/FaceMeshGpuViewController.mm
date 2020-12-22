@@ -476,17 +476,17 @@ double getNiheLine(POINTS P[], int N/*, double *b0*/) {
                 if(MM >= 7.5f) {
                     [self setExpression_sad];
                 } else {
-                    if(mouth_pull_down_avg >= 0.55) {
+                    if(mouth_pull_down_avg >= 1.0) {
                         [self setExpression_angry];
                     } else {
                         [self setExpression_normal];
                     }
                 }
-            } else if((mouth_width_height_rate < 3.5) &&(MM <= 6.10)) { //张嘴：惊讶
+            } else if((mouth_width_height_rate < 3.5) &&(MM <= 7.10)) { //张嘴：惊讶
                 [self setExpression_surprise];
             } else {    //张嘴：高兴、气愤、悲伤
-                if(eye_width_height_rate >= 3.0) {
-                    if((MM >= 7.0) &&(mouth_pull_down_avg < 1.0)) {
+                if(eye_width_height_rate >= 2.0) {
+                    if((MM >= 7.0) &&(mouth_pull_down_avg > 2.5)) {
                         [self setExpression_happy];
                     } else {
                         [self setExpression_angry];
