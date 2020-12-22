@@ -196,8 +196,8 @@ double getNiheLine(POINTS P[], int N/*, double *b0*/) {
         C += P[i].y;
         D += P[i].x * P[i].x;
     }
-    K=(N*A-B*C)/(N*D-B*B);
-    b=C/N-K*B/N;
+    K = (N*A-B*C)/(N*D-B*B);
+    b = C/N-K*B/N;
 //    //将计算得到的直线参数通过指针传递和返回值到函数外部
 //    *b0 = b;  暂时常数不需要外传
     return K;
