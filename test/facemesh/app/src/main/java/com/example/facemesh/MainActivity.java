@@ -365,25 +365,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static final int POINT_NUM = 4;  //输入线性拟和点
-    /*
-     要求的方程为: y=ax+b。
-              N∑xy-∑x∑y
-     其中：a = ----------------
-              N∑(x^2)-(∑x)^2
-
-                 b=y-ax
-              ∑y∑(x^2)-∑x∑xy
-          b = ---------------
-              N∑(x^2)-(∑x)^2
-     设：A=∑xy  B=∑x  C=∑y  D=∑(x^2)
-     注：N为要拟合的点数量
-
-    参数说明：
-    P[POINT_NUM]：传入要线性拟合的点数据（结构体数组）
-    N：线性拟合的点的数量
-    b0:直线截距参数存放地址
-    返回值：曲线斜率, 自左向右 >0(上扬), <0(下拉)
-    */
+    /**
+     *
+     *    要求的方程为: y=ax+b。
+     *               N∑xy-∑x∑y
+     *    其中：a = ----------------       //曲线斜率
+     *               N∑(x^2)-(∑x)^2
+     *
+     *                  b=y-ax
+     *               ∑y∑(x^2)-∑x∑xy
+     *         b = ---------------        //曲线截距
+     *               N∑(x^2)-(∑x)^2
+     *    设：A=∑xy  B=∑x  C=∑y  D=∑(x^2)
+     *    注：N为要拟合的点数量
+     *
+     * 参数说明：
+     * @param pX - 传入要线性拟合的点数据X
+     * @param pY - 传入要线性拟合的点数据Y
+     * @param N  - 线性拟合的点的数量
+     * @return   - 曲线斜率, 自左向右 >0(上扬), <0(下拉)
+     */
     private static double getCurveFit(double pX[], double pY[], int N) {
         double ret = 0, b = 0, A = 0, B = 0, C = 0, D = 0;
 //        WeightedObservedPoints points = new WeightedObservedPoints();
