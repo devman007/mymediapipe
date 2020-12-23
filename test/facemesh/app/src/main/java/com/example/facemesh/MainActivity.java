@@ -26,9 +26,6 @@ import com.google.mediapipe.framework.Packet;
 import com.google.mediapipe.framework.PacketGetter;
 import com.google.mediapipe.glutil.EglManager;
 
-import org.apache.commons.math3.fitting.PolynomialCurveFitter;
-import org.apache.commons.math3.fitting.WeightedObservedPoints;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -367,15 +364,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static double getNiheLine(double pX[], double pY[]) {
-        double ret = 0;
-        WeightedObservedPoints points = new WeightedObservedPoints();
-        for(int i = 0; i < pX.length; i++) {
-            points.add(pX[i], pY[i]);
+    private static final int POINT_NUM = 4;  //输入线性拟和点
+    /*
+     要求的方程为: y=ax+b。
+              N∑xy-∑x∑y
+     其中：a = ----------------
+              N∑(x^2)-(∑x)^2
+
+                 b=y-ax
+              ∑y∑(x^2)-∑x∑xy
+          b = ---------------
+              N∑(x^2)-(∑x)^2
+     设：A=∑xy  B=∑x  C=∑y  D=∑(x^2)
+     注：N为要拟合的点数量
+
+    参数说明：
+    P[POINT_NUM]：传入要线性拟合的点数据（结构体数组）
+    N：线性拟合的点的数量
+    b0:直线截距参数存放地址
+    返回值：曲线斜率, 自左向右 >0(上扬), <0(下拉)
+    */
+    private static double getCurveFit(double pX[], double pY[], int N) {
+        double ret = 0, b = 0, A = 0, B = 0, C = 0, D = 0;
+//        WeightedObservedPoints points = new WeightedObservedPoints();
+//        for(int i = 0; i < pX.length; i++) {
+//            points.add(pX[i], pY[i]);
+//        }
+//        PolynomialCurveFitter fitter = PolynomialCurveFitter.create(1); //指定为1阶数
+//        double[] result = fitter.fit(points.toList());
+//        ret = result[1]*(-10);  //0 - 常数项，1 - 为一次项，拟合出曲线的斜率和实际眉毛的倾斜方向是相反
+        for(int i = 0; i < N; i++){
+            A += pX[i] * pY[i];
+            B += pX[i];
+            C += pY[i];
+            D += pX[i] * pX[i];
         }
-        PolynomialCurveFitter fitter = PolynomialCurveFitter.create(1); //指定为1阶数
-        double[] result = fitter.fit(points.toList());
-        ret = result[1]*(-10);  //0 - 常数项，1 - 为一次项，拟合出曲线的斜率和实际眉毛的倾斜方向是相反
+        ret = (N*A-B*C)/(N*D-B*B);
+//        b = C/N-ret*B/N;
         return ret;
     }
 
@@ -498,28 +523,20 @@ public class MainActivity extends AppCompatActivity {
         double brow_hight_rate = (brow_hight/16)/face_width;
         double brow_width_rate = (brow_width/8)/face_width;
 //        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
-//        double line_brow_x[] = new double[3];
-//        line_brow_x[0] = landmarkList.getLandmark(52).getX();
-//        line_brow_x[1] = landmarkList.getLandmark(70).getX();
-//        line_brow_x[2] = landmarkList.getLandmark(105).getX();
-//        double line_brow_y[] = new double[3];
-//        line_brow_y[0] = landmarkList.getLandmark(52).getY();
-//        line_brow_y[1] = landmarkList.getLandmark(70).getY();
-//        line_brow_y[2] = landmarkList.getLandmark(105).getY();
-//        WeightedObservedPoints points = new WeightedObservedPoints();
-//        for(int i = 0; i < line_brow_x.length; i++) {
-//            points.add(line_brow_x[i], line_brow_y[i]);
-//        }
-//        PolynomialCurveFitter fitter = PolynomialCurveFitter.create(1); //指定为1阶数
-//        double[] result = fitter.fit(points.toList());
-//        if(result[1]*(-10) < 1.0f) { //倒八眉
-//
-//        } else {                     //八字眉 或平眉
-//
-//        }
+        double brow_line_points_x[] = new double[POINT_NUM];
+        brow_line_points_x[0] = (landmarkList.getLandmark(52).getX());
+        brow_line_points_x[1] = (landmarkList.getLandmark(70).getX());
+        brow_line_points_x[2] = (landmarkList.getLandmark(105).getX());
+        brow_line_points_x[3] = (landmarkList.getLandmark(107).getX());
+        double brow_line_points_y[] = new double[POINT_NUM];
+        brow_line_points_y[0] = (landmarkList.getLandmark(52).getY());
+        brow_line_points_y[1] = (landmarkList.getLandmark(70).getY());
+        brow_line_points_y[2] = (landmarkList.getLandmark(105).getY());
+        brow_line_points_y[3] = (landmarkList.getLandmark(107).getY());
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
-        brow_line_left = (landmarkList.getLandmark(105).getY() - landmarkList.getLandmark(52).getY())/(landmarkList.getLandmark(105).getX() - landmarkList.getLandmark(52).getX());
+//        brow_line_left = (landmarkList.getLandmark(105).getY() - landmarkList.getLandmark(52).getY())/(landmarkList.getLandmark(105).getX() - landmarkList.getLandmark(52).getX());
+        brow_line_left = (-10) * getCurveFit(brow_line_points_x, brow_line_points_y, POINT_NUM); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
 //        brow_left_up = landmarkList.getLandmark(70).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(66).getY()-landmarkList.getLandmark(10).getY()*/;
 //        brow_right_up = landmarkList.getLandmark(300).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(283).getY()-landmarkList.getLandmark(10).getY()*/;
@@ -543,17 +560,17 @@ public class MainActivity extends AppCompatActivity {
         double mouth_line_rate = ((landmarkList.getLandmark(78).getY() + landmarkList.getLandmark(308).getY()))/(landmarkList.getLandmark(14).getY() + landmarkList.getLandmark(0).getY());
 //        Log.i(TAG, "faceEC: mouth_line_rate = "+mouth_line_rate);
         //对嘴角进行一阶拟合，曲线斜率
-        double line_brow_x[] = new double[4];
-        line_brow_x[0] = landmarkList.getLandmark(318).getX();
-        line_brow_x[1] = landmarkList.getLandmark(324).getX();
-        line_brow_x[2] = landmarkList.getLandmark(308).getX();
-        line_brow_x[3] = landmarkList.getLandmark(291).getX();
-        double line_brow_y[] = new double[4];
-        line_brow_y[0] = landmarkList.getLandmark(318).getY();
-        line_brow_y[1] = landmarkList.getLandmark(324).getY();
-        line_brow_y[2] = landmarkList.getLandmark(308).getY();
-        line_brow_y[3] = landmarkList.getLandmark(291).getY();
-        double mouth_pull_down = getNiheLine(line_brow_x, line_brow_y);
+        double lips_line_points_x[] = new double[POINT_NUM];
+        lips_line_points_x[0] = (landmarkList.getLandmark(318).getX());
+        lips_line_points_x[1] = (landmarkList.getLandmark(324).getX());
+        lips_line_points_x[2] = (landmarkList.getLandmark(308).getX());
+        lips_line_points_x[3] = (landmarkList.getLandmark(291).getX());
+        double lips_line_points_y[] = new double[POINT_NUM];
+        lips_line_points_y[0] = (landmarkList.getLandmark(318).getY());
+        lips_line_points_y[1] = (landmarkList.getLandmark(324).getY());
+        lips_line_points_y[2] = (landmarkList.getLandmark(308).getY());
+        lips_line_points_y[3] = (landmarkList.getLandmark(291).getY());
+        double mouth_pull_down = (-10) * getCurveFit(lips_line_points_x, lips_line_points_y, POINT_NUM);
 //        Log.i(TAG, "faceEC: mouth_pull_down = "+mouth_pull_down);
 
         //5、两侧眼角到同侧嘴角距离

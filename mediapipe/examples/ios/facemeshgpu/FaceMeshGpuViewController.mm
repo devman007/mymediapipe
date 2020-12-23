@@ -172,8 +172,6 @@ typedef struct POINT  //点的结构
     double x;
     double y;
 } POINTS;
-POINTS lips_line_points[POINT_NUM];
-POINTS brow_line_points[POINT_NUM];
 
 /*
  要求的方程为: y=ax+b。
@@ -203,7 +201,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         D += P[i].x * P[i].x;
     }
     K = (N*A-B*C)/(N*D-B*B);
-    b = C/N-K*B/N;
+//    b = C/N-K*B/N;
 //    //将计算得到的直线参数通过指针传递和返回值到函数外部
 //    *b0 = b;  暂时常数不需要外传
     return K;
@@ -301,6 +299,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         double brow_hight_rate = (brow_hight/16)/face_width;
         double brow_width_rate = (brow_width/8)/face_width;
 //        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
+        POINTS brow_line_points[POINT_NUM];
         brow_line_points[0].x = landmarks.landmark(55).x();
         brow_line_points[1].x = landmarks.landmark(70).x();
         brow_line_points[2].x = landmarks.landmark(105).x();
@@ -313,7 +312,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
 //        brow_line_left = (landmarks.landmark(105).y() - landmarks.landmark(52).y())/(landmarks.landmark(105).x() - landmarks.landmark(52).x());
-        brow_line_left = (-10) * getCurveFit(brow_line_points, 4); //调函数拟合直线
+        brow_line_left = (-10) * getCurveFit(brow_line_points, POINT_NUM); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
 //        brow_left_up = landmarks.landmark(70).y()-landmarks.landmark(10).y()/* + landmarks.landmark(66).y()-landmarks.landmark(10).y()*/;
 //        brow_right_up = landmarks.landmark(300).y()-landmarks.landmark(10).y()/* + landmarks.landmark(283).y()-landmarks.landmark(10).y()*/;
@@ -336,6 +335,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
         double mouth_pull_down = (landmarks.landmark(14).y() - landmarks.landmark(324).y())/(landmarks.landmark(14).y() + landmarks.landmark(324).x());
         //对嘴角进行一阶拟合，曲线斜率
+        POINTS lips_line_points[POINT_NUM];
         lips_line_points[0].x = landmarks.landmark(318).x();
         lips_line_points[1].x = landmarks.landmark(324).x();
         lips_line_points[2].x = landmarks.landmark(308).x();
@@ -345,7 +345,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         lips_line_points[1].y = landmarks.landmark(324).y();
         lips_line_points[2].y = landmarks.landmark(308).y();
         lips_line_points[3].y = landmarks.landmark(291).y();
-        double mouth_pull_down_rate = (-10) * getCurveFit(lips_line_points, 4); //调函数拟合直线
+        double mouth_pull_down_rate = (-10) * getCurveFit(lips_line_points, POINT_NUM); //调函数拟合直线
 //        Log.i(TAG, "faceEC: mouth_pull_down = "+mouth_pull_down);
 
         //5、两侧眼角到同侧嘴角距离
