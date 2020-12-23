@@ -677,7 +677,7 @@ public class MainActivity extends AppCompatActivity {
         //10、抛出表情结果
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            if((mouth_width_height_rate >= 2.60f) /*&&(MM == 0f)*/) {
+            if((mouth_width_height_rate >= 2.60f) /*&&(MM == 0f)*/) {   //没有张嘴：正常、伤心、气愤
                 if(mouth_pull_down_avg >= 2.0f){
                     setExpression_sad();
                 } else if(mouth_pull_down_avg <= 1.0) {
@@ -685,9 +685,9 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     setExpression_angry();
                 }
-            } else if((mouth_width_height_rate < 1.5f) &&(MM <= 2.0f)) {
+            } else if((mouth_width_height_rate < 1.5f) &&(MM <= 2.0f)) {    //张嘴：惊讶
                 setExpression_surprise();
-            } else {
+            } else {    //张嘴：高兴、气愤、悲伤
                 if((eye_width_height_rate >= 4.5f) &&(mouth_pull_down_avg >= 1.0f)) {
                     setExpression_sad();
                 } else {
