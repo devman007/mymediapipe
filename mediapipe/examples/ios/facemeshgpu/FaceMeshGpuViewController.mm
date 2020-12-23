@@ -192,7 +192,7 @@ POINTS brow_line_points[POINT_NUM];
 P[POINT_NUM]：传入要线性拟合的点数据（结构体数组）
 N：线性拟合的点的数量
 b0:直线截距参数存放地址
-返回值：曲线斜率
+返回值：曲线斜率, 自左向右 >0(上扬), <0(下拉)
 */
 double getCurveFit(POINTS P[], int N/*, double *b0*/) {
     double K = 0, b = 0, A = 0, B = 0, C = 0, D = 0;
