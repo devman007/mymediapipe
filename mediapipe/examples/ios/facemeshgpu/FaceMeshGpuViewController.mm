@@ -172,12 +172,18 @@ typedef struct POINT  //点的结构
     double x;
     double y;
 } POINTS;
-POINTS points[POINT_NUM];
+POINTS lips_line_points[POINT_NUM];
+POINTS brow_line_points[POINT_NUM];
 
 /*
  要求的方程为: y=ax+b。
           N∑xy-∑x∑y
- 其中：a= ----------------        b = y - ax
+ 其中：a = ----------------
+          N∑(x^2)-(∑x)^2
+      
+             b=y-ax
+           ∑y∑(x^2)-∑x∑xy
+      b = ---------------
           N∑(x^2)-(∑x)^2
  设：A=∑xy  B=∑x  C=∑y  D=∑(x^2)
  注：N为要拟合的点数量
@@ -185,10 +191,10 @@ POINTS points[POINT_NUM];
 参数说明：
 P[POINT_NUM]：传入要线性拟合的点数据（结构体数组）
 N：线性拟合的点的数量
-K0:直线斜率参数存放地址
 b0:直线截距参数存放地址
+返回值：曲线斜率
 */
-double getNiheLine(POINTS P[], int N/*, double *b0*/) {
+double getCurveFit(POINTS P[], int N/*, double *b0*/) {
     double K = 0, b = 0, A = 0, B = 0, C = 0, D = 0;
     for(int i = 0; i < N; i++){
         A += P[i].x * P[i].y;
@@ -295,28 +301,19 @@ double getNiheLine(POINTS P[], int N/*, double *b0*/) {
         double brow_hight_rate = (brow_hight/16)/face_width;
         double brow_width_rate = (brow_width/8)/face_width;
 //        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
-//        double line_brow_x[] = new double[3];
-//        line_brow_x[0] = landmarks.landmark(52).x();
-//        line_brow_x[1] = landmarks.landmark(70).x();
-//        line_brow_x[2] = landmarks.landmark(105).x();
-//        double line_brow_y[] = new double[3];
-//        line_brow_y[0] = landmarks.landmark(52).y();
-//        line_brow_y[1] = landmarks.landmark(70).y();
-//        line_brow_y[2] = landmarks.landmark(105).y();
-//        WeightedObservedPoints points = new WeightedObservedPoints();
-//        for(int i = 0; i < line_brow_x.length; i++) {
-//            points.add(line_brow_x[i], line_brow_y[i]);
-//        }
-//        PolynomialCurveFitter fitter = PolynomialCurveFitter.create(1); //指定为1阶数
-//        double[] result = fitter.fit(points.toList());
-//        if(result[1]*(-10) < 1.0) { //倒八眉
-//
-//        } else {                     //八字眉 或平眉
-//
-//        }
+        brow_line_points[0].x = landmarks.landmark(55).x();
+        brow_line_points[1].x = landmarks.landmark(70).x();
+        brow_line_points[2].x = landmarks.landmark(105).x();
+        brow_line_points[3].x = landmarks.landmark(107).x();
+        
+        brow_line_points[0].y = landmarks.landmark(55).y();
+        brow_line_points[1].y = landmarks.landmark(70).y();
+        brow_line_points[2].y = landmarks.landmark(105).y();
+        brow_line_points[3].y = landmarks.landmark(107).y();
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
-        brow_line_left = (landmarks.landmark(105).y() - landmarks.landmark(52).y())/(landmarks.landmark(105).x() - landmarks.landmark(52).x());
+//        brow_line_left = (landmarks.landmark(105).y() - landmarks.landmark(52).y())/(landmarks.landmark(105).x() - landmarks.landmark(52).x());
+        brow_line_left = (-10) * getCurveFit(brow_line_points, 4); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
 //        brow_left_up = landmarks.landmark(70).y()-landmarks.landmark(10).y()/* + landmarks.landmark(66).y()-landmarks.landmark(10).y()*/;
 //        brow_right_up = landmarks.landmark(300).y()-landmarks.landmark(10).y()/* + landmarks.landmark(283).y()-landmarks.landmark(10).y()*/;
@@ -339,17 +336,16 @@ double getNiheLine(POINTS P[], int N/*, double *b0*/) {
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
         double mouth_pull_down = (landmarks.landmark(14).y() - landmarks.landmark(324).y())/(landmarks.landmark(14).y() + landmarks.landmark(324).x());
         //对嘴角进行一阶拟合，曲线斜率
-        double k, b;
-        points[0].x = landmarks.landmark(318).x();
-        points[1].x = landmarks.landmark(324).x();
-        points[2].x = landmarks.landmark(308).x();
-        points[3].x = landmarks.landmark(291).x();
+        lips_line_points[0].x = landmarks.landmark(318).x();
+        lips_line_points[1].x = landmarks.landmark(324).x();
+        lips_line_points[2].x = landmarks.landmark(308).x();
+        lips_line_points[3].x = landmarks.landmark(291).x();
         
-        points[0].y = landmarks.landmark(318).y();
-        points[1].y = landmarks.landmark(324).y();
-        points[2].y = landmarks.landmark(308).y();
-        points[3].y = landmarks.landmark(291).y();
-        double mouth_pull_down_rate = (-10) * getNiheLine(points, 4); //调函数拟合直线
+        lips_line_points[0].y = landmarks.landmark(318).y();
+        lips_line_points[1].y = landmarks.landmark(324).y();
+        lips_line_points[2].y = landmarks.landmark(308).y();
+        lips_line_points[3].y = landmarks.landmark(291).y();
+        double mouth_pull_down_rate = (-10) * getCurveFit(lips_line_points, 4); //调函数拟合直线
 //        Log.i(TAG, "faceEC: mouth_pull_down = "+mouth_pull_down);
 
         //5、两侧眼角到同侧嘴角距离
@@ -500,11 +496,10 @@ double getNiheLine(POINTS P[], int N/*, double *b0*/) {
                   mouth_pull_down_avg,
                   dis_eye_mouth_rate,
                   MM);
-            NSLog(@"faceEC: 眉高宽比(%f), \t眼宽高比(%f), \t嘴宽高比(%f), \t眉角嘴(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
+            NSLog(@"faceEC: 眉高宽比(%f), \t眼宽高比(%f), \t嘴宽高比(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
                   brow_height_width_rate,
                   eye_width_height_rate,
                   mouth_width_height_rate,
-                  brow_mouth_avg,
                   brow_height_mouth_avg,
                   eye_height_mouth_avg);
             total_log_cnt = 0;
