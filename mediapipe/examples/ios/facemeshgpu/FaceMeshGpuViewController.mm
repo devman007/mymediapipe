@@ -472,7 +472,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
                 if(MM >= 7.5f) {
                     [self setExpression_sad];
                 } else {
-                    if(mouth_pull_down_avg >= 1.0) {
+                    if(mouth_pull_down_avg >= 0.90) {   //brow_line_avg*(-10) >= 3.5
                         [self setExpression_angry];
                     } else {
                         [self setExpression_normal];
