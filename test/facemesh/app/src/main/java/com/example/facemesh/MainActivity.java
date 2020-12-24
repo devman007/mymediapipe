@@ -638,15 +638,15 @@ public class MainActivity extends AppCompatActivity {
         if(dis_eye_mouth_rate <= 0.7) {
             MM = dis_eye_mouth_rate * 0;
         } else if((dis_eye_mouth_rate > 0.7) &&(dis_eye_mouth_rate <= 0.75)) {    // 微笑
-            MM = (double)(dis_eye_mouth_rate * 1.38);
+            MM = (dis_eye_mouth_rate * 1.38);
         } else if((dis_eye_mouth_rate > 0.75) &&(dis_eye_mouth_rate <= 0.8)) {
-            MM = (double)(dis_eye_mouth_rate * 2.58);
+            MM = (dis_eye_mouth_rate * 2.58);
         } else if((dis_eye_mouth_rate > 0.8) &&(dis_eye_mouth_rate <= 0.9)) {
-            MM = (double)(dis_eye_mouth_rate * 3.54);
+            MM = (dis_eye_mouth_rate * 3.54);
         } else if((dis_eye_mouth_rate > 0.9) &&(dis_eye_mouth_rate <= 1.0)) {     //大笑
-            MM = (double)(dis_eye_mouth_rate * 4.22);
+            MM = (dis_eye_mouth_rate * 4.22);
         } else if(dis_eye_mouth_rate > 1) {
-            MM = (double)(dis_eye_mouth_rate * 5.0);
+            MM = (dis_eye_mouth_rate * 5.0);
         }
 
         if(brow_height_width_rate <= 0.365f) {
