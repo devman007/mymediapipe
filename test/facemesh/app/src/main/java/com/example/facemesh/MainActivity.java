@@ -632,8 +632,8 @@ public class MainActivity extends AppCompatActivity {
 
         //8、表情算法
         double brow_height_width_rate = brow_height_avg/brow_width_avg;
-        double eye_width_height_rate = eye_width_avg/eye_height_avg;
-        double mouth_width_height_rate = mouth_width_avg/mouth_height_avg;
+        double eye_height_width_rate = eye_height_avg/eye_width_avg;
+        double mouth_height_width_rate = mouth_height_avg/mouth_width_avg;
 
         if(dis_eye_mouth_rate <= 0.7) {
             MM = dis_eye_mouth_rate * 0;
@@ -659,12 +659,12 @@ public class MainActivity extends AppCompatActivity {
             NN = (brow_height_width_rate * 5);
         }
 
-        if(eye_width_height_rate <= 3.10f) {
-            PP = (eye_width_height_rate * 0f);
-        } else if((eye_width_height_rate > 3.10f ) &&(eye_width_height_rate <= 4.10f)){
-            PP = (eye_width_height_rate * 3.58f);
+        if(eye_height_width_rate >= 0.323) {
+            PP = (eye_height_width_rate * 4.58f);
+        } else if((eye_height_width_rate < 0.323 ) &&(eye_height_width_rate >= 0.244)){
+            PP = (eye_height_width_rate * 3.58f);
         } else {
-            PP = (eye_width_height_rate * 4.58f);
+            PP = (eye_height_width_rate * 0f);
         }
 
         //9、判断头部倾斜度
@@ -677,7 +677,7 @@ public class MainActivity extends AppCompatActivity {
         //10、抛出表情结果
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            if((mouth_width_height_rate >= 2.60f) /*&&(MM == 0f)*/) {   //没有张嘴：正常、伤心、气愤
+            if(mouth_height_width_rate <= 0.385) {   //没有张嘴：正常、伤心、气愤
                 if(mouth_pull_down_avg >= 2.0f){
                     setExpression_sad();
                 } else if(mouth_pull_down_avg <= 1.0) {
@@ -685,16 +685,18 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     setExpression_angry();
                 }
-            } else if((mouth_width_height_rate < 1.5f) &&(MM <= 2.0f)) {    //张嘴：惊讶
-                setExpression_surprise();
-            } else {    //张嘴：高兴、气愤、悲伤
-                if((eye_width_height_rate >= 4.5f) &&(mouth_pull_down_avg >= 1.0f)) {
-                    setExpression_sad();
+            } else {    //张嘴：高兴、气愤、悲伤、惊讶
+                if((mouth_height_width_rate > 0.667) &&(MM <= 2.0f)) {
+                    setExpression_surprise();
                 } else {
-                    if((MM >= 3.0f) &&((dis_brow_height_mouth_rate >= 4.0f)||(eye_width_height_rate >= 6.0f))){
-                        setExpression_happy();
-                    } else if(MM < 2.0f) {
-                        setExpression_angry();
+                    if ((eye_height_width_rate <= 0.222) && (mouth_pull_down_avg >= 1.0f)) {
+                        setExpression_sad();
+                    } else {
+                        if ((MM >= 3.0f) && ((dis_brow_height_mouth_rate >= 4.0f) || (eye_height_width_rate >= 0.167))) {
+                            setExpression_happy();
+                        } else if (MM < 2.0f) {
+                            setExpression_angry();
+                        }
                     }
                 }
             }
@@ -709,9 +711,9 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "faceEC: 眉高宽比(" + brow_height_width_rate +
                                  "), \t眉角嘴(" + brow_mouth_avg +
                                  "), \t眉高嘴(" + brow_height_mouth_avg +
-                                 "), \t眼宽高比(" + eye_width_height_rate +
+                                 "), \t眼宽高比(" + eye_height_width_rate +
                                  "), \t眼高嘴(" + eye_height_mouth_avg +
-                                 "), \t嘴宽高比(" + mouth_width_height_rate +
+                                 "), \t嘴宽高比(" + mouth_height_width_rate +
                                  ")");
             Log.i(TAG, "faceEC: M(" + dis_eye_mouth_rate +
                               "), \tMM(" + MM +

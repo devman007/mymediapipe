@@ -423,8 +423,8 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
 
         //8、表情算法
         double brow_height_width_rate = brow_height_avg/brow_width_avg;
-        double eye_width_height_rate = eye_width_avg/eye_height_avg;
-        double mouth_width_height_rate = mouth_width_avg/mouth_height_avg;
+        double eye_height_width_rate = eye_height_avg/eye_width_avg;
+        double mouth_height_width_rate = mouth_height_avg/mouth_width_avg;
 
         if(dis_eye_mouth_rate <= 0.7) {
             MM = dis_eye_mouth_rate * 0;
@@ -450,12 +450,12 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
             NN = (brow_height_width_rate * 5);
         }
 
-        if(eye_width_height_rate <= 3.10f) {
-            PP = (eye_width_height_rate * 0);
-        } else if((eye_width_height_rate > 3.10f ) &&(eye_width_height_rate <= 3.50f)){
-            PP = (eye_width_height_rate * 3.58f);
+        if(eye_height_width_rate >= 0.323) {
+            PP = (eye_height_width_rate * 4.58f);
+        } else if((eye_height_width_rate < 0.323 ) &&(eye_height_width_rate >= 0.286)){
+            PP = (eye_height_width_rate * 3.58f);
         } else {
-            PP = (eye_width_height_rate * 4.58f);
+            PP = (eye_height_width_rate * 0);
         }
 
         //9、判断头部倾斜度
@@ -468,7 +468,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         //10、抛出表情结果
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            if((mouth_width_height_rate >= 4.00)) { //没有张嘴：正常、伤心、气愤
+            if((mouth_height_width_rate <= 0.25)) { //没有张嘴：正常、伤心、气愤
                 if(MM >= 7.5f) {
                     [self setExpression_sad];
                 } else {
@@ -478,17 +478,19 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
                         [self setExpression_normal];
                     }
                 }
-            } else if((mouth_width_height_rate < 3.5) &&(MM <= 7.10)) { //张嘴：惊讶
-                [self setExpression_surprise];
-            } else {    //张嘴：高兴、气愤、悲伤
-                if(eye_width_height_rate >= 2.0) {
-                    if((MM >= 7.0) &&(mouth_pull_down_avg > 2.5)) {
-                        [self setExpression_happy];
-                    } else {
-                        [self setExpression_angry];
-                    }
+            } else {    //张嘴：高兴、气愤、悲伤、惊讶
+                if((mouth_height_width_rate > 0.286) &&(MM <= 7.10)) {
+                    [self setExpression_surprise];
                 } else {
-                    [self setExpression_sad];
+                    if(eye_height_width_rate <= 0.5) {
+                        if((MM >= 7.0) &&(mouth_pull_down_avg > 2.5)) {
+                            [self setExpression_happy];
+                        } else {
+                            [self setExpression_angry];
+                        }
+                    } else {
+                        [self setExpression_sad];
+                    }
                 }
             }
             NSLog(@"faceEC: 挑眉(%f), \t嘴角下拉(%f), \tM(%f), \tMM(%f)\n",
@@ -498,8 +500,8 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
                   MM);
             NSLog(@"faceEC: 眉高宽比(%f), \t眼宽高比(%f), \t嘴宽高比(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
                   brow_height_width_rate,
-                  eye_width_height_rate,
-                  mouth_width_height_rate,
+                  eye_height_width_rate,
+                  mouth_height_width_rate,
                   brow_height_mouth_avg,
                   eye_height_mouth_avg);
             total_log_cnt = 0;
