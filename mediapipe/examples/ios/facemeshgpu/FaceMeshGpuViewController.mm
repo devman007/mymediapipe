@@ -498,7 +498,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
                   mouth_pull_down_avg,
                   dis_eye_mouth_rate,
                   MM);
-            NSLog(@"faceEC: 眉高宽比(%f), \t眼宽高比(%f), \t嘴宽高比(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
+            NSLog(@"faceEC: 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
                   brow_height_width_rate,
                   eye_height_width_rate,
                   mouth_height_width_rate,
