@@ -362,9 +362,9 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         double dis_brow_height_mouth_rate = (2 * mouth_width)/(landmarks.landmark(145).y() - landmarks.landmark(70).y());
         // 眉毛上扬与识别框宽度之比
 //        double brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
-        // 眼睛睁开距离与识别框高度之比
-//        double eye_height_rate = eye_height/(2*face_width);
-//        double eye_width_rate = eye_width/(2*face_width);
+//        // 眼睛睁开距离与识别框高度之比
+//        double eye_height_rate = eye_height/face_width;
+//        double eye_width_rate = eye_width/face_width;
 //        // 张开嘴巴距离与识别框高度之比
 //        double mouth_width_rate = mouth_width/face_width;
 //        double mouth_height_rate = mouth_height/face_width;
@@ -400,7 +400,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
             eye_height_mouth_avg = [self getAverage:@"眼高嘴" Arr:eye_height_mouth_arr Num:4];
             mouth_width_avg = [self getAverage:@"嘴宽" Arr:mouth_width_arr Num:4];
             mouth_height_avg = [self getAverage:@"嘴张" Arr:mouth_height_arr Num:4];
-            mouth_pull_down_avg = [self getAverage:@"眉上扬" Arr:mouth_pull_down_arr Num:4];
+            mouth_pull_down_avg = [self getAverage:@"嘴角下拉" Arr:mouth_pull_down_arr Num:4];
             arr_cnt = 0;
         }
         if(arr_cnt == 0) {
@@ -429,15 +429,15 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         if(dis_eye_mouth_rate <= 0.7) {
             MM = dis_eye_mouth_rate * 0;
         } else if((dis_eye_mouth_rate > 0.7) &&(dis_eye_mouth_rate <= 0.75)) {    // 微笑
-            MM = (double)(dis_eye_mouth_rate * 1.38);
+            MM = (dis_eye_mouth_rate * 1.38);
         } else if((dis_eye_mouth_rate > 0.75) &&(dis_eye_mouth_rate <= 0.8)) {
-            MM = (double)(dis_eye_mouth_rate * 2.58);
+            MM = (dis_eye_mouth_rate * 2.58);
         } else if((dis_eye_mouth_rate > 0.8) &&(dis_eye_mouth_rate <= 0.9)) {
-            MM = (double)(dis_eye_mouth_rate * 3.54);
+            MM = (dis_eye_mouth_rate * 3.54);
         } else if((dis_eye_mouth_rate > 0.9) &&(dis_eye_mouth_rate <= 1.0)) {     //大笑
-            MM = (double)(dis_eye_mouth_rate * 4.22);
+            MM = (dis_eye_mouth_rate * 4.22);
         } else if(dis_eye_mouth_rate > 1) {
-            MM = (double)(dis_eye_mouth_rate * 5.0);
+            MM = (dis_eye_mouth_rate * 5.0);
         }
 
         if(brow_height_width_rate <= 0.365f) {

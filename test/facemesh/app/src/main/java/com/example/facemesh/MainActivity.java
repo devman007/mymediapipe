@@ -454,31 +454,31 @@ public class MainActivity extends AppCompatActivity {
         String faceLandmarksStr = "";
         faceLandmarksStr += "\t\tLandmark count: " + landmarkList.getLandmarkCount() + "\n";
         //脸宽
-        double face_width = 0f;
-        double face_height = 0f;
+        double face_width = 0;
+        double face_height = 0;
         //眉毛
-        double brow_left_height = 0f;
-        double brow_right_height = 0f;
-        double brow_hight = 0f;
-        double brow_line_left = 0f;
-        double brow_width = 0f;
-//        double brow_left_up = 0f;
-//        double brow_right_up = 0f;
+        double brow_left_height = 0;
+        double brow_right_height = 0;
+        double brow_hight = 0;
+        double brow_line_left = 0;
+        double brow_width = 0;
+//        double brow_left_up = 0;
+//        double brow_right_up = 0;
         //眼睛
-        double eye_left_height = 0f;
-        double eye_left_width = 0f;
-        double eye_right_height = 0f;
-        double eye_right_width = 0f;
-        double eye_height = 0f;
-        double eye_width = 0f;
+        double eye_left_height = 0;
+        double eye_left_width = 0;
+        double eye_right_height = 0;
+        double eye_right_width = 0;
+        double eye_height = 0;
+        double eye_width = 0;
         //嘴巴
-        double mouth_width = 0f;
-        double mouth_height = 0f;
+        double mouth_width = 0;
+        double mouth_height = 0;
 
         //眼角嘴角距离
-        double distance_eye_left_mouth = 0f;
-        double distance_eye_right_mouth = 0f;
-        double distance_eye_mouth = 0f;
+        double distance_eye_left_mouth = 0;
+        double distance_eye_right_mouth = 0;
+        double distance_eye_mouth = 0;
 
 //        for (int i = 0; i < landmarkList.getLandmarkCount(); i++) {
 //            faceLandmarksStr  += "\t\tLandmark ["
@@ -597,22 +597,24 @@ public class MainActivity extends AppCompatActivity {
 //        Log.i(TAG, "faceEC: 眼角嘴 = "+dis_eye_mouth_rate+", \t眉角嘴 = "+dis_brow_mouth_rate+", \t眼高嘴 = "+dis_eye_height_mouth_rate+", \t眉高嘴 = "+dis_brow_height_mouth_rate);
 
         //7、 求连续多次的平均值
-        brow_mouth_arr[arr_cnt] = dis_brow_mouth_rate;
-        brow_height_mouth_arr[arr_cnt] = dis_brow_height_mouth_rate;
-        eye_height_mouth_arr[arr_cnt] = dis_eye_height_mouth_rate;
-//        brow_up_arr[arr_cnt] = brow_up_rate;
-        brow_width_arr[arr_cnt] = brow_width_rate;
-        brow_height_arr[arr_cnt] = brow_hight_rate;
-        brow_line_arr[arr_cnt] = brow_line_rate;
-        eye_height_arr[arr_cnt] = eye_height;
-        eye_width_arr[arr_cnt] = eye_width;
-        mouth_width_arr[arr_cnt] = mouth_width;
-        mouth_height_arr[arr_cnt] = mouth_height;
-        mouth_pull_down_arr[arr_cnt] = mouth_pull_down;
-        double brow_mouth_avg = 0f, brow_height_mouth_avg = 0f;
-        double brow_width_avg = 0f, brow_height_avg = 0f, brow_line_avg = 0f;
-        double eye_height_avg = 0f, eye_width_avg = 0f, eye_height_mouth_avg = 0f;
-        double mouth_width_avg = 0f, mouth_height_avg = 0f, mouth_pull_down_avg = 0f;
+        if(arr_cnt < AVG_CNT) {
+            brow_mouth_arr[arr_cnt] = dis_brow_mouth_rate;
+            brow_height_mouth_arr[arr_cnt] = dis_brow_height_mouth_rate;
+            eye_height_mouth_arr[arr_cnt] = dis_eye_height_mouth_rate;
+    //        brow_up_arr[arr_cnt] = brow_up_rate;
+            brow_width_arr[arr_cnt] = brow_width_rate;
+            brow_height_arr[arr_cnt] = brow_hight_rate;
+            brow_line_arr[arr_cnt] = brow_line_rate;
+            eye_height_arr[arr_cnt] = eye_height;
+            eye_width_arr[arr_cnt] = eye_width;
+            mouth_width_arr[arr_cnt] = mouth_width;
+            mouth_height_arr[arr_cnt] = mouth_height;
+            mouth_pull_down_arr[arr_cnt] = mouth_pull_down;
+        }
+        double brow_mouth_avg = 0, brow_height_mouth_avg = 0;
+        double brow_width_avg = 0, brow_height_avg = 0, brow_line_avg = 0;
+        double eye_height_avg = 0, eye_width_avg = 0, eye_height_mouth_avg = 0;
+        double mouth_width_avg = 0, mouth_height_avg = 0, mouth_pull_down_avg = 0;
         arr_cnt++;
         if(arr_cnt >= AVG_CNT) {
             brow_mouth_avg = getAverage("眉角嘴", brow_mouth_arr, 4);
@@ -650,7 +652,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(brow_height_width_rate <= 0.365f) {
-            NN = (brow_height_width_rate * 0f);
+            NN = (brow_height_width_rate * 0);
         } else if((brow_height_width_rate > 0.365f)&&(brow_height_width_rate <= 0.405f)) {
             NN = (brow_height_width_rate * 3.58f);
         } else if((brow_height_width_rate > 0.405f)&&(brow_height_width_rate <= 0.455f)) {
@@ -664,7 +666,7 @@ public class MainActivity extends AppCompatActivity {
         } else if((eye_height_width_rate < 0.323 ) &&(eye_height_width_rate >= 0.244)){
             PP = (eye_height_width_rate * 3.58f);
         } else {
-            PP = (eye_height_width_rate * 0f);
+            PP = (eye_height_width_rate * 0);
         }
 
         //9、判断头部倾斜度
