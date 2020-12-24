@@ -318,9 +318,9 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
 //        brow_right_up = landmarks.landmark(300).y()-landmarks.landmark(10).y()/* + landmarks.landmark(283).y()-landmarks.landmark(10).y()*/;
 
         //3、眼睛高度 (注: 眼睛Y坐标 下 > 上, X坐标 右 > 左)
-        eye_left_height = landmarks.landmark(23).y() - landmarks.landmark(27).y();   //中心
+        eye_left_height = landmarks.landmark(23).y() - landmarks.landmark(27).y();   //中心 以后尝试修改为 Y(145) - Y(159) -> Y(23) - Y(27)
         eye_left_width = landmarks.landmark(133).x() - landmarks.landmark(33).x();
-        eye_right_height = landmarks.landmark(253).y() - landmarks.landmark(257).y();  // 中心
+        eye_right_height = landmarks.landmark(253).y() - landmarks.landmark(257).y();  // 中心 以后尝试修改为 Y(374) - Y(386) -> Y(253) - Y(257)
         eye_right_width = landmarks.landmark(263).x() - landmarks.landmark(362).x();
 
         //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
