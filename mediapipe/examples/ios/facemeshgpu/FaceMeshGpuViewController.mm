@@ -374,15 +374,15 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         if(arr_cnt < AVG_CNT) {
             [brow_mouth_arr addObject:[NSNumber numberWithFloat:dis_brow_mouth_rate]];
             [brow_height_mouth_arr addObject:[NSNumber numberWithFloat:dis_brow_height_mouth_rate]];
-            [eye_height_mouth_arr addObject:[NSNumber numberWithFloat:dis_eye_height_mouth_rate]];
-            [mouth_pull_down_arr addObject:[NSNumber numberWithFloat:mouth_pull_down_rate]];
             [brow_width_arr addObject:[NSNumber numberWithFloat:brow_width_rate]];
             [brow_height_arr addObject:[NSNumber numberWithFloat:brow_hight_rate]];
             [brow_line_arr addObject:[NSNumber numberWithFloat:brow_line_rate]];
             [eye_height_arr addObject:[NSNumber numberWithFloat:eye_height_rate]];
             [eye_width_arr addObject:[NSNumber numberWithFloat:eye_width_rate]];
+            [eye_height_mouth_arr addObject:[NSNumber numberWithFloat:dis_eye_height_mouth_rate]];
             [mouth_width_arr addObject:[NSNumber numberWithFloat:mouth_width_rate]];
             [mouth_height_arr addObject:[NSNumber numberWithFloat:mouth_height_rate]];
+            [mouth_pull_down_arr addObject:[NSNumber numberWithFloat:mouth_pull_down_rate]];
         }
         double brow_mouth_avg = 0, brow_height_mouth_avg = 0;
         double brow_width_avg = 0, brow_height_avg = 0, brow_line_avg = 0;
@@ -392,7 +392,6 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         if(arr_cnt >= AVG_CNT) {
             brow_mouth_avg = [self getAverage:@"眉角嘴" Arr:brow_mouth_arr Num:4];
             brow_height_mouth_avg = [self getAverage:@"眉高嘴" Arr:brow_height_mouth_arr Num:4];
-            mouth_pull_down_avg = [self getAverage:@"眉上扬" Arr:mouth_pull_down_arr Num:4];
             brow_width_avg = [self getAverage:@"眉宽" Arr:brow_width_arr Num:4];
             brow_height_avg = [self getAverage:@"眉高" Arr:brow_height_arr Num:4];
             brow_line_avg = [self getAverage:@"挑眉" Arr:brow_line_arr Num:4];
@@ -401,6 +400,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
             eye_height_mouth_avg = [self getAverage:@"眼高嘴" Arr:eye_height_mouth_arr Num:4];
             mouth_width_avg = [self getAverage:@"嘴宽" Arr:mouth_width_arr Num:4];
             mouth_height_avg = [self getAverage:@"嘴张" Arr:mouth_height_arr Num:4];
+            mouth_pull_down_avg = [self getAverage:@"眉上扬" Arr:mouth_pull_down_arr Num:4];
             arr_cnt = 0;
         }
         if(arr_cnt == 0) {
@@ -408,7 +408,6 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
                 if([brow_mouth_arr count] > 0) {
                     [brow_mouth_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [brow_height_mouth_arr removeObjectAtIndex:(AVG_CNT-1-i)];
-                    [mouth_pull_down_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [brow_width_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [brow_height_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [brow_line_arr removeObjectAtIndex:(AVG_CNT-1-i)];
@@ -417,6 +416,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
                     [eye_height_mouth_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [mouth_width_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                     [mouth_height_arr removeObjectAtIndex:(AVG_CNT-1-i)];
+                    [mouth_pull_down_arr removeObjectAtIndex:(AVG_CNT-1-i)];
                 }
             }
         }
