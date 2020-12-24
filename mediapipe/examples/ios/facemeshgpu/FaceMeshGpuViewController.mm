@@ -358,7 +358,7 @@ double getCurveFit(POINTS P[], int N/*, double *b0*/) {
         double dis_eye_mouth_rate = (2 * mouth_width)/distance_eye_mouth;             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
         double distance_brow = landmarks.landmark(296).x() - landmarks.landmark(66).x();
         double dis_brow_mouth_rate = mouth_width/distance_brow;                       // 嘴角 / 两眉间距
-        double dis_eye_height_mouth_rate = (1 * mouth_width)/eye_height)/2);        // 嘴角 / 上下眼睑距离
+        double dis_eye_height_mouth_rate = mouth_width/eye_height;                    // 嘴角 / 上下眼睑距离
         double dis_brow_height_mouth_rate = (2 * mouth_width)/(landmarks.landmark(145).y() - landmarks.landmark(70).y());
         // 眉毛上扬与识别框宽度之比
 //        double brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
