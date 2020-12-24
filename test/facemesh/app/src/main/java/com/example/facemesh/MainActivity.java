@@ -521,8 +521,8 @@ public class MainActivity extends AppCompatActivity {
                                 landmarkList.getLandmark(296).getY() - landmarkList.getLandmark(10).getY();
         brow_hight = brow_left_height + brow_right_height;
         //2.2、眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒) - Solution 1(7-1)
-        double brow_hight_rate = (brow_hight/16)/face_width;
-        double brow_width_rate = (brow_width/8)/face_width;
+        double brow_hight_rate = brow_hight/16;
+        double brow_width_rate = brow_width/8;
 //        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
         double brow_line_points_x[] = new double[POINT_NUM];
         brow_line_points_x[0] = (landmarkList.getLandmark(52).getX());
@@ -549,9 +549,9 @@ public class MainActivity extends AppCompatActivity {
         eye_right_width = landmarkList.getLandmark(263).getX() - landmarkList.getLandmark(362).getX();
 
         //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
-        eye_height = eye_left_height + eye_right_height;
+        eye_height = (eye_left_height + eye_right_height)/2;
         // 两眼角距离
-        eye_width = eye_left_width + eye_right_width;
+        eye_width = (eye_left_width + eye_right_width)/2;
 
         //4、嘴巴宽高(两嘴角间距离- 用于计算嘴巴的宽度 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左 嘴巴睁开程度- 用于计算嘴巴的高度: 上下嘴唇拉大距离(惊奇、恐惧、愤怒、高兴))
         mouth_width = landmarkList.getLandmark(308).getX() - landmarkList.getLandmark(78).getX();
@@ -584,16 +584,16 @@ public class MainActivity extends AppCompatActivity {
         double dis_eye_mouth_rate = (2 * mouth_width)/distance_eye_mouth;             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
         double distance_brow = landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX();
         double dis_brow_mouth_rate = mouth_width/distance_brow;                       // 嘴角 / 两眉间距
-        double dis_eye_height_mouth_rate = (1 * mouth_width)/((eye_height)/2);        // 嘴角 / 上下眼睑距离
+        double dis_eye_height_mouth_rate = (1 * mouth_width)/eye_height;        // 嘴角 / 上下眼睑距离
         double dis_brow_height_mouth_rate = (2 * mouth_width)/(landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(70).getY());
         // 眉毛上扬与识别框宽度之比
 //        double brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
-        // 眼睛睁开距离与识别框高度之比
-        double eye_height_rate = eye_height/(2*face_width);
-        double eye_width_rate = eye_width/(2*face_width);
-        // 张开嘴巴距离与识别框高度之比
-        double mouth_width_rate = mouth_width/face_width;
-        double mouth_height_rate = mouth_height/face_width;
+//        // 眼睛睁开距离与识别框高度之比
+//        double eye_height_rate = eye_height/face_width;
+//        double eye_width_rate = eye_width/face_width;
+//        // 张开嘴巴距离与识别框高度之比
+//        double mouth_width_rate = mouth_width/face_width;
+//        double mouth_height_rate = mouth_height/face_width;
 //        Log.i(TAG, "faceEC: 眼角嘴 = "+dis_eye_mouth_rate+", \t眉角嘴 = "+dis_brow_mouth_rate+", \t眼高嘴 = "+dis_eye_height_mouth_rate+", \t眉高嘴 = "+dis_brow_height_mouth_rate);
 
         //7、 求连续多次的平均值
@@ -604,10 +604,10 @@ public class MainActivity extends AppCompatActivity {
         brow_width_arr[arr_cnt] = brow_width_rate;
         brow_height_arr[arr_cnt] = brow_hight_rate;
         brow_line_arr[arr_cnt] = brow_line_rate;
-        eye_height_arr[arr_cnt] = eye_height_rate;
-        eye_width_arr[arr_cnt] = eye_width_rate;
-        mouth_width_arr[arr_cnt] = mouth_width_rate;
-        mouth_height_arr[arr_cnt] = mouth_height_rate;
+        eye_height_arr[arr_cnt] = eye_height;
+        eye_width_arr[arr_cnt] = eye_width;
+        mouth_width_arr[arr_cnt] = mouth_width;
+        mouth_height_arr[arr_cnt] = mouth_height;
         mouth_pull_down_arr[arr_cnt] = mouth_pull_down;
         double brow_mouth_avg = 0f, brow_height_mouth_avg = 0f;
         double brow_width_avg = 0f, brow_height_avg = 0f, brow_line_avg = 0f;
