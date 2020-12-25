@@ -17,6 +17,7 @@
 
 #include <set>
 
+// add by jacky
 #define FACE_EXPRESSION_UNKNOW      0
 #define FACE_EXPRESSION_HAPPY       1
 #define FACE_EXPRESSION_SURPRISE    2
@@ -62,6 +63,7 @@ typedef struct FACE {
     double h;
     double ratio;
 } HEAD;
+// end add.
 
 namespace mediapipe {
 // Returns the number of CPU cores. Compatible with Android.
@@ -70,6 +72,7 @@ int NumCPUCores();
 std::set<int> InferLowerCoreIds();
 // Returns a set of inferred CPU ids of higher cores.
 std::set<int> InferHigherCoreIds();
+// add by jacky
 /**
  * 拟合曲线
  */
@@ -82,6 +85,7 @@ double getAverage(DOUBLE arr[], int num);
  * 表情算法
  */
 int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, double eye_mouth);
+// end add.
 }  // namespace mediapipe
 
 #endif  // MEDIAPIPE_UTIL_CPU_UTIL_H_
