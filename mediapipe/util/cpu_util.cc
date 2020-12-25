@@ -174,4 +174,89 @@ double getAverage(DOUBLE arr[], int num) {
     return avg;
 }
 
+int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, double eye_mouth) {
+    int ret = 0;
+    double mouth_h_w, eye_h_w, brow_h_w;
+    double eye_rate, brow_rate, eye_mouth_rate;
+    
+    if(abs(face.ratio) >= 0.5f) {    //判断头部倾斜度
+        return FACE_EXPRESSION_HEADFALSE;
+    }
+    
+    mouth_h_w = mouth.h/mouth.w;
+    brow_h_w = brow.h/brow.w;
+    eye_h_w = eye.h/eye.w;
+    if(brow_h_w <= 0.365f) {
+        brow_rate = (brow_h_w * 0);
+    } else if((brow_h_w > 0.365f)&&(brow_h_w <= 0.405f)) {
+        brow_rate = (brow_h_w * 3.58f);
+    } else if((brow_h_w > 0.405f)&&(brow_h_w <= 0.455f)) {
+        brow_rate = (brow_h_w * 4.22f);
+    } else if(brow_h_w > 0.455f) {
+        brow_rate = (brow_h_w * 5);
+    }
+
+    // 眼睛睁开程度
+    if(eye_h_w >= 0.323) {
+        eye_rate = (eye_h_w * 4.58f);
+    } else if((eye_h_w < 0.323 ) &&(eye_h_w >= 0.286)){
+        eye_rate = (eye_h_w * 3.58f);
+    } else {
+        eye_rate = (eye_h_w * 0);
+    }
+    
+    // 判断微笑程度
+    if(eye_mouth <= 0.7) {
+        eye_mouth_rate = eye_mouth * 0;
+    } else if((eye_mouth > 0.7) &&(eye_mouth <= 0.75)) {    // 微笑
+        eye_mouth_rate = (eye_mouth * 1.38);
+    } else if((eye_mouth > 0.75) &&(eye_mouth <= 0.8)) {
+        eye_mouth_rate = (eye_mouth * 2.58);
+    } else if((eye_mouth > 0.8) &&(eye_mouth <= 0.9)) {
+        eye_mouth_rate = (eye_mouth * 3.54);
+    } else if((eye_mouth > 0.9) &&(eye_mouth <= 1.0)) {     //大笑
+        eye_mouth_rate = (eye_mouth * 4.22);
+    } else if(eye_mouth > 1) {
+        eye_mouth_rate = (eye_mouth * 5.0);
+    }
+    
+    printf("faceEC: 挑眉(%f), \t嘴角下拉(%f), \t眼角嘴(%f), \t眼角嘴2(%f)\n",
+          brow.up,
+          mouth.down,
+          eye_mouth,
+          eye_mouth_rate);
+    printf("faceEC: 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f)\n",
+          brow_h_w,
+          eye_h_w,
+          mouth_h_w);
+    
+    if((mouth_h_w <= 0.25)) { //没有张嘴：正常、伤心、气愤
+        if(eye_mouth_rate >= 7.5f) {
+            return FACE_EXPRESSION_SAD;
+        } else {
+            if(mouth.down >= 0.90) {   //brow_line_avg*(-10) >= 3.5
+                return FACE_EXPRESSION_ANGRY;
+            } else {
+                return FACE_EXPRESSION_NATURE;
+            }
+        }
+    } else {    //张嘴：高兴、气愤、悲伤、惊讶
+        if((mouth_h_w > 0.286) &&(eye_mouth_rate <= 7.10)) {
+            return FACE_EXPRESSION_SURPRISE;
+        } else {
+            if(eye_h_w <= 0.5) {
+                if((eye_mouth_rate >= 7.0) &&(mouth.down > 2.5)) {
+                    return FACE_EXPRESSION_HAPPY;
+                } else {
+                    return FACE_EXPRESSION_ANGRY;
+                }
+            } else {
+                return FACE_EXPRESSION_SAD;
+            }
+        }
+    }
+    
+    return ret;
+}
+
 }  // namespace mediapipe.

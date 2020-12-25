@@ -19,12 +19,13 @@
 
 #define FACE_EXPRESSION_UNKNOW      0
 #define FACE_EXPRESSION_HAPPY       1
-#define FACE_EXPRESSION_SUPRISE     2
+#define FACE_EXPRESSION_SURPRISE    2
 #define FACE_EXPRESSION_CRY         3
 #define FACE_EXPRESSION_NATURE      4
 #define FACE_EXPRESSION_SAD         5
 #define FACE_EXPRESSION_ANGRY       6
 #define FACE_EXPRESSION_NERVOUS     7
+#define FACE_EXPRESSION_HEADFALSE   8
 
 // 坐标点
 typedef struct POINTS {
@@ -37,6 +38,30 @@ typedef struct POINTS {
 typedef struct DOUBLE {
     double v;
 } DOUBLE;
+
+// 五官宽高
+typedef struct MOUTH {
+    double w;
+    double h;
+    double down;
+} MOUTHS;
+
+typedef struct EYES {
+    double w;
+    double h;
+} EYES;
+
+typedef struct EYEBROWS {
+    double w;
+    double h;
+    double up;
+} EYEBROWS;
+
+typedef struct FACE {
+    double w;
+    double h;
+    double ratio;
+} HEAD;
 
 namespace mediapipe {
 // Returns the number of CPU cores. Compatible with Android.
@@ -53,6 +78,10 @@ double getCurveFit(POINTS P[], int num);
  * 平均数
  */
 double getAverage(DOUBLE arr[], int num);
+/**
+ * 表情算法
+ */
+int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, double eye_mouth);
 }  // namespace mediapipe
 
 #endif  // MEDIAPIPE_UTIL_CPU_UTIL_H_

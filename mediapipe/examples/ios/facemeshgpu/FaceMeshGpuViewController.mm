@@ -225,7 +225,7 @@ UILabel* expreLabel = nil;
                                 landmarks.landmark(334).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(296).y() - landmarks.landmark(10).y();
         brow_hight = brow_left_height + brow_right_height;
-        //2.2、眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒) - Solution 1(7-1)
+        //2.2、眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒)
         double brow_hight_rate = brow_hight/16;
         double brow_width_rate = brow_width/8;
 //        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
@@ -240,7 +240,7 @@ UILabel* expreLabel = nil;
         brow_line_points[2].y = landmarks.landmark(105).y();
         brow_line_points[3].y = landmarks.landmark(107).y();
 
-        //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
+        //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉
 //        brow_line_left = (landmarks.landmark(105).y() - landmarks.landmark(52).y())/(landmarks.landmark(105).x() - landmarks.landmark(52).x());
         brow_line_left = (-10) * (::mediapipe::getCurveFit(brow_line_points, POINT_NUM)); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
@@ -253,16 +253,15 @@ UILabel* expreLabel = nil;
         eye_right_height = landmarks.landmark(253).y() - landmarks.landmark(257).y();  // 中心 以后尝试修改为 Y(374) - Y(386) -> Y(253) - Y(257)
         eye_right_width = landmarks.landmark(263).x() - landmarks.landmark(362).x();
 
-        //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
+        //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧)
         eye_height = (eye_left_height + eye_right_height)/2;
-        // 两眼角距离
         eye_width = (eye_left_width + eye_right_width)/2;
 
         //4、嘴巴宽高(两嘴角间距离- 用于计算嘴巴的宽度 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左 嘴巴睁开程度- 用于计算嘴巴的高度: 上下嘴唇拉大距离(惊奇、恐惧、愤怒、高兴))
         mouth_width = landmarks.landmark(308).x() - landmarks.landmark(78).x();
         mouth_height = landmarks.landmark(17).y() - landmarks.landmark(0).y();  // 中心
 
-        //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
+        //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉
         double mouth_pull_down = (landmarks.landmark(14).y() - landmarks.landmark(324).y())/(landmarks.landmark(14).y() + landmarks.landmark(324).x());
         //对嘴角进行一阶拟合，曲线斜率
         POINTS lips_line_points[POINT_NUM];
@@ -348,97 +347,61 @@ UILabel* expreLabel = nil;
         }
 
         //8、表情算法
-        double brow_height_width_rate = 0;
-        if(brow_width_avg != 0) {
-            brow_height_width_rate = brow_height_avg/brow_width_avg;
-        }
-        double eye_height_width_rate = 0;
-        if(eye_width_avg != 0) {
-            eye_height_width_rate = eye_height_avg/eye_width_avg;
-        }
-        double mouth_height_width_rate = 0;
-        if(mouth_width_avg != 0) {
-            mouth_height_width_rate = mouth_height_avg/mouth_width_avg;
-        }
+        FACE face;
+        face.w = face_width;
+        face.h = face_height;
+        face.ratio = (landmarks.landmark(362).y() - landmarks.landmark(133).y())/(landmarks.landmark(362).x() - landmarks.landmark(133).x());
+        EYEBROWS eyebrows;
+        eyebrows.w = brow_width_avg;
+        eyebrows.h = brow_height_avg;
+        eyebrows.up = brow_line_avg;
+        EYES eye;
+        eye.w = eye_width_avg;
+        eye.h = eye_height_avg;
+        MOUTH mouth;
+        mouth.w = mouth_width_avg;
+        mouth.h = mouth_height_avg;
+        mouth.down = mouth_pull_down_avg;
 
-        if(dis_eye_mouth_rate <= 0.7) {
-            MM = dis_eye_mouth_rate * 0;
-        } else if((dis_eye_mouth_rate > 0.7) &&(dis_eye_mouth_rate <= 0.75)) {    // 微笑
-            MM = (dis_eye_mouth_rate * 1.38);
-        } else if((dis_eye_mouth_rate > 0.75) &&(dis_eye_mouth_rate <= 0.8)) {
-            MM = (dis_eye_mouth_rate * 2.58);
-        } else if((dis_eye_mouth_rate > 0.8) &&(dis_eye_mouth_rate <= 0.9)) {
-            MM = (dis_eye_mouth_rate * 3.54);
-        } else if((dis_eye_mouth_rate > 0.9) &&(dis_eye_mouth_rate <= 1.0)) {     //大笑
-            MM = (dis_eye_mouth_rate * 4.22);
-        } else if(dis_eye_mouth_rate > 1) {
-            MM = (dis_eye_mouth_rate * 5.0);
-        }
-
-        if(brow_height_width_rate <= 0.365f) {
-            NN = (brow_height_width_rate * 0);
-        } else if((brow_height_width_rate > 0.365f)&&(brow_height_width_rate <= 0.405f)) {
-            NN = (brow_height_width_rate * 3.58f);
-        } else if((brow_height_width_rate > 0.405f)&&(brow_height_width_rate <= 0.455f)) {
-            NN = (brow_height_width_rate * 4.22f);
-        } else if(brow_height_width_rate > 0.455f) {
-            NN = (brow_height_width_rate * 5);
-        }
-
-        if(eye_height_width_rate >= 0.323) {
-            PP = (eye_height_width_rate * 4.58f);
-        } else if((eye_height_width_rate < 0.323 ) &&(eye_height_width_rate >= 0.286)){
-            PP = (eye_height_width_rate * 3.58f);
-        } else {
-            PP = (eye_height_width_rate * 0);
-        }
-
-        //9、判断头部倾斜度
-        double head_line_rate = (landmarks.landmark(362).y() - landmarks.landmark(133).y())/(landmarks.landmark(362).x() - landmarks.landmark(133).x());
-        if(abs(head_line_rate) >= 0.5f) {
-            NSLog(@"faceEC: ============头部太偏=============");
-            showString = @"头部太偏";
-        }
-
-        //10、抛出表情结果
+        //9、抛出表情结果
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            if((mouth_height_width_rate <= 0.25)) { //没有张嘴：正常、伤心、气愤
-                if(MM >= 7.5f) {
-                    [self setExpression_sad];
-                } else {
-                    if(mouth_pull_down_avg >= 0.90) {   //brow_line_avg*(-10) >= 3.5
-                        [self setExpression_angry];
-                    } else {
-                        [self setExpression_normal];
-                    }
-                }
-            } else {    //张嘴：高兴、气愤、悲伤、惊讶
-                if((mouth_height_width_rate > 0.286) &&(MM <= 7.10)) {
+            int expression = ::mediapipe::getFaceExpressionType(face, eyebrows, eye, mouth, dis_eye_mouth_rate);
+            switch (expression) {
+                case FACE_EXPRESSION_HAPPY:
+                    [self setExpression_happy];
+                    break;
+                case FACE_EXPRESSION_SURPRISE:
                     [self setExpression_surprise];
-                } else {
-                    if(eye_height_width_rate <= 0.5) {
-                        if((MM >= 7.0) &&(mouth_pull_down_avg > 2.5)) {
-                            [self setExpression_happy];
-                        } else {
-                            [self setExpression_angry];
-                        }
-                    } else {
-                        [self setExpression_sad];
-                    }
-                }
+                    break;
+                case FACE_EXPRESSION_NATURE:
+                    [self setExpression_normal];
+                    break;
+                case FACE_EXPRESSION_CRY:
+                case FACE_EXPRESSION_SAD:
+                    [self setExpression_sad];
+                    break;
+                case FACE_EXPRESSION_ANGRY:
+                    [self setExpression_angry];
+                    break;
+                case FACE_EXPRESSION_HEADFALSE:
+                    NSLog(@"faceEC: ============头部太偏=============");
+                    showString = @"头部太偏";
+                    break;
+                default:
+                    break;
             }
-            NSLog(@"faceEC: 挑眉(%f), \t嘴角下拉(%f), \tM(%f), \tMM(%f)\n",
-                  brow_line_avg,
-                  mouth_pull_down_avg,
-                  dis_eye_mouth_rate,
-                  MM);
-            NSLog(@"faceEC: 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
-                  brow_height_width_rate,
-                  eye_height_width_rate,
-                  mouth_height_width_rate,
-                  brow_height_mouth_avg,
-                  eye_height_mouth_avg);
+//            NSLog(@"faceEC: 挑眉(%f), \t嘴角下拉(%f), \tM(%f), \tMM(%f)\n",
+//                  brow_line_avg,
+//                  mouth_pull_down_avg,
+//                  dis_eye_mouth_rate,
+//                  MM);
+//            NSLog(@"faceEC: 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
+//                  brow_height_width_rate,
+//                  eye_height_width_rate,
+//                  mouth_height_width_rate,
+//                  brow_height_mouth_avg,
+//                  eye_height_mouth_avg);
             total_log_cnt = 0;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
