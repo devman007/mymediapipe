@@ -125,4 +125,53 @@ std::set<int> InferHigherCoreIds() {
   return InferLowerOrHigherCoreIds(/* lower= */ false);
 }
 
+/*
+ 要求的方程为: y=ax+b。
+          N∑xy-∑x∑y
+ 其中：a = ----------------
+          N∑(x^2)-(∑x)^2
+      
+             b=y-ax
+           ∑y∑(x^2)-∑x∑xy
+      b = ---------------
+          N∑(x^2)-(∑x)^2
+ 设：A=∑xy  B=∑x  C=∑y  D=∑(x^2)
+ 注：N为要拟合的点数量
+ 
+参数说明：
+P[POINT_NUM]：传入要线性拟合的点数据（结构体数组）
+N：线性拟合的点的数量
+b0:直线截距参数存放地址
+返回值：曲线斜率, 自左向右 >0(上扬), <0(下拉)
+*/
+double getCurveFit(POINTS P[], int num) {
+    double K = 0, A = 0, B = 0, C = 0, D = 0;
+    for(int i = 0; i < num; i++){
+        A += P[i].x * P[i].y;
+        B += P[i].x;
+        C += P[i].y;
+        D += P[i].x * P[i].x;
+    }
+    K = (num*A-B*C)/(num*D-B*B);
+    return K;
+}
+
+/**
+* 求平均数
+* @param type - 类型标签
+* @param arr - 数值数值
+* @param num - 保留有效数
+* @return
+*/
+double getAverage(DOUBLE arr[], int num) {
+    double avg = 0, sum = 0;
+    int len = num;
+    for(int i = 0; i < len; i++) {
+        sum += arr[i].v;
+    }
+    avg = sum/len;
+
+    return avg;
+}
+
 }  // namespace mediapipe.
