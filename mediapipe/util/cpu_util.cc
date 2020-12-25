@@ -220,12 +220,14 @@ int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, doubl
         eye_mouth_rate = (eye_mouth * 5.0);
     }
     
-    printf("faceEC: 挑眉(%f), \t嘴角下拉(%f), \t眼角嘴(%f), \t眼角嘴2(%f)\n",
+    printf("faceEC: %s 挑眉(%f), \t嘴角下拉(%f), \t眼角嘴(%f), \t眼角嘴2(%f)\n",
+          __FUNCTION__,
           brow.up,
           mouth.down,
           eye_mouth,
           eye_mouth_rate);
-    printf("faceEC: 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f)\n",
+    printf("faceEC: %s 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f)\n",
+          __FUNCTION__,
           brow_h_w,
           eye_h_w,
           mouth_h_w);
