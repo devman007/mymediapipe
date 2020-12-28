@@ -270,50 +270,6 @@ public class MainActivity extends AppCompatActivity {
         return multiFaceLandmarksStr;
     }
 
-    /**
-     * 求平均数
-     * @param type - 类型标签
-     * @param arr - 数值数值
-     * @param num - 保留有效数
-     * @return
-     */
-    private static double getAverage(String type, double[] arr, int num) {
-        double avg = 0f, sum = 0f;
-        int len = arr.length;
-        for(int i = 0; i < len; i++) {
-            sum += arr[i];
-        }
-        try {
-            BigDecimal bigD = new BigDecimal(sum/len);
-            avg = (double) (bigD.setScale(num, BigDecimal.ROUND_HALF_UP).doubleValue());
-        } catch (NumberFormatException e) {
-
-        }
-//        Log.i(TAG, "faceEC average: "+type+", avg = "+avg);
-        return avg;
-    }
-
-    /**
-     * 四舍五入
-     * @param val - 数值
-     * @param num - 保留小数点后的有效数位
-     * @return
-     */
-    private static double getRound(double val, int num) {
-        double ret = 0f;
-        if((num < 1) ||(val == 0f) ||(val == NaN)) {
-            return val;
-        }
-        try {
-            BigDecimal bigD = new BigDecimal(val);
-            ret = (double) (bigD.setScale(num, BigDecimal.ROUND_HALF_UP).doubleValue());
-        } catch (NumberFormatException e) {
-
-        }
-
-        return ret;
-    }
-
     private static void setExpression_happy() {
         happy_times++;
         if(happy_times >= DETECT_TIMES) {
@@ -365,45 +321,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static final int POINT_NUM = 4;  //输入线性拟和点
-    /**
-     *
-     *    要求的方程为: y=ax+b。
-     *               N∑xy-∑x∑y
-     *    其中：a = ----------------       //曲线斜率
-     *               N∑(x^2)-(∑x)^2
-     *
-     *                  b=y-ax
-     *               ∑y∑(x^2)-∑x∑xy
-     *         b = ---------------        //曲线截距
-     *               N∑(x^2)-(∑x)^2
-     *    设：A=∑xy  B=∑x  C=∑y  D=∑(x^2)
-     *    注：N为要拟合的点数量
-     *
-     * 参数说明：
-     * @param pX - 传入要线性拟合的点数据X
-     * @param pY - 传入要线性拟合的点数据Y
-     * @param N  - 线性拟合的点的数量
-     * @return   - 曲线斜率, 自左向右 >0(上扬), <0(下拉)
-     */
-    private static double getCurveFit(double pX[], double pY[], int N) {
-        double ret = 0, b = 0, A = 0, B = 0, C = 0, D = 0;
-//        WeightedObservedPoints points = new WeightedObservedPoints();
-//        for(int i = 0; i < pX.length; i++) {
-//            points.add(pX[i], pY[i]);
-//        }
-//        PolynomialCurveFitter fitter = PolynomialCurveFitter.create(1); //指定为1阶数
-//        double[] result = fitter.fit(points.toList());
-//        ret = result[1]*(-10);  //0 - 常数项，1 - 为一次项，拟合出曲线的斜率和实际眉毛的倾斜方向是相反
-        for(int i = 0; i < N; i++){
-            A += pX[i] * pY[i];
-            B += pX[i];
-            C += pY[i];
-            D += pX[i] * pX[i];
-        }
-        ret = (N*A-B*C)/(N*D-B*B);
-//        b = C/N-ret*B/N;
-        return ret;
-    }
 
     private static void getLandmarkMinMax(String key, double[] arr) {
         int cnt = arr.length;
@@ -549,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
 //        brow_line_left = (landmarkList.getLandmark(105).getY() - landmarkList.getLandmark(52).getY())/(landmarkList.getLandmark(105).getX() - landmarkList.getLandmark(52).getX());
-        brow_line_left = (-10) * getCurveFit(brow_line_points_x, brow_line_points_y, POINT_NUM); //调函数拟合直线
+        brow_line_left = (-10) * (processor.getCurveFit(brow_line_points_x, brow_line_points_y, POINT_NUM)); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
 //        brow_left_up = landmarkList.getLandmark(70).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(66).getY()-landmarkList.getLandmark(10).getY()*/;
 //        brow_right_up = landmarkList.getLandmark(300).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(283).getY()-landmarkList.getLandmark(10).getY()*/;
@@ -583,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
         lips_line_points_y[1] = (landmarkList.getLandmark(324).getY());
         lips_line_points_y[2] = (landmarkList.getLandmark(308).getY());
         lips_line_points_y[3] = (landmarkList.getLandmark(291).getY());
-        double mouth_pull_down = (-10) * getCurveFit(lips_line_points_x, lips_line_points_y, POINT_NUM);
+        double mouth_pull_down = (-10) * (processor.getCurveFit(lips_line_points_x, lips_line_points_y, POINT_NUM));
 //        Log.i(TAG, "faceEC: mouth_pull_down = "+mouth_pull_down);
 
         //5、两侧眼角到同侧嘴角距离
@@ -628,17 +545,17 @@ public class MainActivity extends AppCompatActivity {
         double mouth_width_avg = 0, mouth_height_avg = 0, mouth_pull_down_avg = 0;
         arr_cnt++;
         if(arr_cnt >= AVG_CNT) {
-            brow_mouth_avg = getAverage("眉角嘴", brow_mouth_arr, 4);
-            brow_height_mouth_avg = getAverage("眉高嘴", brow_height_mouth_arr, 4);
-            brow_width_avg = getAverage("眉宽", brow_width_arr, 4);
-            brow_height_avg = getAverage("眉高", brow_height_arr, 4);
-            brow_line_avg = getAverage("挑眉", brow_line_arr, 4);
-            eye_height_avg = getAverage("眼睁", eye_height_arr, 4);
-            eye_width_avg = getAverage("眼宽", eye_width_arr, 4);
-            eye_height_mouth_avg = getAverage("眼高嘴", eye_height_mouth_arr, 4);
-            mouth_width_avg = getAverage("嘴宽", mouth_width_arr, 4);
-            mouth_height_avg = getAverage("嘴张", mouth_height_arr, 4);
-            mouth_pull_down_avg = getAverage("嘴角下拉", mouth_pull_down_arr, 4);
+            brow_mouth_avg = processor.getAverage(brow_mouth_arr, 4);
+            brow_height_mouth_avg = processor.getAverage(brow_height_mouth_arr, 4);
+            brow_width_avg = processor.getAverage(brow_width_arr, 4);
+            brow_height_avg = processor.getAverage(brow_height_arr, 4);
+            brow_line_avg = processor.getAverage(brow_line_arr, 4);
+            eye_height_avg = processor.getAverage(eye_height_arr, 4);
+            eye_width_avg = processor.getAverage(eye_width_arr, 4);
+            eye_height_mouth_avg = processor.getAverage(eye_height_mouth_arr, 4);
+            mouth_width_avg = processor.getAverage(mouth_width_arr, 4);
+            mouth_height_avg = processor.getAverage(mouth_height_arr, 4);
+            mouth_pull_down_avg = processor.getAverage(mouth_pull_down_arr, 4);
             arr_cnt = 0;
         }
 

@@ -630,6 +630,10 @@ public class Graph {
   private native long nativeGetProfiler(long context);
 
   //add by jacky.
+  public native double nativeGetAverage(double arr[], int num);
+
+  public native double nativeGetCurveFit(double pX[], double pY[], int num);
+
   public native int nativeFaceExpressionFace(double w, double h, double ratio);
 
   public native int nativeFaceExpressionBrow(double w, double h, double up);

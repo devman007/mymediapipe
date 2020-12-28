@@ -77,12 +77,22 @@ std::set<int> InferHigherCoreIds();
 // add by jacky
 /**
  * 拟合曲线
+ * for ios
  */
 double getCurveFit(POINTS P[], int num);
+/*
+ * for android
+ */
+double getCurveFit_android(double pX[], double pY[], int num);
 /**
  * 平均数
+ * for ios
  */
 double getAverage(DOUBLE arr[], int num);
+/*
+ * for android
+ */
+double getAverage_android(double arr[], int num);
 /**
  * 脸部参数
  * w - 宽

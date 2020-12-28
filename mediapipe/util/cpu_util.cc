@@ -156,6 +156,18 @@ double getCurveFit(POINTS P[], int num) {
     return K;
 }
 
+double getCurveFit_android(double pX[], double pY[], int num) {
+  double K = 0, A = 0, B = 0, C = 0, D = 0;
+  for(int i = 0; i < num; i++){
+      A += pX[i] * pY[i];
+      B += pX[i];
+      C += pY[i];
+      D += pX[i] * pX[i];
+  }
+  K = (num*A-B*C)/(num*D-B*B);
+  return K;
+}
+
 /**
 * 求平均数
 * @param type - 类型标签
@@ -168,6 +180,17 @@ double getAverage(DOUBLE arr[], int num) {
     int len = num;
     for(int i = 0; i < len; i++) {
         sum += arr[i].v;
+    }
+    avg = sum/len;
+
+    return avg;
+}
+
+double getAverage_android(double arr[], int num) {
+    double avg = 0, sum = 0;
+    int len = num;
+    for(int i = 0; i < len; i++) {
+        sum += arr[i];
     }
     avg = sum/len;
 

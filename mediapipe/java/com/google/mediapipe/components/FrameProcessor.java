@@ -603,6 +603,14 @@ public class FrameProcessor implements TextureFrameProcessor, AudioDataProcessor
   }
 
   //add by jacky
+  public double getAverage(double arr[], int num) {
+    return mediapipeGraph.nativeGetAverage(arr, num);
+
+
+  public double getCurveFit(double pX[], double pY[], int num) {
+    return mediapipeGraph.nativeGetCurveFit(pX, pY, num);
+  }
+
   public int setFaceExpressionFace(double w, double h, double ratio) {
     return mediapipeGraph.nativeFaceExpressionFace(w, h, ratio);
   }

@@ -75,6 +75,12 @@ JNIEXPORT void JNICALL GRAPH_METHOD(nativeStartRunningGraph)(
     jlongArray header_handles);
 
 //add by jacky.
+JNIEXPORT double JNICALL GRAPH_METHOD(nativeGetAverage)(
+    JNIEnv* env, jobject thiz, jdoubleArray arr, int num);
+
+JNIEXPORT double JNICALL GRAPH_METHOD(nativeGetCurveFit)(
+    JNIEnv* env, jobject thiz, jdoubleArray px, jdoubleArray py, int num);
+
 JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionFace)(
     JNIEnv* env, jobject thiz, double w, double h, double ratio);
 

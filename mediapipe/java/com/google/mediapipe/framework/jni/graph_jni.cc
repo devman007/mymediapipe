@@ -229,6 +229,29 @@ JNIEXPORT void JNICALL GRAPH_METHOD(nativeStartRunningGraph)(
 }
 
 //add by jacky
+JNIEXPORT double JNICALL GRAPH_METHOD(nativeGetAverage)(
+  JNIEnv* env, jobject thiz, jdoubleArray arr, int num) {
+    double ret = 0;
+    jdouble* tmpdouble = env->GetDoubleArrayElements(arr, JNI_FALSE);
+    double* tmp = (double*)tmpdouble;
+    ret = mediapipe::getAverage_android(tmp, num);
+    env->ReleaseDoubleArrayElements(arr, tmpdouble, 0);
+    return ret;
+  }
+
+JNIEXPORT double JNICALL GRAPH_METHOD(nativeGetCurveFit)(
+  JNIEnv* env, jobject thiz, jdoubleArray px, jdoubleArray py, int num) {
+    double ret = 0;
+    jdouble* tmpx = env->GetDoubleArrayElements(px, JNI_FALSE);
+    jdouble* tmpy = env->GetDoubleArrayElements(py, JNI_FALSE);
+    double* tx = (double*)tmpx;
+    double* ty = (double*)tmpy;
+    ret = mediapipe::getCurveFit_android(tx, ty, num);
+    env->ReleaseDoubleArrayElements(px, tmpx, 0);
+    env->ReleaseDoubleArrayElements(py, tmpy, 0);
+    return ret;
+  }
+
 JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionFace)(
   JNIEnv* env, jobject thiz, double w, double h, double ratio) {
     int ret = 0;
