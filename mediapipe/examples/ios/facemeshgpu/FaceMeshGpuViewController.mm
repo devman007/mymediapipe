@@ -352,7 +352,7 @@ UILabel* expreLabel = nil;
         ::mediapipe::setFaceExpressionFace(face_width, face_height, face_ratio);
         ::mediapipe::setFaceExpressionBrow(brow_width_avg, brow_height_avg, brow_line_avg);
         ::mediapipe::setFaceExpressionEye(eye_width_avg, eye_height_avg, dis_eye_mouth_rate);
-        ::mediapipe::setFaceExpressionMouth(mouth_width_avg, mouth_height_avg, mouth_pull_down_avg);
+        ::mediapipe::setFaceExpressionMouth(mouth_width_avg, mouth_height_avg, mouth_pull_down_avg, brow_height_mouth_avg);
 
         //9、抛出表情结果
         total_log_cnt++;

@@ -85,7 +85,7 @@ JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionEye)(
     JNIEnv* env, jobject thiz, double w, double h, double eye_mouth);
 
 JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionMouth)(
-    JNIEnv* env, jobject thiz, double w, double h, double down);
+    JNIEnv* env, jobject thiz, double w, double h, double down, double brow_h_mouth);
 
 JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionType)(
     JNIEnv* env, jobject thiz);

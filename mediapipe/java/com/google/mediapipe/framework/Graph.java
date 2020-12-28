@@ -636,7 +636,7 @@ public class Graph {
 
   public native int nativeFaceExpressionEye(double w, double h, double eye_mouth);
 
-  public native int nativeFaceExpressionMouth(double w, double h, double down);
+  public native int nativeFaceExpressionMouth(double w, double h, double down, double brow_h_mouth);
 
   public native int nativeFaceExpressionType();
 }

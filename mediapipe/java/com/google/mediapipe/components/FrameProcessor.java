@@ -615,8 +615,8 @@ public class FrameProcessor implements TextureFrameProcessor, AudioDataProcessor
     return mediapipeGraph.nativeFaceExpressionEye(w, h, eye_mouth);
   }
 
-  public int setFaceExpressionMouth(double w, double h, double down) {
-    return mediapipeGraph.nativeFaceExpressionMouth(w, h, down);
+  public int setFaceExpressionMouth(double w, double h, double down, double brow_h_mouth) {
+    return mediapipeGraph.nativeFaceExpressionMouth(w, h, down, brow_h_mouth);
   }
 
   public int getFaceExpressionType() {

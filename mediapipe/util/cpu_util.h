@@ -45,6 +45,7 @@ typedef struct MOUTH {
     double w;
     double h;
     double down;
+    double brow_h_mouth;
 } MOUTHS;
 
 typedef struct EYES {
@@ -108,8 +109,9 @@ int setFaceExpressionEye(double w, double h, double eye_mouth);
  * w - 宽
  * h - 高
  * down - 嘴角下拉度
+ * brow_h_mouth - 眉毛高度与嘴巴宽度比
  */
-int setFaceExpressionMouth(double w, double h, double down); 
+int setFaceExpressionMouth(double w, double h, double down, double brow_h_mouth); 
 /**
  * 表情算法
  */

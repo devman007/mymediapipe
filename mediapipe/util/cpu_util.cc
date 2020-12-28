@@ -202,11 +202,12 @@ int setFaceExpressionEye(double w, double h, double eye_mouth) {
   return ret;
 }
 
-int setFaceExpressionMouth(double w, double h, double down) {
+int setFaceExpressionMouth(double w, double h, double down, double brow_h_mouth) {
   int ret = 0;
   g_mouth.w = w;
   g_mouth.h = h;
   g_mouth.down = down;
+  g_mouth.brow_h_mouth = brow_h_mouth;
   return ret;
 }
 
@@ -267,7 +268,32 @@ int getFaceExpressionType() {
           brow_h_w,
           eye_h_w,
           mouth_h_w);
-    
+          
+#ifdef __ANDROID__
+    if(mouth_h_w <= 0.385) {   //没有张嘴：正常、伤心、气愤
+        if(g_mouth.down >= 2.0f){
+            return FACE_EXPRESSION_SAD;
+        } else if(g_mouth.down <= 1.0) {
+            return FACE_EXPRESSION_NATURE;
+        } else {
+            return FACE_EXPRESSION_ANGRY;
+        }
+    } else {    //张嘴：高兴、气愤、悲伤、惊讶
+        if((mouth_h_w > 0.667) &&(eye_mouth_rate <= 2.0f)) {
+            return FACE_EXPRESSION_SURPRISE;
+        } else {
+            if ((eye_h_w <= 0.222) && (g_mouth.down >= 1.0f)) {
+                return FACE_EXPRESSION_SAD;
+            } else {
+                if ((eye_mouth_rate >= 3.0f) && ((g_mouth.brow_h_mouth >= 4.0f) /*|| (eye_h_w >= 0.167)*/)) {
+                    return FACE_EXPRESSION_HAPPY;
+                } else if (eye_mouth_rate < 2.0f) {
+                    return FACE_EXPRESSION_ANGRY;
+                }
+            }
+        }
+    }
+#else // __ANDROID__
     if((mouth_h_w <= 0.25)) { //没有张嘴：正常、伤心、气愤
         if(eye_mouth_rate >= 7.5f) {
             return FACE_EXPRESSION_SAD;
@@ -293,7 +319,8 @@ int getFaceExpressionType() {
             }
         }
     }
-    
+#endif   
+
     return ret;
 }
 

@@ -251,9 +251,9 @@ JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionEye)(
   }
 
 JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionMouth)(
-  JNIEnv* env, jobject thiz, double w, double h, double down) {
+  JNIEnv* env, jobject thiz, double w, double h, double down, double brow_h_mouth) {
     int ret = 0;
-    ret = mediapipe::setFaceExpressionMouth(w, h, down);
+    ret = mediapipe::setFaceExpressionMouth(w, h, down, brow_h_mouth);
     return ret;
   }
 
