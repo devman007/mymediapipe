@@ -22,6 +22,7 @@
 #include "mediapipe/java/com/google/mediapipe/framework/jni/class_registry.h"
 #include "mediapipe/java/com/google/mediapipe/framework/jni/graph.h"
 #include "mediapipe/java/com/google/mediapipe/framework/jni/jni_util.h"
+#include "mediapipe/util/cpu_util.h"
 
 using mediapipe::android::JStringToStdString;
 using mediapipe::android::ThrowIfError;
@@ -226,6 +227,43 @@ JNIEXPORT void JNICALL GRAPH_METHOD(nativeStartRunningGraph)(
   }
   ThrowIfError(env, mediapipe_graph->StartRunningGraph(env));
 }
+
+//add by jacky
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionFace)(
+  JNIEnv* env, jobject thiz, double w, double h, double ratio) {
+    int ret = 0;
+    ret = mediapipe::setFaceExpressionFace(w, h, ratio);
+    return ret;
+  }
+
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionBrow)(
+  JNIEnv* env, jobject thiz, double w, double h, double up) {
+    int ret = 0;
+    ret = mediapipe::setFaceExpressionBrow(w, h, up);
+    return ret;
+  }
+
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionEye)(
+  JNIEnv* env, jobject thiz, double w, double h, double eye_mouth) {
+    int ret = 0;
+    ret = mediapipe::setFaceExpressionEye(w, h, eye_mouth);
+    return ret;
+  }
+
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionMouth)(
+  JNIEnv* env, jobject thiz, double w, double h, double down) {
+    int ret = 0;
+    ret = mediapipe::setFaceExpressionMouth(w, h, down);
+    return ret;
+  }
+
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionType)(
+  JNIEnv* env, jobject thiz) {
+  int ret = 0;
+  ret = mediapipe::getFaceExpressionType();
+  return ret;
+}
+//end add.
 
 JNIEXPORT void JNICALL GRAPH_METHOD(nativeAddPacketToInputStream)(
     JNIEnv* env, jobject thiz, jlong context, jstring stream_name, jlong packet,

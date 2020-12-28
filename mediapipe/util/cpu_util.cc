@@ -174,18 +174,54 @@ double getAverage(DOUBLE arr[], int num) {
     return avg;
 }
 
-int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, double eye_mouth) {
+static FACE g_face;
+static EYEBROWS g_brow;
+static EYES g_eye;
+static MOUTH g_mouth;
+int setFaceExpressionFace(double w, double h, double ratio) {
+  int ret = 0;
+  g_face.w = w;
+  g_face.h = h;
+  g_face.ratio = ratio;
+  return ret;
+}
+
+int setFaceExpressionBrow(double w, double h, double up) {
+  int ret = 0;
+  g_brow.w = w;
+  g_brow.h = h;
+  g_brow.up = up;
+  return ret;
+}
+
+int setFaceExpressionEye(double w, double h, double eye_mouth) {
+  int ret = 0;
+  g_eye.w = w;
+  g_eye.h = h;
+  g_eye.eye_mouth = eye_mouth;
+  return ret;
+}
+
+int setFaceExpressionMouth(double w, double h, double down) {
+  int ret = 0;
+  g_mouth.w = w;
+  g_mouth.h = h;
+  g_mouth.down = down;
+  return ret;
+}
+
+int getFaceExpressionType() {
     int ret = 0;
     double mouth_h_w, eye_h_w, brow_h_w;
     double eye_rate, brow_rate, eye_mouth_rate;
     
-    if(abs(face.ratio) >= 0.5f) {    //判断头部倾斜度
+    if(abs(g_face.ratio) >= 0.5f) {    //判断头部倾斜度
         return FACE_EXPRESSION_HEADFALSE;
     }
     
-    mouth_h_w = mouth.h/mouth.w;
-    brow_h_w = brow.h/brow.w;
-    eye_h_w = eye.h/eye.w;
+    mouth_h_w = g_mouth.h/g_mouth.w;
+    brow_h_w = g_brow.h/g_brow.w;
+    eye_h_w = g_eye.h/g_eye.w;
     if(brow_h_w <= 0.365f) {
         brow_rate = (brow_h_w * 0);
     } else if((brow_h_w > 0.365f)&&(brow_h_w <= 0.405f)) {
@@ -206,25 +242,25 @@ int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, doubl
     }
     
     // 判断微笑程度
-    if(eye_mouth <= 0.7) {
-        eye_mouth_rate = eye_mouth * 0;
-    } else if((eye_mouth > 0.7) &&(eye_mouth <= 0.75)) {    // 微笑
-        eye_mouth_rate = (eye_mouth * 1.38);
-    } else if((eye_mouth > 0.75) &&(eye_mouth <= 0.8)) {
-        eye_mouth_rate = (eye_mouth * 2.58);
-    } else if((eye_mouth > 0.8) &&(eye_mouth <= 0.9)) {
-        eye_mouth_rate = (eye_mouth * 3.54);
-    } else if((eye_mouth > 0.9) &&(eye_mouth <= 1.0)) {     //大笑
-        eye_mouth_rate = (eye_mouth * 4.22);
-    } else if(eye_mouth > 1) {
-        eye_mouth_rate = (eye_mouth * 5.0);
+    if(g_eye.eye_mouth <= 0.7) {
+        eye_mouth_rate = g_eye.eye_mouth * 0;
+    } else if((g_eye.eye_mouth > 0.7) &&(g_eye.eye_mouth <= 0.75)) {    // 微笑
+        eye_mouth_rate = (g_eye.eye_mouth * 1.38);
+    } else if((g_eye.eye_mouth > 0.75) &&(g_eye.eye_mouth <= 0.8)) {
+        eye_mouth_rate = (g_eye.eye_mouth * 2.58);
+    } else if((g_eye.eye_mouth > 0.8) &&(g_eye.eye_mouth <= 0.9)) {
+        eye_mouth_rate = (g_eye.eye_mouth * 3.54);
+    } else if((g_eye.eye_mouth > 0.9) &&(g_eye.eye_mouth <= 1.0)) {     //大笑
+        eye_mouth_rate = (g_eye.eye_mouth * 4.22);
+    } else if(g_eye.eye_mouth > 1) {
+        eye_mouth_rate = (g_eye.eye_mouth * 5.0);
     }
     
     printf("faceEC: %s 挑眉(%f), \t嘴角下拉(%f), \t眼角嘴(%f), \t眼角嘴2(%f)\n",
           __FUNCTION__,
-          brow.up,
-          mouth.down,
-          eye_mouth,
+          g_brow.up,
+          g_mouth.down,
+          g_eye.eye_mouth,
           eye_mouth_rate);
     printf("faceEC: %s 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f)\n",
           __FUNCTION__,
@@ -236,7 +272,7 @@ int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, doubl
         if(eye_mouth_rate >= 7.5f) {
             return FACE_EXPRESSION_SAD;
         } else {
-            if(mouth.down >= 0.90) {   //brow_line_avg*(-10) >= 3.5
+            if(g_mouth.down >= 0.90) {   //brow_line_avg*(-10) >= 3.5
                 return FACE_EXPRESSION_ANGRY;
             } else {
                 return FACE_EXPRESSION_NATURE;
@@ -247,7 +283,7 @@ int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, doubl
             return FACE_EXPRESSION_SURPRISE;
         } else {
             if(eye_h_w <= 0.5) {
-                if((eye_mouth_rate >= 7.0) &&(mouth.down > 2.5)) {
+                if((eye_mouth_rate >= 7.0) &&(g_mouth.down > 2.5)) {
                     return FACE_EXPRESSION_HAPPY;
                 } else {
                     return FACE_EXPRESSION_ANGRY;

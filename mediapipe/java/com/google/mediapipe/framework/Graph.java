@@ -628,4 +628,15 @@ public class Graph {
   private native void nativeCancelGraph(long context);
 
   private native long nativeGetProfiler(long context);
+
+  //add by jacky.
+  public native int nativeFaceExpressionFace(double w, double h, double ratio);
+
+  public native int nativeFaceExpressionBrow(double w, double h, double up);
+
+  public native int nativeFaceExpressionEye(double w, double h, double eye_mouth);
+
+  public native int nativeFaceExpressionMouth(double w, double h, double down);
+
+  public native int nativeFaceExpressionType();
 }

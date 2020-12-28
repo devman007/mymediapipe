@@ -74,6 +74,22 @@ JNIEXPORT void JNICALL GRAPH_METHOD(nativeStartRunningGraph)(
     jlongArray side_packet_handles, jobjectArray stream_names_with_header,
     jlongArray header_handles);
 
+//add by jacky.
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionFace)(
+    JNIEnv* env, jobject thiz, double w, double h, double ratio);
+
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionBrow)(
+    JNIEnv* env, jobject thiz, double w, double h, double up);
+
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionEye)(
+    JNIEnv* env, jobject thiz, double w, double h, double eye_mouth);
+
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionMouth)(
+    JNIEnv* env, jobject thiz, double w, double h, double down);
+
+JNIEXPORT int JNICALL GRAPH_METHOD(nativeFaceExpressionType)(
+    JNIEnv* env, jobject thiz);
+
 JNIEXPORT void JNICALL GRAPH_METHOD(nativeAddPacketToInputStream)(
     JNIEnv* env, jobject thiz, jlong context, jstring stream_name, jlong packet,
     jlong timestamp);

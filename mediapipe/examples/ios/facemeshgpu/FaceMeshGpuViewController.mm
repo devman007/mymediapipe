@@ -161,6 +161,7 @@ UILabel* expreLabel = nil;
         //脸宽
         double face_width = 0;
         double face_height = 0;
+        double face_ratio = 0;
         //眉毛
         double brow_left_height = 0;
         double brow_right_height = 0;
@@ -196,6 +197,7 @@ UILabel* expreLabel = nil;
         // 1、计算人脸识别框边长(注: 脸Y坐标 下 > 上, X坐标 右 > 左)
         face_width = landmarks.landmark(361).x() - landmarks.landmark(132).x();
         face_height = landmarks.landmark(152).y() - landmarks.landmark(10).y();
+        face_ratio = (landmarks.landmark(362).y() - landmarks.landmark(133).y())/(landmarks.landmark(362).x() - landmarks.landmark(133).x());
 
         //2、眉毛宽度(注: 脸Y坐标 下 > 上, X坐标 右 > 左 眉毛变短程度: 皱变短(恐惧、愤怒、悲伤))
         brow_width = landmarks.landmark(296).x()-landmarks.landmark(53).x() +
@@ -347,26 +349,15 @@ UILabel* expreLabel = nil;
         }
 
         //8、表情算法
-        FACE face;
-        face.w = face_width;
-        face.h = face_height;
-        face.ratio = (landmarks.landmark(362).y() - landmarks.landmark(133).y())/(landmarks.landmark(362).x() - landmarks.landmark(133).x());
-        EYEBROWS eyebrows;
-        eyebrows.w = brow_width_avg;
-        eyebrows.h = brow_height_avg;
-        eyebrows.up = brow_line_avg;
-        EYES eye;
-        eye.w = eye_width_avg;
-        eye.h = eye_height_avg;
-        MOUTH mouth;
-        mouth.w = mouth_width_avg;
-        mouth.h = mouth_height_avg;
-        mouth.down = mouth_pull_down_avg;
+        ::mediapipe::setFaceExpressionFace(face_width, face_height, face_ratio);
+        ::mediapipe::setFaceExpressionBrow(brow_width_avg, brow_height_avg, brow_line_avg);
+        ::mediapipe::setFaceExpressionEye(eye_width_avg, eye_height_avg, dis_eye_mouth_rate);
+        ::mediapipe::setFaceExpressionMouth(mouth_width_avg, mouth_height_avg, mouth_pull_down_avg);
 
         //9、抛出表情结果
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
-            int expression = ::mediapipe::getFaceExpressionType(face, eyebrows, eye, mouth, dis_eye_mouth_rate);
+            int expression = ::mediapipe::getFaceExpressionType();
             switch (expression) {
                 case FACE_EXPRESSION_HAPPY:
                     [self setExpression_happy];

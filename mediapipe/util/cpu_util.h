@@ -50,6 +50,7 @@ typedef struct MOUTH {
 typedef struct EYES {
     double w;
     double h;
+    double eye_mouth;
 } EYES;
 
 typedef struct EYEBROWS {
@@ -62,7 +63,7 @@ typedef struct FACE {
     double w;
     double h;
     double ratio;
-} HEAD;
+} FACE;
 // end add.
 
 namespace mediapipe {
@@ -82,9 +83,37 @@ double getCurveFit(POINTS P[], int num);
  */
 double getAverage(DOUBLE arr[], int num);
 /**
+ * 脸部参数
+ * w - 宽
+ * h - 高
+ * ratio - 脸部倾斜度
+ */
+int setFaceExpressionFace(double w, double h, double ratio);
+/**
+ * 眉毛参数
+ * w - 宽
+ * h - 高
+ * up - 眉毛上扬度
+ */
+int setFaceExpressionBrow(double w, double h, double up);
+/**
+ * 眼睛参数
+ * w - 宽
+ * h - 高
+ * eye_mouth - 眼角到嘴角距离
+ */
+int setFaceExpressionEye(double w, double h, double eye_mouth);
+/**
+ * 嘴巴参数
+ * w - 宽
+ * h - 高
+ * down - 嘴角下拉度
+ */
+int setFaceExpressionMouth(double w, double h, double down); 
+/**
  * 表情算法
  */
-int getFaceExpressionType(FACE face, EYEBROWS brow, EYES eye, MOUTH mouth, double eye_mouth);
+int getFaceExpressionType();
 // end add.
 }  // namespace mediapipe
 

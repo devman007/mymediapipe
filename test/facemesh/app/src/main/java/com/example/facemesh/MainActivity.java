@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     //
     // Sends camera-preview frames into a MediaPipe graph for processing, and displays the processed
     // frames onto a {@link Surface}.
-    protected FrameProcessor processor;
+    protected static FrameProcessor processor;
     // Handles camera access via the {@link CameraX} Jetpack support library.
     protected CameraXPreviewHelper cameraHelper;
 
@@ -456,6 +456,7 @@ public class MainActivity extends AppCompatActivity {
         //脸宽
         double face_width = 0;
         double face_height = 0;
+        double face_ratio = 0;
         //眉毛
         double brow_left_height = 0;
         double brow_right_height = 0;
@@ -491,6 +492,7 @@ public class MainActivity extends AppCompatActivity {
         // 1、计算人脸识别框边长(注: 脸Y坐标 下 > 上, X坐标 右 > 左)
         face_width = landmarkList.getLandmark(361).getX() - landmarkList.getLandmark(132).getX();
         face_height = landmarkList.getLandmark(152).getY() - landmarkList.getLandmark(10).getY();
+        face_ratio = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
 
         //2、眉毛宽度(注: 脸Y坐标 下 > 上, X坐标 右 > 左 眉毛变短程度: 皱变短(恐惧、愤怒、悲伤))
         brow_width = landmarkList.getLandmark(296).getX()-landmarkList.getLandmark(53).getX() +
@@ -670,11 +672,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //9、判断头部倾斜度
-        double head_line_rate = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
-        if(Math.abs(head_line_rate) >= 0.5f) {
+        face_ratio = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
+        if(Math.abs(face_ratio) >= 0.5f) {
             Log.i(TAG, "faceEC: ============头部太偏=============");
             showString = "头部太偏";
         }
+//        processor.setFaceExpressionFace(face_width, face_height, face_ratio);
+//        processor.setFaceExpressionBrow(brow_width_avg, brow_height_avg, brow_line_rate);
+//        processor.setFaceExpressionEye(eye_width_avg, eye_height_avg, dis_eye_mouth_rate);
+//        processor.setFaceExpressionMouth(mouth_width_avg , mouth_height_avg, mouth_pull_down_avg);
+//        int ret = processor.getFaceExpressionType();
 
         //10、抛出表情结果
         total_log_cnt++;

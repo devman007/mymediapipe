@@ -601,4 +601,33 @@ public class FrameProcessor implements TextureFrameProcessor, AudioDataProcessor
     }
     return existed;
   }
+
+  //add by jacky
+  public int setFaceExpressionFace(double w, double h, double ratio) {
+    return mediapipeGraph.nativeFaceExpressionFace(w, h, ratio);
+  }
+
+  public int setFaceExpressionBrow(double w, double h, double up) {
+    return mediapipeGraph.nativeFaceExpressionBrow(w, h, up);
+  }
+
+  public int setFaceExpressionEye(double w, double h, double eye_mouth) {
+    return mediapipeGraph.nativeFaceExpressionEye(w, h, eye_mouth);
+  }
+
+  public int setFaceExpressionMouth(double w, double h, double down) {
+    return mediapipeGraph.nativeFaceExpressionMouth(w, h, down);
+  }
+
+  public int getFaceExpressionType() {
+    int ret = 0;
+    try {
+      ret = mediapipeGraph.nativeFaceExpressionType();
+    } catch (MediaPipeException e) {
+
+    }
+
+    return ret;
+  }
+  //end add.
 }
