@@ -1,4 +1,4 @@
-package com.example.facemesh;
+package com.fx.faceexpression;
 
 public class Point {
     private double x;

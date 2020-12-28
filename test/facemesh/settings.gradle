@@ -1,2 +1,3 @@
 rootProject.name='facemash'
 include ':app'
+include ':faceexpression'
