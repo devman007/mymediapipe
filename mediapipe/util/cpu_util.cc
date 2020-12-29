@@ -308,7 +308,7 @@ int getFaceExpressionType() {
             if ((eye_h_w <= 0.222) && (g_mouth.down >= 1.0f)) {
                 return FACE_EXPRESSION_SAD;
             } else {
-                if ((eye_mouth_rate >= 3.0f) && ((g_mouth.brow_h_mouth >= 4.0f) /*|| (eye_h_w >= 0.167)*/)) {
+                if ((eye_mouth_rate >= 3.0f) && ((g_mouth.brow_h_mouth >= 2.0f) /*|| (eye_h_w >= 0.167)*/)) {
                     return FACE_EXPRESSION_HAPPY;
                 } else if (eye_mouth_rate < 2.0f) {
                     return FACE_EXPRESSION_ANGRY;

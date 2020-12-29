@@ -331,7 +331,7 @@ public class FExpression {
 
         //6、归一化
         double dis_eye_mouth_rate = (2 * mouth_width)/distance_eye_mouth;             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
-        double dis_brow_height_mouth_rate = (2 * mouth_width)/(landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(70).getY());
+        double dis_brow_height_mouth_rate = mouth_width/(landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(70).getY());
 
         //7、 求连续多次的平均值
         if(arr_cnt < AVG_CNT) {
