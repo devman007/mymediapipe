@@ -209,6 +209,14 @@
 //                }
 //            }
 
+注：FExpression 库的使用
+1、使用工程：
+  在APP的build.grade的dependencies中加入 implementation，如下
+  implementation project(path: ':faceexpression')
+2、使用aar：
+  2.1、在APP的build.grade的dependencies中取消 implementation
+  2.2、在APP的libs目录下加入aar：mediapipe_face_mesh.aar 和 faceexpression.aar
+
 1、计算人脸识别框边长
 2、计算嘴巴的长度和宽度
 3、分析挑眉程度和皱眉程度
