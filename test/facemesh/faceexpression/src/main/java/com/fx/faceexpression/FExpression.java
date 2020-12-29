@@ -44,10 +44,10 @@ public class FExpression {
 
     // Sends camera-preview frames into a MediaPipe graph for processing, and displays the processed
     // frames onto a {@link Surface}.
-    protected static FrameProcessor processor;
+    private static FrameProcessor processor;
 
     // Handles camera access via the {@link CameraX} Jetpack support library.
-    protected CameraXPreviewHelper cameraHelper;
+    private CameraXPreviewHelper cameraHelper;
 
     private static final boolean FLIP_FRAMES_VERTICALLY = true;
     private static final boolean USE_FRONT_CAMERA = true;
@@ -81,17 +81,17 @@ public class FExpression {
 
     private static final int AVG_CNT = 10;
 
-    private static double brow_width_arr[] = new double[AVG_CNT];
-    private static double brow_height_arr[] = new double[AVG_CNT];
-    private static double brow_line_arr[] = new double[AVG_CNT];
-    private static double brow_mouth_arr[] = new double[AVG_CNT];
-    private static double brow_height_mouth_arr[] = new double[AVG_CNT];
-    private static double eye_height_arr[] = new double[AVG_CNT];
-    private static double eye_width_arr[] = new double[AVG_CNT];
-    private static double eye_height_mouth_arr[] = new double[AVG_CNT];
-    private static double mouth_width_arr[] = new double[AVG_CNT];
-    private static double mouth_height_arr[] = new double[AVG_CNT];
-    private static double mouth_pull_down_arr[] = new double[AVG_CNT];
+    private static double[] brow_width_arr = new double[AVG_CNT];
+    private static double[] brow_height_arr = new double[AVG_CNT];
+    private static double[] brow_line_arr = new double[AVG_CNT];
+    private static double[] brow_mouth_arr = new double[AVG_CNT];
+    private static double[] brow_height_mouth_arr = new double[AVG_CNT];
+    private static double[] eye_height_arr = new double[AVG_CNT];
+    private static double[] eye_width_arr = new double[AVG_CNT];
+    private static double[] eye_height_mouth_arr = new double[AVG_CNT];
+    private static double[] mouth_width_arr = new double[AVG_CNT];
+    private static double[] mouth_height_arr = new double[AVG_CNT];
+    private static double[] mouth_pull_down_arr = new double[AVG_CNT];
     private static int arr_cnt = 0;
     private static int total_log_cnt = 0;
 
@@ -106,7 +106,7 @@ public class FExpression {
         expressionState = stateListener;
     }
 
-    public void initialize() {
+    private void initialize() {
         previewDisplayView = new SurfaceView(context);
 
         AndroidAssetUtil.initializeNativeAssetManager(context);
@@ -203,7 +203,7 @@ public class FExpression {
         converter.close();
     }
 
-    private static String faceExpressCalculator(List<LandmarkProto.NormalizedLandmarkList> multiFaceLandmarks) {
+    private static void faceExpressCalculator(List<LandmarkProto.NormalizedLandmarkList> multiFaceLandmarks) {
         // 正常// 惊讶// 伤心// 开心// 生气// 微笑// 大笑// 紧张
         LandmarkProto.NormalizedLandmarkList landmarkList = multiFaceLandmarks.get(0);
 //        String faceLandmarksStr = "";
@@ -280,23 +280,20 @@ public class FExpression {
         double brow_hight_rate = brow_hight/16;
         double brow_width_rate = brow_width/8;
 //        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
-        double brow_line_points_x[] = new double[POINT_NUM];
+        double[] brow_line_points_x = new double[POINT_NUM];
         brow_line_points_x[0] = (landmarkList.getLandmark(52).getX());
         brow_line_points_x[1] = (landmarkList.getLandmark(70).getX());
         brow_line_points_x[2] = (landmarkList.getLandmark(105).getX());
         brow_line_points_x[3] = (landmarkList.getLandmark(107).getX());
-        double brow_line_points_y[] = new double[POINT_NUM];
+        double[] brow_line_points_y = new double[POINT_NUM];
         brow_line_points_y[0] = (landmarkList.getLandmark(52).getY());
         brow_line_points_y[1] = (landmarkList.getLandmark(70).getY());
         brow_line_points_y[2] = (landmarkList.getLandmark(105).getY());
         brow_line_points_y[3] = (landmarkList.getLandmark(107).getY());
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
-//        brow_line_left = (landmarkList.getLandmark(105).getY() - landmarkList.getLandmark(52).getY())/(landmarkList.getLandmark(105).getX() - landmarkList.getLandmark(52).getX());
         brow_line_left = (-10) * (processor.getCurveFit(brow_line_points_x, brow_line_points_y, POINT_NUM)); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
-//        brow_left_up = landmarkList.getLandmark(70).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(66).getY()-landmarkList.getLandmark(10).getY()*/;
-//        brow_right_up = landmarkList.getLandmark(300).getY()-landmarkList.getLandmark(10).getY()/* + landmarkList.getLandmark(283).getY()-landmarkList.getLandmark(10).getY()*/;
 
         //3、眼睛高度 (注: 眼睛Y坐标 下 > 上, X坐标 右 > 左)
         eye_left_height = landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(159).getY();   //中心 以后尝试修改为 Y(145) - Y(159) -> Y(23) - Y(27)
@@ -306,7 +303,6 @@ public class FExpression {
 
         //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
         eye_height = (eye_left_height + eye_right_height)/2;
-        // 两眼角距离
         eye_width = (eye_left_width + eye_right_width)/2;
 
         //4、嘴巴宽高(两嘴角间距离- 用于计算嘴巴的宽度 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左 嘴巴睁开程度- 用于计算嘴巴的高度: 上下嘴唇拉大距离(惊奇、恐惧、愤怒、高兴))
@@ -314,15 +310,13 @@ public class FExpression {
         mouth_height = landmarkList.getLandmark(17).getY() - landmarkList.getLandmark(0).getY();  // 中心
 
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
-//        double mouth_line_rate = ((landmarkList.getLandmark(78).getY() + landmarkList.getLandmark(308).getY()))/(landmarkList.getLandmark(14).getY() + landmarkList.getLandmark(0).getY());
-//        Log.i(TAG, "faceEC: mouth_line_rate = "+mouth_line_rate);
         //对嘴角进行一阶拟合，曲线斜率
-        double lips_line_points_x[] = new double[POINT_NUM];
+        double[] lips_line_points_x = new double[POINT_NUM];
         lips_line_points_x[0] = (landmarkList.getLandmark(318).getX());
         lips_line_points_x[1] = (landmarkList.getLandmark(324).getX());
         lips_line_points_x[2] = (landmarkList.getLandmark(308).getX());
         lips_line_points_x[3] = (landmarkList.getLandmark(291).getX());
-        double lips_line_points_y[] = new double[POINT_NUM];
+        double[] lips_line_points_y = new double[POINT_NUM];
         lips_line_points_y[0] = (landmarkList.getLandmark(318).getY());
         lips_line_points_y[1] = (landmarkList.getLandmark(324).getY());
         lips_line_points_y[2] = (landmarkList.getLandmark(308).getY());
@@ -337,25 +331,11 @@ public class FExpression {
 
         //6、归一化
         double dis_eye_mouth_rate = (2 * mouth_width)/distance_eye_mouth;             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
-        double distance_brow = landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX();
-        double dis_brow_mouth_rate = mouth_width/distance_brow;                       // 嘴角 / 两眉间距
-        double dis_eye_height_mouth_rate = mouth_width/eye_height;                    // 嘴角 / 上下眼睑距离
         double dis_brow_height_mouth_rate = (2 * mouth_width)/(landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(70).getY());
-        // 眉毛上扬与识别框宽度之比
-//        double brow_up_rate = (brow_left_up + brow_right_up)/(2*face_width);
-//        // 眼睛睁开距离与识别框高度之比
-//        double eye_height_rate = eye_height/face_width;
-//        double eye_width_rate = eye_width/face_width;
-//        // 张开嘴巴距离与识别框高度之比
-//        double mouth_width_rate = mouth_width/face_width;
-//        double mouth_height_rate = mouth_height/face_width;
-//        Log.i(TAG, "faceEC: 眼角嘴 = "+dis_eye_mouth_rate+", \t眉角嘴 = "+dis_brow_mouth_rate+", \t眼高嘴 = "+dis_eye_height_mouth_rate+", \t眉高嘴 = "+dis_brow_height_mouth_rate);
 
         //7、 求连续多次的平均值
         if(arr_cnt < AVG_CNT) {
-            brow_mouth_arr[arr_cnt] = dis_brow_mouth_rate;
             brow_height_mouth_arr[arr_cnt] = dis_brow_height_mouth_rate;
-            eye_height_mouth_arr[arr_cnt] = dis_eye_height_mouth_rate;
             brow_width_arr[arr_cnt] = brow_width_rate;
             brow_height_arr[arr_cnt] = brow_hight_rate;
             brow_line_arr[arr_cnt] = brow_line_rate;
@@ -371,14 +351,12 @@ public class FExpression {
         double mouth_width_avg = 0, mouth_height_avg = 0, mouth_pull_down_avg = 0;
         arr_cnt++;
         if(arr_cnt >= AVG_CNT) {
-            brow_mouth_avg = processor.getAverage(brow_mouth_arr, 4);
             brow_height_mouth_avg = processor.getAverage(brow_height_mouth_arr, 4);
             brow_width_avg = processor.getAverage(brow_width_arr, 4);
             brow_height_avg = processor.getAverage(brow_height_arr, 4);
             brow_line_avg = processor.getAverage(brow_line_arr, 4);
             eye_height_avg = processor.getAverage(eye_height_arr, 4);
             eye_width_avg = processor.getAverage(eye_width_arr, 4);
-            eye_height_mouth_avg = processor.getAverage(eye_height_mouth_arr, 4);
             mouth_width_avg = processor.getAverage(mouth_width_arr, 4);
             mouth_height_avg = processor.getAverage(mouth_height_arr, 4);
             mouth_pull_down_avg = processor.getAverage(mouth_pull_down_arr, 4);
@@ -398,6 +376,5 @@ public class FExpression {
             expressionState.onExpressStateListener(ret, "");
             total_log_cnt = 0;
         }
-        return "";
     }
 }
