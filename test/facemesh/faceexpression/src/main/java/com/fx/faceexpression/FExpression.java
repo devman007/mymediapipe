@@ -2,9 +2,17 @@ package com.fx.faceexpression;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.util.Log;
+import android.util.Size;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
 
+import androidx.annotation.NonNull;
+
+import com.google.mediapipe.components.CameraHelper;
+import com.google.mediapipe.components.CameraXPreviewHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
 import com.google.mediapipe.components.FrameProcessor;
 import com.google.mediapipe.components.PermissionHelper;
@@ -38,12 +46,25 @@ public class FExpression {
     // frames onto a {@link Surface}.
     protected static FrameProcessor processor;
 
+    // Handles camera access via the {@link CameraX} Jetpack support library.
+    protected CameraXPreviewHelper cameraHelper;
+
+    private static final boolean FLIP_FRAMES_VERTICALLY = true;
+    private static final boolean USE_FRONT_CAMERA = true;
+
+    // {@link SurfaceTexture} where the camera-preview frames can be accessed.
+    private SurfaceTexture previewFrameTexture;
+    // {@link SurfaceView} that displays the camera-preview frames processed by a MediaPipe graph.
+    private SurfaceView previewDisplayView;
+
     // Creates and manages an {@link EGLContext}.
     private EglManager eglManager;
 
     // Converts the GL_TEXTURE_EXTERNAL_OES texture from Android camera into a regular texture to be
     // consumed by {@link FrameProcessor} and the underlying MediaPipe graph.
     private ExternalTextureConverter converter;
+
+    private Context context = null;
 
     // face mesh
     private static final String BINARY_GRAPH_NAME = "face_mesh_mobile_gpu.binarypb";
@@ -56,32 +77,50 @@ public class FExpression {
     // Max number of faces to detect/process.
     private static final int NUM_FACES = 4;
 
-    private static final boolean FLIP_FRAMES_VERTICALLY = true;
-    private static final boolean USE_FRONT_CAMERA = true;
+    private static final int POINT_NUM = 4;  //输入线性拟和点
+
+    private static final int AVG_CNT = 10;
+
+    private static double brow_width_arr[] = new double[AVG_CNT];
+    private static double brow_height_arr[] = new double[AVG_CNT];
+    private static double brow_line_arr[] = new double[AVG_CNT];
+    private static double brow_mouth_arr[] = new double[AVG_CNT];
+    private static double brow_height_mouth_arr[] = new double[AVG_CNT];
+    private static double eye_height_arr[] = new double[AVG_CNT];
+    private static double eye_width_arr[] = new double[AVG_CNT];
+    private static double eye_height_mouth_arr[] = new double[AVG_CNT];
+    private static double mouth_width_arr[] = new double[AVG_CNT];
+    private static double mouth_height_arr[] = new double[AVG_CNT];
+    private static double mouth_pull_down_arr[] = new double[AVG_CNT];
+    private static int arr_cnt = 0;
+    private static int total_log_cnt = 0;
 
     private static IFaceExpressionState expressionState = null;
 
-    public FExpression() {
-
+    public FExpression(Context cont) {
+        context = cont;
+        initialize();
     }
 
     public void setFaceExpressionStateListener(IFaceExpressionState stateListener) {
         expressionState = stateListener;
     }
 
-    public void initialize(Activity activity) {
-        AndroidAssetUtil.initializeNativeAssetManager(activity);
+    public void initialize() {
+        previewDisplayView = new SurfaceView(context);
+
+        AndroidAssetUtil.initializeNativeAssetManager(context);
+
         eglManager = new EglManager(null);
-        processor = new FrameProcessor(
-                        activity,
-                        eglManager.getNativeContext(),
-                        BINARY_GRAPH_NAME,
-                        INPUT_VIDEO_STREAM_NAME,
-                        OUTPUT_VIDEO_STREAM_NAME);
+        processor = new FrameProcessor(context,
+                                    eglManager.getNativeContext(),
+                                    BINARY_GRAPH_NAME,
+                                    INPUT_VIDEO_STREAM_NAME,
+                                    OUTPUT_VIDEO_STREAM_NAME);
 
         processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
 
-        PermissionHelper.checkAndRequestCameraPermissions(activity);
+        PermissionHelper.checkAndRequestCameraPermissions((Activity) context);
 
         AndroidPacketCreator packetCreator = processor.getPacketCreator();
         Map<String, Packet> inputSidePackets = new HashMap<>();
@@ -99,75 +138,76 @@ public class FExpression {
 //                                    + packet.getTimestamp()
 //                                    + "] "
 //                                    + getMultiFaceLandmarksDebugString(multiFaceLandmarks));
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            faceexpress.setText(faceExpressCalculator(multiFaceLandmarks));
                     faceExpressCalculator(multiFaceLandmarks);
-//                        }
-//                    });
                 });
-    }
 
-    public void resume() {
         converter = new ExternalTextureConverter(eglManager.getContext());
         converter.setFlipY(FLIP_FRAMES_VERTICALLY);
         converter.setConsumer(processor);
+
+        previewDisplayView.setVisibility(View.GONE);
+        previewDisplayView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(@NonNull SurfaceHolder holder) {
+                processor.getVideoSurfaceOutput().setSurface(holder.getSurface());
+            }
+
+            @Override
+            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+                // (Re-)Compute the ideal size of the camera-preview display (the area that the
+                // camera-preview frames get rendered onto, potentially with scaling and rotation)
+                // based on the size of the SurfaceView that contains the display.
+                Size viewSize = new Size(width, height);
+                Size displaySize = cameraHelper.computeDisplaySizeFromViewSize(viewSize);
+
+                // Connect the converter to the camera-preview frames as its input (via
+                // previewFrameTexture), and configure the output width and height as the computed
+                // display size.
+                boolean isCameraRotated = cameraHelper.isCameraRotated();
+                converter.setSurfaceTextureAndAttachToGLContext(
+                                previewFrameTexture,
+                                isCameraRotated ? displaySize.getHeight() : displaySize.getWidth(),
+                                isCameraRotated ? displaySize.getWidth() : displaySize.getHeight());
+            }
+
+            @Override
+            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+                processor.getVideoSurfaceOutput().setSurface(null);
+            }
+        });
     }
 
-    public void pause() {
+    public SurfaceView getSurfaceView() {
+        return previewDisplayView;
+    }
+
+    public void startCamera() {
+        if (PermissionHelper.cameraPermissionsGranted((Activity) context)) {
+            cameraHelper = new CameraXPreviewHelper();
+            cameraHelper.setOnCameraStartedListener(
+                    surfaceTexture -> {
+                        previewFrameTexture = surfaceTexture;
+                        // Make the display view visible to start showing the preview. This triggers the
+                        // SurfaceHolder.Callback added to (the holder of) previewDisplayView.
+                        previewDisplayView.setVisibility(View.VISIBLE);
+                    });
+            CameraHelper.CameraFacing cameraFacing =
+                    USE_FRONT_CAMERA ? CameraHelper.CameraFacing.FRONT
+                            : CameraHelper.CameraFacing.BACK;
+            cameraHelper.startCamera(
+                    (Activity) context, cameraFacing, /*surfaceTexture=*/ null, null);
+        }
+    }
+
+    public void closeCamera() {
         converter.close();
     }
 
-    public void surfaceCreate(SurfaceHolder holder) {
-        processor.getVideoSurfaceOutput().setSurface(holder.getSurface());
-    }
-
-    public void surfaceDestory() {
-        processor.getVideoSurfaceOutput().setSurface(null);
-    }
-
-    public int getFaceExpressionType() {
-        int ret = 0;
-        ret = processor.getFaceExpressionType();
-        return ret;
-    }
-
-    private static final int POINT_NUM = 4;  //输入线性拟和点
-
-    private static final int FACE_EXPRESSION_UNKNOWN    = 0;
-    private static final int FACE_EXPRESSION_HAPPY      = 1;
-    private static final int FACE_EXPRESSION_SURPRISE   = 2;
-    private static final int FACE_EXPRESSION_CRY        = 3;
-    private static final int FACE_EXPRESSION_NATURE     = 4;
-    private static final int FACE_EXPRESSION_SAD        = 5;
-    private static final int FACE_EXPRESSION_ANGRY      = 6;
-    private static final int FACE_EXPRESSION_NERVOUS    = 7;
-    private static final int FACE_EXPRESSION_HEADFALSE  = 8;
-
-    private static final int AVG_CNT = 10;
-    private static final int DETECT_TIMES = 2;
-
-    static double brow_width_arr[] = new double[AVG_CNT];
-    static double brow_height_arr[] = new double[AVG_CNT];
-    static double brow_line_arr[] = new double[AVG_CNT];
-    static double brow_mouth_arr[] = new double[AVG_CNT];
-    static double brow_height_mouth_arr[] = new double[AVG_CNT];
-    static double eye_height_arr[] = new double[AVG_CNT];
-    static double eye_width_arr[] = new double[AVG_CNT];
-    static double eye_height_mouth_arr[] = new double[AVG_CNT];
-    static double mouth_width_arr[] = new double[AVG_CNT];
-    static double mouth_height_arr[] = new double[AVG_CNT];
-    static double mouth_pull_down_arr[] = new double[AVG_CNT];
-    static int arr_cnt = 0;
-    static int normal_times = 0, suprise_times = 0, sad_times = 0, happy_times = 0, angry_times = 0;
-    static int total_log_cnt = 0;
-    static String showString = "";
     private static String faceExpressCalculator(List<LandmarkProto.NormalizedLandmarkList> multiFaceLandmarks) {
         // 正常// 惊讶// 伤心// 开心// 生气// 微笑// 大笑// 紧张
         LandmarkProto.NormalizedLandmarkList landmarkList = multiFaceLandmarks.get(0);
-        String faceLandmarksStr = "";
-        faceLandmarksStr += "\t\tLandmark count: " + landmarkList.getLandmarkCount() + "\n";
+//        String faceLandmarksStr = "";
+//        faceLandmarksStr += "\t\tLandmark count: " + landmarkList.getLandmarkCount() + "\n";
         //脸宽
         double face_width = 0;
         double face_height = 0;
@@ -274,7 +314,7 @@ public class FExpression {
         mouth_height = landmarkList.getLandmark(17).getY() - landmarkList.getLandmark(0).getY();  // 中心
 
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
-        double mouth_line_rate = ((landmarkList.getLandmark(78).getY() + landmarkList.getLandmark(308).getY()))/(landmarkList.getLandmark(14).getY() + landmarkList.getLandmark(0).getY());
+//        double mouth_line_rate = ((landmarkList.getLandmark(78).getY() + landmarkList.getLandmark(308).getY()))/(landmarkList.getLandmark(14).getY() + landmarkList.getLandmark(0).getY());
 //        Log.i(TAG, "faceEC: mouth_line_rate = "+mouth_line_rate);
         //对嘴角进行一阶拟合，曲线斜率
         double lips_line_points_x[] = new double[POINT_NUM];
@@ -296,7 +336,6 @@ public class FExpression {
         distance_eye_mouth = distance_eye_left_mouth + distance_eye_right_mouth;
 
         //6、归一化
-        double MM = 0, NN = 0, PP = 0, QQ = 0;
         double dis_eye_mouth_rate = (2 * mouth_width)/distance_eye_mouth;             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
         double distance_brow = landmarkList.getLandmark(296).getX() - landmarkList.getLandmark(66).getX();
         double dis_brow_mouth_rate = mouth_width/distance_brow;                       // 嘴角 / 两眉间距
@@ -356,33 +395,9 @@ public class FExpression {
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
             int ret = processor.getFaceExpressionType();
-            expressionState.onExpressState(ret, "");
-            switch (ret) {
-                case FACE_EXPRESSION_HAPPY:
-//                    setExpression_happy();
-                    break;
-                case FACE_EXPRESSION_SURPRISE:
-//                    setExpression_surprise();
-                    break;
-                case FACE_EXPRESSION_CRY:
-                case FACE_EXPRESSION_SAD:
-//                    setExpression_sad();
-                    break;
-                case FACE_EXPRESSION_NATURE:
-//                    setExpression_normal();
-                    break;
-                case FACE_EXPRESSION_ANGRY:
-//                    setExpression_angry();
-                    break;
-                case FACE_EXPRESSION_HEADFALSE:
-//                    Log.i(TAG, "faceEC: ============头部太偏=============");
-                    showString = "头部太偏";
-                    break;
-                default:
-                    break;
-            }
+            expressionState.onExpressStateListener(ret, "");
             total_log_cnt = 0;
         }
-        return showString;
+        return "";
     }
 }
