@@ -208,32 +208,6 @@ public class FExpression {
         LandmarkProto.NormalizedLandmarkList landmarkList = multiFaceLandmarks.get(0);
 //        String faceLandmarksStr = "";
 //        faceLandmarksStr += "\t\tLandmark count: " + landmarkList.getLandmarkCount() + "\n";
-        //脸宽
-        double face_width = 0;
-        double face_height = 0;
-        double face_ratio = 0;
-        //眉毛
-        double brow_width = 0;
-        double brow_hight = 0;
-        double brow_line_left = 0;
-        double brow_left_height = 0;
-        double brow_right_height = 0;
-        //眼睛
-        double eye_width = 0;
-        double eye_height = 0;
-        double eye_left_height = 0;
-        double eye_left_width = 0;
-        double eye_right_height = 0;
-        double eye_right_width = 0;
-        //嘴巴
-        double mouth_width = 0;
-        double mouth_height = 0;
-
-        //眼角嘴角距离
-        double distance_eye_left_mouth = 0;
-        double distance_eye_right_mouth = 0;
-        double distance_eye_mouth = 0;
-
 //        for (int i = 0; i < landmarkList.getLandmarkCount(); i++) {
 //            faceLandmarksStr  += "\t\tLandmark ["
 //                                + i + "], "
@@ -243,13 +217,13 @@ public class FExpression {
 //            Log.i(TAG, faceLandmarksStr);
 //        }
         // 1、计算人脸识别框边长(注: 脸Y坐标 下 > 上, X坐标 右 > 左)
-        face_width = landmarkList.getLandmark(361).getX() - landmarkList.getLandmark(132).getX();
-        face_height = landmarkList.getLandmark(152).getY() - landmarkList.getLandmark(10).getY();
+        double face_width = landmarkList.getLandmark(361).getX() - landmarkList.getLandmark(132).getX();
+        double face_height = landmarkList.getLandmark(152).getY() - landmarkList.getLandmark(10).getY();
         //判断头部倾斜度
-        face_ratio = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
+        double face_ratio = (landmarkList.getLandmark(362).getY() - landmarkList.getLandmark(133).getY())/(landmarkList.getLandmark(362).getX() - landmarkList.getLandmark(133).getX());
 
         //2、眉毛宽度(注: 脸Y坐标 下 > 上, X坐标 右 > 左 眉毛变短程度: 皱变短(恐惧、愤怒、悲伤))
-        brow_width = landmarkList.getLandmark(296).getX()-landmarkList.getLandmark(53).getX() +
+        double brow_width = landmarkList.getLandmark(296).getX()-landmarkList.getLandmark(53).getX() +
                 landmarkList.getLandmark(334).getX()-landmarkList.getLandmark(52).getX() +
                 landmarkList.getLandmark(293).getX()-landmarkList.getLandmark(65).getX() +
                 landmarkList.getLandmark(300).getX()-landmarkList.getLandmark(55).getX() +
@@ -259,7 +233,7 @@ public class FExpression {
                 landmarkList.getLandmark(283).getX()-landmarkList.getLandmark(66).getX();
 
         //2.1、眉毛高度之和
-        brow_left_height =      landmarkList.getLandmark(53).getY() - landmarkList.getLandmark(10).getY() +
+        double brow_left_height = landmarkList.getLandmark(53).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(52).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(65).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(55).getY() - landmarkList.getLandmark(10).getY() +
@@ -267,7 +241,7 @@ public class FExpression {
                 landmarkList.getLandmark(63).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(105).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(66).getY() - landmarkList.getLandmark(10).getY();
-        brow_right_height =     landmarkList.getLandmark(283).getY() - landmarkList.getLandmark(10).getY() +
+        double brow_right_height = landmarkList.getLandmark(283).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(282).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(295).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(285).getY() - landmarkList.getLandmark(10).getY() +
@@ -275,7 +249,7 @@ public class FExpression {
                 landmarkList.getLandmark(293).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(334).getY() - landmarkList.getLandmark(10).getY() +
                 landmarkList.getLandmark(296).getY() - landmarkList.getLandmark(10).getY();
-        brow_hight = brow_left_height + brow_right_height;
+        double brow_hight = brow_left_height + brow_right_height;
         //2.2、眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒) - Solution 1(7-1)
         double brow_hight_rate = brow_hight/16;
         double brow_width_rate = brow_width/8;
@@ -292,22 +266,22 @@ public class FExpression {
         brow_line_points_y[3] = (landmarkList.getLandmark(107).getY());
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉 - Solution 1(7-2) - 临时关闭(未使用)
-        brow_line_left = (-10) * (processor.getCurveFit(brow_line_points_x, brow_line_points_y, POINT_NUM)); //调函数拟合直线
+        double brow_line_left = (-10) * (processor.getCurveFit(brow_line_points_x, brow_line_points_y, POINT_NUM)); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
 
         //3、眼睛高度 (注: 眼睛Y坐标 下 > 上, X坐标 右 > 左)
-        eye_left_height = landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(159).getY();   //中心 以后尝试修改为 Y(145) - Y(159) -> Y(23) - Y(27)
-        eye_left_width = landmarkList.getLandmark(133).getX() - landmarkList.getLandmark(33).getX();
-        eye_right_height = landmarkList.getLandmark(374).getY() - landmarkList.getLandmark(386).getY();  // 中心 以后尝试修改为 Y(374) - Y(386) -> Y(253) - Y(257)
-        eye_right_width = landmarkList.getLandmark(263).getX() - landmarkList.getLandmark(362).getX();
+        double eye_left_height = landmarkList.getLandmark(145).getY() - landmarkList.getLandmark(159).getY();   //中心 以后尝试修改为 Y(145) - Y(159) -> Y(23) - Y(27)
+        double eye_left_width = landmarkList.getLandmark(133).getX() - landmarkList.getLandmark(33).getX();
+        double eye_right_height = landmarkList.getLandmark(374).getY() - landmarkList.getLandmark(386).getY();  // 中心 以后尝试修改为 Y(374) - Y(386) -> Y(253) - Y(257)
+        double eye_right_width = landmarkList.getLandmark(263).getX() - landmarkList.getLandmark(362).getX();
 
         //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧) - Solution 1(7-4)
-        eye_height = (eye_left_height + eye_right_height)/2;
-        eye_width = (eye_left_width + eye_right_width)/2;
+        double eye_height = (eye_left_height + eye_right_height)/2;
+        double eye_width = (eye_left_width + eye_right_width)/2;
 
         //4、嘴巴宽高(两嘴角间距离- 用于计算嘴巴的宽度 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左 嘴巴睁开程度- 用于计算嘴巴的高度: 上下嘴唇拉大距离(惊奇、恐惧、愤怒、高兴))
-        mouth_width = landmarkList.getLandmark(308).getX() - landmarkList.getLandmark(78).getX();
-        mouth_height = landmarkList.getLandmark(17).getY() - landmarkList.getLandmark(0).getY();  // 中心
+        double mouth_width = landmarkList.getLandmark(308).getX() - landmarkList.getLandmark(78).getX();
+        double mouth_height = landmarkList.getLandmark(17).getY() - landmarkList.getLandmark(0).getY();  // 中心
 
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉 - Solution 1(7-7)
         //对嘴角进行一阶拟合，曲线斜率
@@ -325,9 +299,9 @@ public class FExpression {
 //        Log.i(TAG, "faceEC: mouth_pull_down = "+mouth_pull_down);
 
         //5、两侧眼角到同侧嘴角距离
-        distance_eye_left_mouth = landmarkList.getLandmark(78).getY() - landmarkList.getLandmark(133).getY();
-        distance_eye_right_mouth = landmarkList.getLandmark(308).getY() - landmarkList.getLandmark(362).getY();
-        distance_eye_mouth = distance_eye_left_mouth + distance_eye_right_mouth;
+        double distance_eye_left_mouth = landmarkList.getLandmark(78).getY() - landmarkList.getLandmark(133).getY();
+        double distance_eye_right_mouth = landmarkList.getLandmark(308).getY() - landmarkList.getLandmark(362).getY();
+        double distance_eye_mouth = distance_eye_left_mouth + distance_eye_right_mouth;
 
         //6、归一化
         double dis_eye_mouth_rate = (2 * mouth_width)/distance_eye_mouth;             // 嘴角 / 眼角嘴角距离, 高兴(0.85),愤怒/生气(0.7),惊讶(0.6),大哭(0.75)
