@@ -28,17 +28,17 @@ static const int kNumFaces = 1;
 #define AVG_CNT 10
 #define DETECT_TIMES 2
 
-DOUBLE brow_width_arr[AVG_CNT];
-DOUBLE brow_height_arr[AVG_CNT];
-DOUBLE brow_line_arr[AVG_CNT];
-DOUBLE brow_mouth_arr[AVG_CNT];
-DOUBLE brow_height_mouth_arr[AVG_CNT];
-DOUBLE eye_height_arr[AVG_CNT];
-DOUBLE eye_width_arr[AVG_CNT];
-DOUBLE eye_height_mouth_arr[AVG_CNT];
-DOUBLE mouth_width_arr[AVG_CNT];
-DOUBLE mouth_height_arr[AVG_CNT];
-DOUBLE mouth_pull_down_arr[AVG_CNT];
+double brow_width_arr[AVG_CNT];
+double brow_height_arr[AVG_CNT];
+double brow_line_arr[AVG_CNT];
+double brow_mouth_arr[AVG_CNT];
+double brow_height_mouth_arr[AVG_CNT];
+double eye_height_arr[AVG_CNT];
+double eye_width_arr[AVG_CNT];
+double eye_height_mouth_arr[AVG_CNT];
+double mouth_width_arr[AVG_CNT];
+double mouth_height_arr[AVG_CNT];
+double mouth_pull_down_arr[AVG_CNT];
 static int arr_cnt = 0;
 static int normal_times = 0, suprise_times = 0, sad_times = 0, happy_times = 0, angry_times = 0;
 static int total_log_cnt = 0;
@@ -231,20 +231,20 @@ UILabel* expreLabel = nil;
         double brow_hight_rate = brow_hight/16;
         double brow_width_rate = brow_width/8;
 //        // 分析挑眉程度和皱眉程度, 左眉拟合曲线(53-52-65-55-70-63-105-66) - 暂时未使用
-        POINTS brow_line_points[POINT_NUM];
-        brow_line_points[0].x = landmarks.landmark(55).x();
-        brow_line_points[1].x = landmarks.landmark(70).x();
-        brow_line_points[2].x = landmarks.landmark(105).x();
-        brow_line_points[3].x = landmarks.landmark(107).x();
-        
-        brow_line_points[0].y = landmarks.landmark(55).y();
-        brow_line_points[1].y = landmarks.landmark(70).y();
-        brow_line_points[2].y = landmarks.landmark(105).y();
-        brow_line_points[3].y = landmarks.landmark(107).y();
+        double brow_line_points_x[POINT_NUM];
+        brow_line_points_x[0] = landmarks.landmark(55).x();
+        brow_line_points_x[1] = landmarks.landmark(70).x();
+        brow_line_points_x[2] = landmarks.landmark(105).x();
+        brow_line_points_x[3] = landmarks.landmark(107).x();
+        double brow_line_points_y[POINT_NUM];
+        brow_line_points_y[0] = landmarks.landmark(55).y();
+        brow_line_points_y[1] = landmarks.landmark(70).y();
+        brow_line_points_y[2] = landmarks.landmark(105).y();
+        brow_line_points_y[3] = landmarks.landmark(107).y();
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉
 //        brow_line_left = (landmarks.landmark(105).y() - landmarks.landmark(52).y())/(landmarks.landmark(105).x() - landmarks.landmark(52).x());
-        brow_line_left = (-10) * (::mediapipe::getCurveFit(brow_line_points, POINT_NUM)); //调函数拟合直线
+        brow_line_left = (-10) * (::mediapipe::getCurveFit_android(brow_line_points_x, brow_line_points_y, POINT_NUM)); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
 //        brow_left_up = landmarks.landmark(70).y()-landmarks.landmark(10).y()/* + landmarks.landmark(66).y()-landmarks.landmark(10).y()*/;
 //        brow_right_up = landmarks.landmark(300).y()-landmarks.landmark(10).y()/* + landmarks.landmark(283).y()-landmarks.landmark(10).y()*/;
@@ -266,17 +266,17 @@ UILabel* expreLabel = nil;
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉
         double mouth_pull_down = (landmarks.landmark(14).y() - landmarks.landmark(324).y())/(landmarks.landmark(14).y() + landmarks.landmark(324).x());
         //对嘴角进行一阶拟合，曲线斜率
-        POINTS lips_line_points[POINT_NUM];
-        lips_line_points[0].x = landmarks.landmark(318).x();
-        lips_line_points[1].x = landmarks.landmark(324).x();
-        lips_line_points[2].x = landmarks.landmark(308).x();
-        lips_line_points[3].x = landmarks.landmark(291).x();
-        
-        lips_line_points[0].y = landmarks.landmark(318).y();
-        lips_line_points[1].y = landmarks.landmark(324).y();
-        lips_line_points[2].y = landmarks.landmark(308).y();
-        lips_line_points[3].y = landmarks.landmark(291).y();
-        double mouth_pull_down_rate = (-10) * (::mediapipe::getCurveFit(lips_line_points, POINT_NUM)); //调函数拟合直线
+        double lips_line_points_x[POINT_NUM];
+        lips_line_points_x[0] = landmarks.landmark(318).x();
+        lips_line_points_x[1] = landmarks.landmark(324).x();
+        lips_line_points_x[2] = landmarks.landmark(308).x();
+        lips_line_points_x[3] = landmarks.landmark(291).x();
+        double lips_line_points_y[POINT_NUM];
+        lips_line_points_y[0] = landmarks.landmark(318).y();
+        lips_line_points_y[1] = landmarks.landmark(324).y();
+        lips_line_points_y[2] = landmarks.landmark(308).y();
+        lips_line_points_y[3] = landmarks.landmark(291).y();
+        double mouth_pull_down_rate = (-10) * (::mediapipe::getCurveFit_android(lips_line_points_x, lips_line_points_y, POINT_NUM)); //调函数拟合直线
 //        Log.i(TAG, "faceEC: mouth_pull_down = "+mouth_pull_down);
 
         //5、两侧眼角到同侧嘴角距离
@@ -303,17 +303,17 @@ UILabel* expreLabel = nil;
 
         //7、 求连续多次的平均值
         if(arr_cnt < AVG_CNT) {
-            brow_mouth_arr[arr_cnt].v = dis_brow_mouth_rate;
-            brow_height_mouth_arr[arr_cnt].v = dis_brow_height_mouth_rate;
-            brow_width_arr[arr_cnt].v = brow_width_rate;
-            brow_height_arr[arr_cnt].v = brow_hight_rate;
-            brow_line_arr[arr_cnt].v = brow_line_rate;
-            eye_height_arr[arr_cnt].v = eye_height;
-            eye_width_arr[arr_cnt].v = eye_width;
-            eye_height_mouth_arr[arr_cnt].v = dis_eye_height_mouth_rate;
-            mouth_width_arr[arr_cnt].v = mouth_width;
-            mouth_height_arr[arr_cnt].v = mouth_height;
-            mouth_pull_down_arr[arr_cnt].v = mouth_pull_down_rate;
+            brow_mouth_arr[arr_cnt] = dis_brow_mouth_rate;
+            brow_height_mouth_arr[arr_cnt] = dis_brow_height_mouth_rate;
+            brow_width_arr[arr_cnt] = brow_width_rate;
+            brow_height_arr[arr_cnt] = brow_hight_rate;
+            brow_line_arr[arr_cnt] = brow_line_rate;
+            eye_height_arr[arr_cnt] = eye_height;
+            eye_width_arr[arr_cnt] = eye_width;
+            eye_height_mouth_arr[arr_cnt] = dis_eye_height_mouth_rate;
+            mouth_width_arr[arr_cnt] = mouth_width;
+            mouth_height_arr[arr_cnt] = mouth_height;
+            mouth_pull_down_arr[arr_cnt] = mouth_pull_down_rate;
         }
         double brow_mouth_avg = 0, brow_height_mouth_avg = 0;
         double brow_width_avg = 0, brow_height_avg = 0, brow_line_avg = 0;
@@ -321,17 +321,17 @@ UILabel* expreLabel = nil;
         double mouth_width_avg = 0, mouth_height_avg = 0, mouth_pull_down_avg = 0;
         arr_cnt++;
         if(arr_cnt >= AVG_CNT) {
-            brow_mouth_avg = ::mediapipe::getAverage(brow_mouth_arr, AVG_CNT);
-            brow_height_mouth_avg = ::mediapipe::getAverage(brow_height_mouth_arr, AVG_CNT);
-            brow_width_avg = ::mediapipe::getAverage(brow_width_arr, AVG_CNT);
-            brow_height_avg = ::mediapipe::getAverage(brow_height_arr, AVG_CNT);
-            brow_line_avg = ::mediapipe::getAverage(brow_line_arr, AVG_CNT);
-            eye_height_avg = ::mediapipe::getAverage(eye_height_arr, AVG_CNT);
-            eye_width_avg = ::mediapipe::getAverage(eye_width_arr, AVG_CNT);
-            eye_height_mouth_avg = ::mediapipe::getAverage(eye_height_mouth_arr, AVG_CNT);
-            mouth_width_avg = ::mediapipe::getAverage(mouth_width_arr, AVG_CNT);
-            mouth_height_avg = ::mediapipe::getAverage(mouth_height_arr, AVG_CNT);
-            mouth_pull_down_avg = ::mediapipe::getAverage(mouth_pull_down_arr, AVG_CNT);
+            brow_mouth_avg = ::mediapipe::getAverage_android(brow_mouth_arr, AVG_CNT);
+            brow_height_mouth_avg = ::mediapipe::getAverage_android(brow_height_mouth_arr, AVG_CNT);
+            brow_width_avg = ::mediapipe::getAverage_android(brow_width_arr, AVG_CNT);
+            brow_height_avg = ::mediapipe::getAverage_android(brow_height_arr, AVG_CNT);
+            brow_line_avg = ::mediapipe::getAverage_android(brow_line_arr, AVG_CNT);
+            eye_height_avg = ::mediapipe::getAverage_android(eye_height_arr, AVG_CNT);
+            eye_width_avg = ::mediapipe::getAverage_android(eye_width_arr, AVG_CNT);
+            eye_height_mouth_avg = ::mediapipe::getAverage_android(eye_height_mouth_arr, AVG_CNT);
+            mouth_width_avg = ::mediapipe::getAverage_android(mouth_width_arr, AVG_CNT);
+            mouth_height_avg = ::mediapipe::getAverage_android(mouth_height_arr, AVG_CNT);
+            mouth_pull_down_avg = ::mediapipe::getAverage_android(mouth_pull_down_arr, AVG_CNT);
             arr_cnt = 0;
         }
         if(arr_cnt == 0) {
