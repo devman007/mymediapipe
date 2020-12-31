@@ -14,6 +14,57 @@
 
 #import "CommonViewController.h"
 
+#import "mediapipe/objc/MPPCameraInputSource.h"
+#import "mediapipe/objc/MPPGraph.h"
+#import "mediapipe/objc/MPPLayerRenderer.h"
+#import "mediapipe/objc/MPPPlayerInputSource.h"
+
+typedef NS_ENUM(NSInteger, MediaPipeDemoSourceMode) {
+  MediaPipeDemoSourceCamera,
+  MediaPipeDemoSourceVideo
+};
+
+@interface CommonViewController() <MPPGraphDelegate, MPPInputSourceDelegate>
+
+// The MediaPipe graph currently in use. Initialized in viewDidLoad, started in
+// viewWillAppear: and sent video frames on videoQueue.
+@property(nonatomic) MPPGraph* mediapipeGraph;
+
+// Handles camera access via AVCaptureSession library.
+@property(nonatomic) MPPCameraInputSource* cameraSource;
+
+// Provides data from a video.
+@property(nonatomic) MPPPlayerInputSource* videoSource;
+
+// The data source for the demo.
+@property(nonatomic) MediaPipeDemoSourceMode sourceMode;
+
+// Inform the user when camera is unavailable.
+@property(nonatomic) IBOutlet UILabel* noCameraLabel;
+
+// Display the camera preview frames.
+@property(strong, nonatomic) IBOutlet UIView* liveView;
+
+// Render frames in a layer.
+@property(nonatomic) MPPLayerRenderer* renderer;
+
+// Process camera frames on this queue.
+@property(nonatomic) dispatch_queue_t videoQueue;
+
+// Graph name.
+@property(nonatomic) NSString* graphName;
+
+// Graph input stream.
+@property(nonatomic) const char* graphInputStream;
+
+// Graph output stream.
+@property(nonatomic) const char* graphOutputStream;
+
+@end
+
+static const int kNumFaces = 1;
+static const char* kNumFacesInputSidePacket = "num_faces";
+static const char* kLandmarksOutputStream = "multi_face_landmarks";
 static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 
 @implementation CommonViewController
@@ -30,6 +81,13 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
     if (self == baseClass) return [customClass allocWithZone:zone];
   }
   return [super allocWithZone:zone];
+}
+
+- (void)initGraph {
+    [self.mediapipeGraph setSidePacket:(mediapipe::MakePacket<int>(kNumFaces))
+                                 named:kNumFacesInputSidePacket];
+    [self.mediapipeGraph addFrameOutputStream:kLandmarksOutputStream
+                             outputPacketType:MPPPacketTypeRaw];
 }
 
 #pragma mark - Cleanup methods
@@ -190,6 +248,29 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
       CVPixelBufferRelease(pixelBuffer);
     });
   }
+}
+
+// Receives raw Packet from the MediaPipe graph.
+- (void)mediapipeGraph:(MPPGraph*)graph
+       didOutputPacket:(const ::mediapipe::Packet&)packet
+            fromStream:(const std::string&)streamName {
+    
+//    const auto& multi_face_landmarks = packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
+//    int face_index = 0;
+//    const auto& landmarks = multi_face_landmarks[face_index];
+//    NSLog(@"\tNumber of landmarks for face[%d]: %d", face_index, landmarks.landmark_size());
+//    for (int i = 0; i < landmarks.landmark_size(); ++i) {
+//      NSLog(@"\t\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
+//            landmarks.landmark(i).y(), landmarks.landmark(i).z());
+//    }
+//      for (int i = 0; i < landmarkList.getLandmarkCount(); i++) {
+//          faceLandmarksStr  += "\t\tLandmark ["
+//                              + i + "], "
+//                              + landmarks.landmark(i).x() + ", "
+//                              + landmarks.landmark(i).y() + ", "
+//                              + landmarks.landmark(i).z() + ")\n";
+//          Log.i(TAG, faceLandmarksStr);
+//      }
 }
 
 @end

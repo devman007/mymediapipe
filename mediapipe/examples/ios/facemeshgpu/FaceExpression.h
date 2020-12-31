@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "mediapipe/examples/ios/common/CommonViewController.h"
+//#import "mediapipe/examples/ios/common/CommonViewController.h"
 
 @class FaceExpression;
 
@@ -10,16 +10,15 @@
 - (void)faceExpression:(FaceExpression*)faceExpression Type:(int)type;
 @end
 
-@interface FaceExpression
+@interface FaceExpression: NSObject
 
-// The MediaPipe graph currently in use. Initialized in viewDidLoad, started in
-// viewWillAppear: and sent video frames on videoQueue.
-@property(nonatomic) MPPGraph* mediapipeGraph;
+//@property (weak, nonatomic)id<FaceExpressionDelegate> delegate;
 
-- (double)getRound:(double)val Num:(int)round;
-
-- (void)initialize;
+- (void)initialize:(UIView*)preview;
 
 - (void)startCamera;
 
+- (double)getRound:(double)val Num:(int)round;
+
 @end
+
