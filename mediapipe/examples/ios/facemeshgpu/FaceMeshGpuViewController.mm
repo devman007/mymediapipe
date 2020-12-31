@@ -71,23 +71,6 @@ UILabel* expreLabel = nil;
     expreLabel.textColor = [UIColor greenColor];
 }
 
-/**
- 四舍五入字符串
- @param round 小数位 eg: 4
- @param numberString 数字 eg 0.125678
- @return 四舍五入之后的 eg: 0.1257
- */
-- (double)getRound:(double)val Num:(int)round {
-    NSString* valString = [NSString stringWithFormat:@"%f", val];
-    if (valString == nil) {
-        return 0;
-    }
-    NSDecimalNumberHandler *roundingBehavior    = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:round raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
-    NSDecimalNumber *aDN                        = [[NSDecimalNumber alloc] initWithString:valString];
-    NSDecimalNumber *resultDN                   = [aDN decimalNumberByRoundingAccordingToBehavior:roundingBehavior];
-    return resultDN.doubleValue;
-}
-
 - (void)setExpression_happy {
     happy_times++;
     if(happy_times >= DETECT_TIMES) {
