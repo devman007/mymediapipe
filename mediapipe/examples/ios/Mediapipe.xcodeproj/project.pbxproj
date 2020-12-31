@@ -4079,7 +4079,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
 				INFOPLIST_FILE = "${PROJECT_FILE_PATH}/.tulsi/Resources/StubInfoPlist.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshGpu;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lygou.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -5889,7 +5889,7 @@
 				OTHER_CFLAGS = "--version";
 				OTHER_LDFLAGS = "--version";
 				OTHER_SWIFT_FLAGS = "--version";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshGpu;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lygou.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -6258,7 +6258,7 @@
 				OTHER_CFLAGS = "--version";
 				OTHER_LDFLAGS = "--version";
 				OTHER_SWIFT_FLAGS = "--version";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshGpu;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lygou.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -6597,7 +6597,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				INFOPLIST_FILE = "${PROJECT_FILE_PATH}/.tulsi/Resources/StubInfoPlist.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshGpu;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lygou.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;

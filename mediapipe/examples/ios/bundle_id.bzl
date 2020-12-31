@@ -15,7 +15,7 @@
 """Configuration helper for iOS app bundle ids and provisioning profiles.
 """
 
-BUNDLE_ID_PREFIX = "com.lyg.mediapipe"
+BUNDLE_ID_PREFIX = "com.lygou.mediapipe"
 
 # Look for a provisioning profile in the example's directory first,
 # otherwise look for a common one.

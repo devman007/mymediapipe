@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D4CD8BFA259C5628005DEFFC /* FaceMeshFramework.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FaceMeshFramework.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4CD8BFA259C5628005DEFFC /* FaceMeshGpuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FaceMeshGpuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4CD8BFD259C5628005DEFFC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D4CD8BFE259C5628005DEFFC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		D4CD8C00259C5628005DEFFC /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
@@ -53,7 +53,7 @@
 		D4CD8BFB259C5628005DEFFC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D4CD8BFA259C5628005DEFFC /* FaceMeshFramework.app */,
+				D4CD8BFA259C5628005DEFFC /* FaceMeshGpuApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -93,7 +93,7 @@
 			);
 			name = FaceMeshGpu;
 			productName = FaceMeshGpu;
-			productReference = D4CD8BFA259C5628005DEFFC /* FaceMeshFramework.app */;
+			productReference = D4CD8BFA259C5628005DEFFC /* FaceMeshGpuApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -297,8 +297,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshFramework;
-				PRODUCT_NAME = FaceMeshFramework;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lygou.mediapipe.FaceMeshGpu;
+				PRODUCT_NAME = FaceMeshGpuApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -316,8 +316,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshFramework;
-				PRODUCT_NAME = FaceMeshFramework;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lygou.mediapipe.FaceMeshGpu;
+				PRODUCT_NAME = FaceMeshGpuApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
