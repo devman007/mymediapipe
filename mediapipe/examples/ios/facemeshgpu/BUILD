@@ -56,9 +56,11 @@ ios_application(
 objc_library(
     name = "FaceMeshGpuAppLibrary",
     srcs = [
+        "FaceExpression.mm",
         "FaceMeshGpuViewController.mm",
     ],
     hdrs = [
+        "FaceExpression.h",
         "FaceMeshGpuViewController.h",
     ],
     data = [

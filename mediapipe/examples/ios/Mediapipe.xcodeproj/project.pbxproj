@@ -814,6 +814,8 @@
 		57E48872FF84466600000000 /* circular_buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = circular_buffer.h; path = mediapipe/framework/profiler/circular_buffer.h; sourceTree = "<group>"; };
 		D42A43CE258B357800D28CBE /* FaceMeshGpuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FaceMeshGpuViewController.h; path = mediapipe/examples/ios/facemeshgpu/FaceMeshGpuViewController.h; sourceTree = "<group>"; };
 		D42A43CF258B357800D28CBE /* FaceMeshGpuViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FaceMeshGpuViewController.mm; path = mediapipe/examples/ios/facemeshgpu/FaceMeshGpuViewController.mm; sourceTree = "<group>"; };
+		D4371D84259C8DB600445EC4 /* FaceExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FaceExpression.h; path = mediapipe/examples/ios/facemeshgpu/FaceExpression.h; sourceTree = "<group>"; };
+		D4371D85259C8DB600445EC4 /* FaceExpression.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FaceExpression.mm; path = mediapipe/examples/ios/facemeshgpu/FaceExpression.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -1550,6 +1552,8 @@
 		052FFF3FC04EABC200000001 /* facemeshgpu */ = {
 			isa = PBXGroup;
 			children = (
+				D4371D84259C8DB600445EC4 /* FaceExpression.h */,
+				D4371D85259C8DB600445EC4 /* FaceExpression.mm */,
 				D42A43CE258B357800D28CBE /* FaceMeshGpuViewController.h */,
 				D42A43CF258B357800D28CBE /* FaceMeshGpuViewController.mm */,
 				57E48872856734C400000000 /* BUILD */,
@@ -2956,6 +2960,12 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 1000;
+				TargetAttributes = {
+					6A7C7824C7B8905200000000 = {
+						DevelopmentTeam = T4LF6K955V;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 476463155683DE8D00000000 /* Build configuration list for PBXProject "Mediapipe" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -4062,12 +4072,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Stub Launch Image";
 				BAZEL_TARGET = "//mediapipe/examples/ios/facemeshgpu:FaceMeshGpuApp";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T4LF6K955V;
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
 				INFOPLIST_FILE = "${PROJECT_FILE_PATH}/.tulsi/Resources/StubInfoPlist.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TULSI_BUILD_PATH = mediapipe/examples/ios/facemeshgpu;
 				TULSI_XCODE_VERSION = 11.3.1.11C505;
@@ -5862,7 +5876,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Stub Launch Image";
 				BAZEL_TARGET = "//mediapipe/examples/ios/facemeshgpu:FaceMeshGpuApp";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T4LF6K955V;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
 				HEADER_SEARCH_PATHS = "";
@@ -5874,6 +5891,7 @@
 				OTHER_SWIFT_FLAGS = "--version";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(PRODUCT_NAME).h";
@@ -6227,7 +6245,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Stub Launch Image";
 				BAZEL_TARGET = "//mediapipe/examples/ios/facemeshgpu:FaceMeshGpuApp";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T4LF6K955V;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				HEADER_SEARCH_PATHS = "";
@@ -6239,6 +6260,7 @@
 				OTHER_SWIFT_FLAGS = "--version";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(PRODUCT_NAME).h";
@@ -6568,12 +6590,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Stub Launch Image";
 				BAZEL_TARGET = "//mediapipe/examples/ios/facemeshgpu:FaceMeshGpuApp";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T4LF6K955V;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				INFOPLIST_FILE = "${PROJECT_FILE_PATH}/.tulsi/Resources/StubInfoPlist.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TULSI_BUILD_PATH = mediapipe/examples/ios/facemeshgpu;
 				TULSI_XCODE_VERSION = 11.3.1.11C505;
