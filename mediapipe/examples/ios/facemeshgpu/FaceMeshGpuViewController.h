@@ -14,3 +14,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "mediapipe/examples/ios/common/CommonViewController.h"
+
+@interface FaceMeshGpuViewController : CommonViewController
+
+@end
