@@ -2,28 +2,28 @@
 <Scheme version="1.3" LastUpgradeVersion="1000">
     <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES">
         <BuildActionEntries>
-            <BuildActionEntry buildForAnalyzing="YES" buildForTesting="YES" buildForArchiving="YES" buildForRunning="YES" buildForProfiling="YES">
-                <BuildableReference BuildableIdentifier="primary" ReferencedContainer="container:Mediapipe.xcodeproj" BlueprintName="ObjectDetectionCpuApp" BuildableName="ObjectDetectionCpuApp.app" BlueprintIdentifier="6A7C78247B02DCBC00000000"></BuildableReference>
+            <BuildActionEntry buildForTesting="YES" buildForRunning="YES" buildForProfiling="YES" buildForArchiving="YES" buildForAnalyzing="YES">
+                <BuildableReference BuildableName="ObjectDetectionCpuApp.app" BlueprintIdentifier="C46656D9A5793CB000000000" BlueprintName="ObjectDetectionCpuApp" BuildableIdentifier="primary" ReferencedContainer="container:Mediapipe.xcodeproj"></BuildableReference>
             </BuildActionEntry>
         </BuildActionEntries>
     </BuildAction>
-    <TestAction selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv="YES" buildConfiguration="__TulsiTestRunner_Debug">
+    <TestAction buildConfiguration="__TulsiTestRunner_Debug" shouldUseLaunchSchemeArgsEnv="YES" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB">
         <Testables></Testables>
         <BuildableProductRunnable runnableDebuggingMode="0">
-            <BuildableReference BlueprintName="ObjectDetectionCpuApp" ReferencedContainer="container:Mediapipe.xcodeproj" BuildableIdentifier="primary" BlueprintIdentifier="6A7C78247B02DCBC00000000" BuildableName="ObjectDetectionCpuApp.app"></BuildableReference>
+            <BuildableReference BuildableIdentifier="primary" BuildableName="ObjectDetectionCpuApp.app" BlueprintName="ObjectDetectionCpuApp" ReferencedContainer="container:Mediapipe.xcodeproj" BlueprintIdentifier="C46656D9A5793CB000000000"></BuildableReference>
         </BuildableProductRunnable>
     </TestAction>
-    <LaunchAction allowLocationSimulation="YES" ignoresPersistentStateOnLaunch="NO" buildConfiguration="Debug" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB" debugDocumentVersioning="YES" useCustomWorkingDirectory="NO" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" launchStyle="0" debugServiceExtension="internal">
+    <LaunchAction debugServiceExtension="internal" allowLocationSimulation="YES" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" useCustomWorkingDirectory="NO" ignoresPersistentStateOnLaunch="NO" buildConfiguration="Debug" launchStyle="0" debugDocumentVersioning="YES" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB">
         <EnvironmentVariables></EnvironmentVariables>
         <BuildableProductRunnable runnableDebuggingMode="0">
-            <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="6A7C78247B02DCBC00000000" BlueprintName="ObjectDetectionCpuApp" BuildableName="ObjectDetectionCpuApp.app" ReferencedContainer="container:Mediapipe.xcodeproj"></BuildableReference>
+            <BuildableReference BlueprintName="ObjectDetectionCpuApp" ReferencedContainer="container:Mediapipe.xcodeproj" BuildableIdentifier="primary" BuildableName="ObjectDetectionCpuApp.app" BlueprintIdentifier="C46656D9A5793CB000000000"></BuildableReference>
         </BuildableProductRunnable>
     </LaunchAction>
-    <ProfileAction shouldUseLaunchSchemeArgsEnv="YES" buildConfiguration="__TulsiTestRunner_Release" useCustomWorkingDirectory="NO" debugDocumentVersioning="YES">
+    <ProfileAction shouldUseLaunchSchemeArgsEnv="YES" debugDocumentVersioning="YES" buildConfiguration="__TulsiTestRunner_Release" useCustomWorkingDirectory="NO">
         <BuildableProductRunnable runnableDebuggingMode="0">
-            <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="6A7C78247B02DCBC00000000" ReferencedContainer="container:Mediapipe.xcodeproj" BuildableName="ObjectDetectionCpuApp.app" BlueprintName="ObjectDetectionCpuApp"></BuildableReference>
+            <BuildableReference BuildableName="ObjectDetectionCpuApp.app" BuildableIdentifier="primary" BlueprintIdentifier="C46656D9A5793CB000000000" ReferencedContainer="container:Mediapipe.xcodeproj" BlueprintName="ObjectDetectionCpuApp"></BuildableReference>
         </BuildableProductRunnable>
     </ProfileAction>
     <AnalyzeAction buildConfiguration="Debug"></AnalyzeAction>
-    <ArchiveAction revealArchiveInOrganizer="YES" buildConfiguration="Release"></ArchiveAction>
+    <ArchiveAction buildConfiguration="Release" revealArchiveInOrganizer="YES"></ArchiveAction>
 </Scheme>
