@@ -250,27 +250,28 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
   }
 }
 
-// Receives raw Packet from the MediaPipe graph.
-- (void)mediapipeGraph:(MPPGraph*)graph
-       didOutputPacket:(const ::mediapipe::Packet&)packet
-            fromStream:(const std::string&)streamName {
-    
-//    const auto& multi_face_landmarks = packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
-//    int face_index = 0;
-//    const auto& landmarks = multi_face_landmarks[face_index];
-//    NSLog(@"\tNumber of landmarks for face[%d]: %d", face_index, landmarks.landmark_size());
-//    for (int i = 0; i < landmarks.landmark_size(); ++i) {
-//      NSLog(@"\t\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
-//            landmarks.landmark(i).y(), landmarks.landmark(i).z());
-//    }
-//      for (int i = 0; i < landmarkList.getLandmarkCount(); i++) {
-//          faceLandmarksStr  += "\t\tLandmark ["
-//                              + i + "], "
-//                              + landmarks.landmark(i).x() + ", "
-//                              + landmarks.landmark(i).y() + ", "
-//                              + landmarks.landmark(i).z() + ")\n";
-//          Log.i(TAG, faceLandmarksStr);
-//      }
-}
+//将此接口移植到上层，这里不能获取 :mediapipe::NormalizedLandmarkList
+//// Receives raw Packet from the MediaPipe graph.
+//- (void)mediapipeGraph:(MPPGraph*)graph
+//       didOutputPacket:(const ::mediapipe::Packet&)packet
+//            fromStream:(const std::string&)streamName {
+//
+////    const auto& multi_face_landmarks = packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
+////    int face_index = 0;
+////    const auto& landmarks = multi_face_landmarks[face_index];
+////    NSLog(@"\tNumber of landmarks for face[%d]: %d", face_index, landmarks.landmark_size());
+////    for (int i = 0; i < landmarks.landmark_size(); ++i) {
+////      NSLog(@"\t\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
+////            landmarks.landmark(i).y(), landmarks.landmark(i).z());
+////    }
+////      for (int i = 0; i < landmarkList.getLandmarkCount(); i++) {
+////          faceLandmarksStr  += "\t\tLandmark ["
+////                              + i + "], "
+////                              + landmarks.landmark(i).x() + ", "
+////                              + landmarks.landmark(i).y() + ", "
+////                              + landmarks.landmark(i).z() + ")\n";
+////          Log.i(TAG, faceLandmarksStr);
+////      }
+//}
 
 @end
