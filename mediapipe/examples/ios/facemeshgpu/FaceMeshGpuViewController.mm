@@ -56,14 +56,14 @@ UILabel* expreLabel = nil;
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-    [self.mediapipeGraph setSidePacket:(mediapipe::MakePacket<int>(kNumFaces))
-                                 named:kNumFacesInputSidePacket];
-    [self.mediapipeGraph addFrameOutputStream:kLandmarksOutputStream
-                             outputPacketType:MPPPacketTypeRaw];
+  [self.mediapipeGraph setSidePacket:(mediapipe::MakePacket<int>(kNumFaces))
+                               named:kNumFacesInputSidePacket];
+  [self.mediapipeGraph addFrameOutputStream:kLandmarksOutputStream
+                           outputPacketType:MPPPacketTypeRaw];
     
     CGRect frame = CGRectMake(100, 50, 200, 50);
     expreLabel = [[UILabel alloc]initWithFrame:frame];
-//    [self.view addSubview:expreLabel];
+    [self.view addSubview:expreLabel];
     [expreLabel setText:@""];
     expreLabel.font = [UIFont systemFontOfSize:30.f];
     expreLabel.font = [UIFont boldSystemFontOfSize:30.f];
@@ -128,10 +128,10 @@ UILabel* expreLabel = nil;
      didOutputPacket:(const ::mediapipe::Packet&)packet
           fromStream:(const std::string&)streamName {
   if (streamName == kLandmarksOutputStream) {
-//    if (packet.IsEmpty()) {
-//      NSLog(@"[TS:%lld] No face landmarks", packet.Timestamp().Value());
-//      return;
-//    }
+    if (packet.IsEmpty()) {
+      NSLog(@"[TS:%lld] No face landmarks", packet.Timestamp().Value());
+      return;
+    }
     const auto& multi_face_landmarks = packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
 //    NSLog(@"[TS:%lld] Number of face instances with landmarks: %lu", packet.Timestamp().Value(),
 //          multi_face_landmarks.size());

@@ -32,13 +32,6 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
   return [super allocWithZone:zone];
 }
 
-- (void)initGraph {
-//    [self.mediapipeGraph setSidePacket:(mediapipe::MakePacket<int>(kNumFaces))
-//                                 named:kNumFacesInputSidePacket];
-//    [self.mediapipeGraph addFrameOutputStream:kLandmarksOutputStream
-//                             outputPacketType:MPPPacketTypeRaw];
-}
-
 #pragma mark - Cleanup methods
 
 - (void)dealloc {

@@ -60,6 +60,4 @@ typedef NS_ENUM(NSInteger, MediaPipeDemoSourceMode) {
 // Graph output stream.
 @property(nonatomic) const char* graphOutputStream;
 
-- (void)initGraph;
-
 @end
