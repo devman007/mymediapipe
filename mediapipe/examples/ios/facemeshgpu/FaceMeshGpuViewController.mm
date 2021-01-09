@@ -304,15 +304,15 @@ UILabel* expreLabel = nil;
             memset(mouth_pull_down_arr, 0, sizeof(mouth_pull_down_arr));
         }
 
-        //8、表情算法
-        ::mediapipe::setFaceExpressionFace(face_width, face_height, face_ratio);
-        ::mediapipe::setFaceExpressionBrow(brow_width_avg, brow_height_avg, brow_line_avg);
-        ::mediapipe::setFaceExpressionEye(eye_width_avg, eye_height_avg, dis_eye_mouth_rate);
-        ::mediapipe::setFaceExpressionMouth(mouth_width_avg, mouth_height_avg, mouth_pull_down_avg, brow_height_mouth_avg);
-
-        //9、抛出表情结果
         total_log_cnt++;
         if(total_log_cnt >= AVG_CNT) {
+            //8、表情算法
+            ::mediapipe::setFaceExpressionFace(face_width, face_height, face_ratio);
+            ::mediapipe::setFaceExpressionBrow(brow_width_avg, brow_height_avg, brow_line_avg);
+            ::mediapipe::setFaceExpressionEye(eye_width_avg, eye_height_avg, dis_eye_mouth_rate);
+            ::mediapipe::setFaceExpressionMouth(mouth_width_avg, mouth_height_avg, mouth_pull_down_avg, brow_height_mouth_avg);
+            
+            //9、抛出表情结果
             int expression = ::mediapipe::getFaceExpressionType();
             switch (expression) {
                 case FACE_EXPRESSION_HAPPY:
@@ -338,17 +338,20 @@ UILabel* expreLabel = nil;
                 default:
                     break;
             }
+            double mouth_h_w = mouth_height_avg/mouth_width_avg;
+            double eye_h_w = eye_height_avg/eye_width_avg;
+            double brow_h_w = brow_height_avg/brow_width_avg;
 //            NSLog(@"faceEC: 挑眉(%f), \t嘴角下拉(%f), \tM(%f), \tMM(%f)\n",
 //                  brow_line_avg,
 //                  mouth_pull_down_avg,
 //                  dis_eye_mouth_rate,
 //                  MM);
-//            NSLog(@"faceEC: 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
-//                  brow_height_width_rate,
-//                  eye_height_width_rate,
-//                  mouth_height_width_rate,
-//                  brow_height_mouth_avg,
-//                  eye_height_mouth_avg);
+            NSLog(@"faceEC: 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f), \t眉高嘴(%f), \t眼高嘴(%f)\n",
+                  brow_h_w,
+                  eye_h_w,
+                  mouth_h_w,
+                  brow_height_mouth_avg,
+                  eye_height_mouth_avg);
             total_log_cnt = 0;
         }
         dispatch_async(dispatch_get_main_queue(), ^{

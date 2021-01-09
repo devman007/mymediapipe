@@ -49,6 +49,8 @@ typedef NS_ENUM(NSInteger, MediaPipeDemoSourceMode) {
 
 static NSString* const kGraphName = @"face_mesh_mobile_gpu";
 static const char* kNumFacesInputSidePacket = "num_faces";
+static const char* kInputStream = "input_video";
+static const char* kOutputStream = "output_video";
 static const char* kLandmarksOutputStream = "multi_face_landmarks";
 static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 // Max number of faces to detect/process.
@@ -75,7 +77,7 @@ static int total_log_cnt = 0;
     //for uiview used
     self.renderer = [[MPPLayerRenderer alloc] init];
     self.renderer.layer.frame = preview.layer.bounds;
-//    [self.liveView.layer addSublayer:self.renderer.layer];
+    [preview.layer addSublayer:self.renderer.layer];
     self.renderer.frameScaleMode = MPPFrameScaleModeFillAndCrop;
 
     dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
@@ -114,21 +116,12 @@ static int total_log_cnt = 0;
 
     [self.cameraSource requestCameraAccessWithCompletionHandler:^void(BOOL granted) {
       if (granted) {
-        [self startCamera];
+        [self startGraph];
 //        dispatch_async(dispatch_get_main_queue(), ^{
 //          self.noCameraLabel.hidden = YES;
 //        });
       }
     }];
-    
-    [self.mediapipeGraph setSidePacket:(mediapipe::MakePacket<int>(kNumFaces))
-                                 named:kNumFacesInputSidePacket];
-    [self.mediapipeGraph addFrameOutputStream:kLandmarksOutputStream
-                             outputPacketType:MPPPacketTypeRaw];
-}
-
-- (void)startCamera {
-    [self startGraphAndCamera];
 }
 
 /**
@@ -180,10 +173,13 @@ static int total_log_cnt = 0;
 
     // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
     MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
+    [newGraph addFrameOutputStream:kOutputStream outputPacketType:MPPPacketTypePixelBuffer];
+    [newGraph addFrameOutputStream:kLandmarksOutputStream outputPacketType:MPPPacketTypeRaw];
+    NSLog(@"%s, %d, newGraph(%x)\n", __FUNCTION__, __LINE__, newGraph);
     return newGraph;
 }
 
-- (void)startGraphAndCamera {
+- (void)startGraph {
     // Start running self.mediapipeGraph.
     NSError* error;
     if (![self.mediapipeGraph startWithError:&error]) {
@@ -194,6 +190,13 @@ static int total_log_cnt = 0;
     dispatch_async(self.videoQueue, ^{
         [self.cameraSource start];
     });
+}
+
+- (void)processGraph {
+    [self.mediapipeGraph setSidePacket:(mediapipe::MakePacket<int>(kNumFaces))
+                                 named:kNumFacesInputSidePacket];
+    [self.mediapipeGraph addFrameOutputStream:kLandmarksOutputStream
+                             outputPacketType:MPPPacketTypeRaw];
 }
 
 #pragma mark - MPPInputSourceDelegate methods
@@ -208,7 +211,7 @@ static int total_log_cnt = 0;
     }
 
     [self.mediapipeGraph sendPixelBuffer:imageBuffer
-                              intoStream:self.graphInputStream
+                              intoStream:kInputStream
                               packetType:MPPPacketTypePixelBuffer];
 }
 
@@ -381,17 +384,16 @@ static int total_log_cnt = 0;
                 memset(mouth_pull_down_arr, 0, sizeof(mouth_pull_down_arr));
             }
 
-            //8、表情算法
-            ::mediapipe::setFaceExpressionFace(face_width, face_height, face_ratio);
-            ::mediapipe::setFaceExpressionBrow(brow_width_avg, brow_height_avg, brow_line_avg);
-            ::mediapipe::setFaceExpressionEye(eye_width_avg, eye_height_avg, dis_eye_mouth_rate);
-            ::mediapipe::setFaceExpressionMouth(mouth_width_avg, mouth_height_avg, mouth_pull_down_avg, brow_height_mouth_avg);
-
-            //9、抛出表情结果
             total_log_cnt++;
             if(total_log_cnt >= AVG_CNT) {
+                //8、表情算法
+                ::mediapipe::setFaceExpressionFace(face_width, face_height, face_ratio);
+                ::mediapipe::setFaceExpressionBrow(brow_width_avg, brow_height_avg, brow_line_avg);
+                ::mediapipe::setFaceExpressionEye(eye_width_avg, eye_height_avg, dis_eye_mouth_rate);
+                ::mediapipe::setFaceExpressionMouth(mouth_width_avg, mouth_height_avg, mouth_pull_down_avg, brow_height_mouth_avg);
+
                 int expression = ::mediapipe::getFaceExpressionType();
-                //回调结果给上层
+                //9、抛出表情结果, 回调结果给上层
 //                [_delegate faceExpression:self Type:expression];
                 total_log_cnt = 0;
             }

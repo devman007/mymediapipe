@@ -18,19 +18,18 @@
 		D497CE0125A3006D0075D6A0 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CDFD25A3006D0075D6A0 /* CoreMedia.framework */; };
 		D497CE0225A3006D0075D6A0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CDFE25A3006D0075D6A0 /* QuartzCore.framework */; };
 		D497CE0325A3006D0075D6A0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CDFF25A3006D0075D6A0 /* AVFoundation.framework */; };
-		D497CE0525A3007C0075D6A0 /* FaceMeshFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */; };
-		D497CE0625A3007C0075D6A0 /* FaceMeshFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D497CE0925A307710075D6A0 /* FaceMeshFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CE0825A307710075D6A0 /* FaceMeshFramework.framework */; };
+		D497CF3225A474620075D6A0 /* FaceMeshFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */; };
+		D497CF3325A474620075D6A0 /* FaceMeshFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D497CE0725A3007C0075D6A0 /* Embed Frameworks */ = {
+		D497CF3425A474620075D6A0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D497CE0625A3007C0075D6A0 /* FaceMeshFramework.framework in Embed Frameworks */,
+				D497CF3325A474620075D6A0 /* FaceMeshFramework.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -55,7 +54,6 @@
 		D497CDFE25A3006D0075D6A0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D497CDFF25A3006D0075D6A0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FaceMeshFramework.framework; path = facemeshios/FaceMeshFramework.framework; sourceTree = "<group>"; };
-		D497CE0825A307710075D6A0 /* FaceMeshFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FaceMeshFramework.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,8 +65,7 @@
 				D497CE0125A3006D0075D6A0 /* CoreMedia.framework in Frameworks */,
 				D497CE0025A3006D0075D6A0 /* CoreVideo.framework in Frameworks */,
 				D497CE0225A3006D0075D6A0 /* QuartzCore.framework in Frameworks */,
-				D497CE0525A3007C0075D6A0 /* FaceMeshFramework.framework in Frameworks */,
-				D497CE0925A307710075D6A0 /* FaceMeshFramework.framework in Frameworks */,
+				D497CF3225A474620075D6A0 /* FaceMeshFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,7 +92,6 @@
 		D497CDE125A2FD870075D6A0 /* facemeshios */ = {
 			isa = PBXGroup;
 			children = (
-				D497CE0825A307710075D6A0 /* FaceMeshFramework.framework */,
 				D497CDE225A2FD870075D6A0 /* AppDelegate.h */,
 				D497CDE325A2FD870075D6A0 /* AppDelegate.m */,
 				D497CDE525A2FD870075D6A0 /* SceneDelegate.h */,
@@ -133,7 +129,7 @@
 				D497CDDB25A2FD870075D6A0 /* Sources */,
 				D497CDDC25A2FD870075D6A0 /* Frameworks */,
 				D497CDDD25A2FD870075D6A0 /* Resources */,
-				D497CE0725A3007C0075D6A0 /* Embed Frameworks */,
+				D497CF3425A474620075D6A0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

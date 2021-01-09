@@ -280,17 +280,17 @@ int getFaceExpressionType() {
         eye_mouth_rate = (g_eye.eye_mouth * 5.0);
     }
     
-    printf("faceEC: %s 挑眉(%f), \t嘴角下拉(%f), \t眼角嘴(%f), \t眼角嘴2(%f)\n",
-          __FUNCTION__,
-          g_brow.up,
-          g_mouth.down,
-          g_eye.eye_mouth,
-          eye_mouth_rate);
-    printf("faceEC: %s 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f)\n",
-          __FUNCTION__,
-          brow_h_w,
-          eye_h_w,
-          mouth_h_w);
+//    printf("faceEC: %s 挑眉(%f), \t嘴角下拉(%f), \t眼角嘴(%f), \t眼角嘴2(%f)\n",
+//          __FUNCTION__,
+//          g_brow.up,
+//          g_mouth.down,
+//          g_eye.eye_mouth,
+//          eye_mouth_rate);
+//    printf("faceEC: %s 眉高宽比(%f), \t眼高宽比(%f), \t嘴高宽比(%f)\n",
+//          __FUNCTION__,
+//          brow_h_w,
+//          eye_h_w,
+//          mouth_h_w);
           
 #ifdef __ANDROID__
     if(mouth_h_w <= 0.385) {   //没有张嘴：正常、伤心、气愤

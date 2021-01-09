@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #import "FaceMeshGpuViewController.h"
+//#import "FaceExpression.h"
 
 #include "mediapipe/framework/formats/landmark.pb.h"
 #include "mediapipe/util/cpu_util.h"
@@ -25,23 +26,25 @@ static const char* kLandmarksOutputStream = "multi_face_landmarks";
 // Max number of faces to detect/process.
 static const int kNumFaces = 1;
 
-#define AVG_CNT 10
-#define DETECT_TIMES 2
+#define AVG_CNT         10
+#define DETECT_TIMES    2
+#define POINT_NUM       4  //输入线性拟和点
 
-double brow_width_arr[AVG_CNT];
-double brow_height_arr[AVG_CNT];
-double brow_line_arr[AVG_CNT];
-double brow_mouth_arr[AVG_CNT];
-double brow_height_mouth_arr[AVG_CNT];
-double eye_height_arr[AVG_CNT];
-double eye_width_arr[AVG_CNT];
-double eye_height_mouth_arr[AVG_CNT];
-double mouth_width_arr[AVG_CNT];
-double mouth_height_arr[AVG_CNT];
-double mouth_pull_down_arr[AVG_CNT];
+static double brow_width_arr[AVG_CNT];
+static double brow_height_arr[AVG_CNT];
+static double brow_line_arr[AVG_CNT];
+static double brow_mouth_arr[AVG_CNT];
+static double brow_height_mouth_arr[AVG_CNT];
+static double eye_height_arr[AVG_CNT];
+static double eye_width_arr[AVG_CNT];
+static double eye_height_mouth_arr[AVG_CNT];
+static double mouth_width_arr[AVG_CNT];
+static double mouth_height_arr[AVG_CNT];
+static double mouth_pull_down_arr[AVG_CNT];
 static int arr_cnt = 0;
 static int normal_times = 0, suprise_times = 0, sad_times = 0, happy_times = 0, angry_times = 0;
 static int total_log_cnt = 0;
+
 NSString* showString = @"";
 
 UILabel* expreLabel = nil;
@@ -118,8 +121,6 @@ UILabel* expreLabel = nil;
     }
 }
 
-#define POINT_NUM  4  //输入线性拟和点
-
 #pragma mark - MPPGraphDelegate methods
 
 // Receives a raw packet from the MediaPipe graph. Invoked on a MediaPipe worker thread.
@@ -141,34 +142,6 @@ UILabel* expreLabel = nil;
 //        NSLog(@"\t\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
 //              landmarks.landmark(i).y(), landmarks.landmark(i).z());
 //      }
-        //脸宽
-        double face_width = 0;
-        double face_height = 0;
-        double face_ratio = 0;
-        //眉毛
-        double brow_left_height = 0;
-        double brow_right_height = 0;
-        double brow_hight = 0;
-        double brow_line_left = 0;
-        double brow_width = 0;
-//        double brow_left_up = 0;
-//        double brow_right_up = 0;
-        //眼睛
-        double eye_left_height = 0;
-        double eye_left_width = 0;
-        double eye_right_height = 0;
-        double eye_right_width = 0;
-        double eye_height = 0;
-        double eye_width = 0;
-        //嘴巴
-        double mouth_width = 0;
-        double mouth_height = 0;
-
-        //眼角嘴角距离
-        double distance_eye_left_mouth = 0;
-        double distance_eye_right_mouth = 0;
-        double distance_eye_mouth = 0;
-
 //        for (int i = 0; i < landmarkList.getLandmarkCount(); i++) {
 //            faceLandmarksStr  += "\t\tLandmark ["
 //                                + i + "], "
@@ -178,12 +151,12 @@ UILabel* expreLabel = nil;
 //            Log.i(TAG, faceLandmarksStr);
 //        }
         // 1、计算人脸识别框边长(注: 脸Y坐标 下 > 上, X坐标 右 > 左)
-        face_width = landmarks.landmark(361).x() - landmarks.landmark(132).x();
-        face_height = landmarks.landmark(152).y() - landmarks.landmark(10).y();
-        face_ratio = (landmarks.landmark(362).y() - landmarks.landmark(133).y())/(landmarks.landmark(362).x() - landmarks.landmark(133).x());
+        double face_width = landmarks.landmark(361).x() - landmarks.landmark(132).x();
+        double face_height = landmarks.landmark(152).y() - landmarks.landmark(10).y();
+        double face_ratio = (landmarks.landmark(362).y() - landmarks.landmark(133).y())/(landmarks.landmark(362).x() - landmarks.landmark(133).x());
 
         //2、眉毛宽度(注: 脸Y坐标 下 > 上, X坐标 右 > 左 眉毛变短程度: 皱变短(恐惧、愤怒、悲伤))
-        brow_width = landmarks.landmark(296).x()-landmarks.landmark(53).x() +
+        double brow_width = landmarks.landmark(296).x()-landmarks.landmark(53).x() +
                      landmarks.landmark(334).x()-landmarks.landmark(52).x() +
                      landmarks.landmark(293).x()-landmarks.landmark(65).x() +
                      landmarks.landmark(300).x()-landmarks.landmark(55).x() +
@@ -193,7 +166,7 @@ UILabel* expreLabel = nil;
                      landmarks.landmark(283).x()-landmarks.landmark(66).x();
 
         //2.1、眉毛高度之和
-        brow_left_height =      landmarks.landmark(53).y() - landmarks.landmark(10).y() +
+        double brow_left_height =      landmarks.landmark(53).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(52).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(65).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(55).y() - landmarks.landmark(10).y() +
@@ -201,7 +174,7 @@ UILabel* expreLabel = nil;
                                 landmarks.landmark(63).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(105).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(66).y() - landmarks.landmark(10).y();
-        brow_right_height =     landmarks.landmark(283).y() - landmarks.landmark(10).y() +
+        double brow_right_height =     landmarks.landmark(283).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(282).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(295).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(285).y() - landmarks.landmark(10).y() +
@@ -209,7 +182,7 @@ UILabel* expreLabel = nil;
                                 landmarks.landmark(293).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(334).y() - landmarks.landmark(10).y() +
                                 landmarks.landmark(296).y() - landmarks.landmark(10).y();
-        brow_hight = brow_left_height + brow_right_height;
+        double brow_hight = brow_left_height + brow_right_height;
         //2.2、眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒)
         double brow_hight_rate = brow_hight/16;
         double brow_width_rate = brow_width/8;
@@ -227,24 +200,24 @@ UILabel* expreLabel = nil;
 
         //2.3、眉毛变化程度: 变弯(高兴、惊奇) - 上扬  - 下拉
 //        brow_line_left = (landmarks.landmark(105).y() - landmarks.landmark(52).y())/(landmarks.landmark(105).x() - landmarks.landmark(52).x());
-        brow_line_left = (-10) * (::mediapipe::getCurveFit_android(brow_line_points_x, brow_line_points_y, POINT_NUM)); //调函数拟合直线
+        double brow_line_left = (-10) * (::mediapipe::getCurveFit_android(brow_line_points_x, brow_line_points_y, POINT_NUM)); //调函数拟合直线
         double brow_line_rate = brow_line_left;  // + brow_line_right;
 //        brow_left_up = landmarks.landmark(70).y()-landmarks.landmark(10).y()/* + landmarks.landmark(66).y()-landmarks.landmark(10).y()*/;
 //        brow_right_up = landmarks.landmark(300).y()-landmarks.landmark(10).y()/* + landmarks.landmark(283).y()-landmarks.landmark(10).y()*/;
 
         //3、眼睛高度 (注: 眼睛Y坐标 下 > 上, X坐标 右 > 左)
-        eye_left_height = landmarks.landmark(23).y() - landmarks.landmark(27).y();   //中心 以后尝试修改为 Y(145) - Y(159) -> Y(23) - Y(27)
-        eye_left_width = landmarks.landmark(133).x() - landmarks.landmark(33).x();
-        eye_right_height = landmarks.landmark(253).y() - landmarks.landmark(257).y();  // 中心 以后尝试修改为 Y(374) - Y(386) -> Y(253) - Y(257)
-        eye_right_width = landmarks.landmark(263).x() - landmarks.landmark(362).x();
+        double eye_left_height = landmarks.landmark(23).y() - landmarks.landmark(27).y();   //中心 以后尝试修改为 Y(145) - Y(159) -> Y(23) - Y(27)
+        double eye_left_width = landmarks.landmark(133).x() - landmarks.landmark(33).x();
+        double eye_right_height = landmarks.landmark(253).y() - landmarks.landmark(257).y();  // 中心 以后尝试修改为 Y(374) - Y(386) -> Y(253) - Y(257)
+        double eye_right_width = landmarks.landmark(263).x() - landmarks.landmark(362).x();
 
         //3.1、眼睛睁开程度: 上下眼睑拉大距离(惊奇、恐惧)
-        eye_height = (eye_left_height + eye_right_height)/2;
-        eye_width = (eye_left_width + eye_right_width)/2;
+        double eye_height = (eye_left_height + eye_right_height)/2;
+        double eye_width = (eye_left_width + eye_right_width)/2;
 
         //4、嘴巴宽高(两嘴角间距离- 用于计算嘴巴的宽度 注: 嘴巴Y坐标 上 > 下, X坐标 右 > 左 嘴巴睁开程度- 用于计算嘴巴的高度: 上下嘴唇拉大距离(惊奇、恐惧、愤怒、高兴))
-        mouth_width = landmarks.landmark(308).x() - landmarks.landmark(78).x();
-        mouth_height = landmarks.landmark(17).y() - landmarks.landmark(0).y();  // 中心
+        double mouth_width = landmarks.landmark(308).x() - landmarks.landmark(78).x();
+        double mouth_height = landmarks.landmark(17).y() - landmarks.landmark(0).y();  // 中心
 
         //4.1、嘴角下拉(厌恶、愤怒、悲伤),    > 1 上扬， < 1 下拉
         double mouth_pull_down = (landmarks.landmark(14).y() - landmarks.landmark(324).y())/(landmarks.landmark(14).y() + landmarks.landmark(324).x());
@@ -263,9 +236,9 @@ UILabel* expreLabel = nil;
 //        Log.i(TAG, "faceEC: mouth_pull_down = "+mouth_pull_down);
 
         //5、两侧眼角到同侧嘴角距离
-        distance_eye_left_mouth = landmarks.landmark(78).y() - landmarks.landmark(133).y();
-        distance_eye_right_mouth = landmarks.landmark(308).y() - landmarks.landmark(362).y();
-        distance_eye_mouth = distance_eye_left_mouth + distance_eye_right_mouth;
+        double distance_eye_left_mouth = landmarks.landmark(78).y() - landmarks.landmark(133).y();
+        double distance_eye_right_mouth = landmarks.landmark(308).y() - landmarks.landmark(362).y();
+        double distance_eye_mouth = distance_eye_left_mouth + distance_eye_right_mouth;
 
         //6、归一化
         double MM = 0, NN = 0, PP = 0, QQ = 0;
@@ -384,5 +357,4 @@ UILabel* expreLabel = nil;
     }
   }
 }
-
 @end
