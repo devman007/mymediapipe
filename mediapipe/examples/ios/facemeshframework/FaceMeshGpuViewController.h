@@ -14,8 +14,9 @@
 
 #import <UIKit/UIKit.h>
 
-#import "mediapipe/examples/ios/common/CommonViewController.h"
+#import "FaceExpresser.h"
 
-@interface FaceMeshGpuViewController : CommonViewController
+@interface FaceMeshGpuViewController : FaceExpresser <FaceExpressDelegate>
 
+@property(nonatomic) IBOutlet UIView* liveView;
 @end

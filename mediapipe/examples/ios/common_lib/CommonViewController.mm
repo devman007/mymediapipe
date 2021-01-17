@@ -14,6 +14,23 @@
 
 #import "CommonViewController.h"
 
+#import "mediapipe/objc/MPPCameraInputSource.h"
+#import "mediapipe/objc/MPPPlayerInputSource.h"
+
+typedef NS_ENUM(NSInteger, MediaPipeDemoSourceMode) {
+  MediaPipeDemoSourceCamera,
+  MediaPipeDemoSourceVideo
+};
+
+@interface CommonViewController() <MPPInputSourceDelegate>
+// Handles camera access via AVCaptureSession library.
+@property(nonatomic) MPPCameraInputSource* cameraSource;
+
+// Process camera frames on this queue.
+@property(nonatomic) dispatch_queue_t videoQueue;
+
+@end
+
 static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 static const char* kInputStream = "input_video";
 static const char* kOutputStream = "output_video";

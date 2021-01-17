@@ -292,11 +292,13 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T4LF6K955V;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = FaceMeshGpu/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_CFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lygou.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -311,11 +313,13 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T4LF6K955V;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = FaceMeshGpu/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_CFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lygou.mediapipe.FaceMeshGpu;
 				PRODUCT_NAME = FaceMeshGpuApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";

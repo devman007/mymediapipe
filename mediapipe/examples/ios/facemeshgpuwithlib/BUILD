@@ -57,15 +57,30 @@ objc_library(
     name = "FaceMeshGpuAppLibrary",
     srcs = [
         "AppDelegate.mm",
-        "FaceExpression.mm",
         "FaceExpresser.mm",
         "FaceMeshGpuViewController.mm",
         "main.m",
     ],
-    hdrs = [
+    hdrs = glob([
+        "mediapipe/*.h",
+        "mediapipe/objc/*.h",
+        "mediapipe/util/*.h",
+        "mediapipe/framework/*.h",
+        "mediapipe/framework/deps/*.h",
+        "mediapipe/framework/formats/*.h",
+        "mediapipe/framework/formats/motion/*.h",
+        #"mediapipe/framework/port/*.h",
+        "mediapipe/framework/profiler/*.h",
+        "mediapipe/framework/profiler/reporter/*.h",
+        "mediapipe/framework/stream_handler/*.h",
+        "mediapipe/framework/tool/*.h",
+    ]) + [
+        "MPPGraph.h",
+        "MPPLayerRenderer.h",
+        "MPPGLViewRenderer.h",
         "AppDelegate.h",
-        "FaceExpression.h",
         "FaceExpresser.h",
+        "CommonViewController.h",
         "FaceMeshGpuViewController.h",
     ],
     data = [

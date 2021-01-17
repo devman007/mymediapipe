@@ -20,6 +20,7 @@
 		D497CE0325A3006D0075D6A0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CDFF25A3006D0075D6A0 /* AVFoundation.framework */; };
 		D497CF3225A474620075D6A0 /* FaceMeshFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */; };
 		D497CF3325A474620075D6A0 /* FaceMeshFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D49C94AF25AD9856005EE0BE /* libCommonMediaPipeLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D49C94AE25AD983B005EE0BE /* libCommonMediaPipeLibrary.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -54,6 +55,7 @@
 		D497CDFE25A3006D0075D6A0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D497CDFF25A3006D0075D6A0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FaceMeshFramework.framework; path = facemeshios/FaceMeshFramework.framework; sourceTree = "<group>"; };
+		D49C94AE25AD983B005EE0BE /* libCommonMediaPipeLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCommonMediaPipeLibrary.a; path = facemeshios/libCommonMediaPipeLibrary.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D49C94AF25AD9856005EE0BE /* libCommonMediaPipeLibrary.a in Frameworks */,
 				D497CE0325A3006D0075D6A0 /* AVFoundation.framework in Frameworks */,
 				D497CE0125A3006D0075D6A0 /* CoreMedia.framework in Frameworks */,
 				D497CE0025A3006D0075D6A0 /* CoreVideo.framework in Frameworks */,
@@ -110,6 +113,7 @@
 		D497CDFB25A3006D0075D6A0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D49C94AE25AD983B005EE0BE /* libCommonMediaPipeLibrary.a */,
 				D497CE0425A3007C0075D6A0 /* FaceMeshFramework.framework */,
 				D497CDFF25A3006D0075D6A0 /* AVFoundation.framework */,
 				D497CDFD25A3006D0075D6A0 /* CoreMedia.framework */,
@@ -333,6 +337,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T4LF6K955V;
 				ENABLE_BITCODE = NO;
@@ -340,13 +345,16 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/facemeshios",
 				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/facemeshios";
 				INFOPLIST_FILE = facemeshios/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.facemeshios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -355,6 +363,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T4LF6K955V;
 				ENABLE_BITCODE = NO;
@@ -362,13 +371,20 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/facemeshios",
 				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/facemeshios";
 				INFOPLIST_FILE = facemeshios/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/facemeshios",
+				);
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lyg.mediapipe.facemeshios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

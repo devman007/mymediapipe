@@ -14,7 +14,7 @@
 
 #import "AppDelegate.h"
 
-#import "mediapipe/examples/ios/common_lib/CommonViewController.h"
+//#import "mediapipe/examples/ios/common_lib/CommonViewController.h"
 
 @interface AppDelegate ()
 

@@ -19,6 +19,7 @@
     "mediapipe/examples/ios/facemeshframework",
     "mediapipe/examples/ios/facemeshgpu",
     "mediapipe/examples/ios/facemeshgpuwithlib",
+    "mediapipe/examples/ios/facemeshionframework",
     "mediapipe/examples/ios/handdetectiongpu",
     "mediapipe/examples/ios/handtrackingframework",
     "mediapipe/examples/ios/handtrackinggpu",

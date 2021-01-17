@@ -16,7 +16,7 @@
 
 #import "FaceExpresser.h"
 
-@interface FaceMeshGpuViewController : FaceExpresser
+@interface FaceMeshGpuViewController : FaceExpresser <FaceExpressDelegate>
 
 @property(nonatomic) IBOutlet UIView* liveView;
 @end

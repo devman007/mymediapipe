@@ -31,9 +31,26 @@ MIN_IOS_VERSION = "10.0"
 
 ios_framework(
     name = "FaceMeshFramework",
-    hdrs = [
-        "FaceExpression.h",
-        "FaceMeshGpuViewController.h",
+    hdrs = glob([
+        "CF*.h",
+        "CG*.h",
+        "MP*.h",
+        #"mediapipe/*.h",
+        #"mediapipe/objc/*.h",
+        #"mediapipe/util/*.h",
+        #"mediapipe/framework/*.h",
+        #"mediapipe/framework/deps/*.h",
+        #"mediapipe/framework/formats/*.h",
+        #"mediapipe/framework/formats/motion/*.h",
+        #"mediapipe/framework/port/*.h",
+        #"mediapipe/framework/profiler/*.h",
+        #"mediapipe/framework/profiler/reporter/*.h",
+        #"mediapipe/framework/stream_handler/*.h",
+        #"mediapipe/framework/tool/*.h",
+    ]) + [
+        "FaceExpresser.h",
+        "CommonViewController.h",
+        #"FaceMeshGpuViewController.h",
     ],
     bundle_id = "com.lyg.mediapipe",
     families = [
@@ -52,11 +69,28 @@ ios_framework(
 objc_library(
     name = "FaceMeshGpuAppLibrary",
     srcs = [
-        "FaceExpression.mm",
+        "FaceExpresser.mm",
         "FaceMeshGpuViewController.mm",
     ],
-    hdrs = [
-        "FaceExpression.h",
+    hdrs = glob([
+        "mediapipe/*.h",
+        "mediapipe/objc/*.h",
+        "mediapipe/util/*.h",
+        "mediapipe/framework/*.h",
+        "mediapipe/framework/deps/*.h",
+        "mediapipe/framework/formats/*.h",
+        "mediapipe/framework/formats/motion/*.h",
+        #"mediapipe/framework/port/*.h",
+        "mediapipe/framework/profiler/*.h",
+        "mediapipe/framework/profiler/reporter/*.h",
+        "mediapipe/framework/stream_handler/*.h",
+        "mediapipe/framework/tool/*.h",
+    ]) + [
+        "MPPGraph.h",
+        "MPPLayerRenderer.h",
+        "MPPGLViewRenderer.h",
+        "FaceExpresser.h",
+        "CommonViewController.h",
         "FaceMeshGpuViewController.h",
     ],
     data = [
@@ -72,7 +106,7 @@ objc_library(
     ],
     deps = [
         "//mediapipe/objc:mediapipe_framework_ios",
-        "//mediapipe/examples/ios/common:CommonMediaPipeAppLibrary",
+        "//mediapipe/examples/ios/common_lib:CommonMediaPipeLibrary",
     ] + select({
         "//mediapipe:ios_i386": [],
         "//mediapipe:ios_x86_64": [],
