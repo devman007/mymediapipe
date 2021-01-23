@@ -32,8 +32,8 @@
 //@property(strong, nonatomic) IBOutlet UIView* liveView;
 //// Render frames in a layer.
 //@property(nonatomic) MPPLayerRenderer* renderer;
-//// Process camera frames on this queue.
-//@property(nonatomic) dispatch_queue_t videoQueue;
+// Process camera frames on this queue.
+@property(nonatomic) dispatch_queue_t videoQueue;
 //// Graph name.
 //@property(nonatomic) NSString* graphName;
 //// Graph input stream.
@@ -41,6 +41,10 @@
 //// Graph output stream.
 //@property(nonatomic) const char* graphOutputStream;
 
+@end
+
+@interface Landmark()
+- (instancetype)initWithX:(float)x y:(float)y z:(float)z;
 @end
 
 #define AVG_CNT         10
@@ -73,7 +77,9 @@ static int total_log_cnt = 0;
 
 @implementation FaceExpression {}
 
-- (void)initialize {
+- (instancetype)init {
+    self = [super init];
+    if(self) {
 //    //for uiview used
 //    NSLog(@"%s, %d, preview(%x)\n", __FUNCTION__, __LINE__, preview);
 //    self.renderer = [[MPPLayerRenderer alloc] init];
@@ -81,9 +87,9 @@ static int total_log_cnt = 0;
 //    [preview.layer addSublayer:self.renderer.layer];
 //    self.renderer.frameScaleMode = MPPFrameScaleModeFillAndCrop;
 //
-//    dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
-//        DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, /*relative_priority=*/0);
-//    self.videoQueue = dispatch_queue_create(kVideoQueueLabel, qosAttribute);
+    dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
+        DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, /*relative_priority=*/0);
+    self.videoQueue = dispatch_queue_create(kVideoQueueLabel, qosAttribute);
 //    NSLog(@"%s, %d, videoQueue(%x)\n", __FUNCTION__, __LINE__, self.videoQueue);
 //    self.graphName = kGraphName;//[[NSBundle mainBundle] objectForInfoDictionaryKey:@"GraphName"];
 //    self.graphInputStream =
@@ -97,7 +103,7 @@ static int total_log_cnt = 0;
     [self processGraph];
     self.mediapipeGraph.delegate = self;
     // Set maxFramesInFlight to a small value to avoid memory contention for real-time processing.
-    self.mediapipeGraph.maxFramesInFlight = 2;
+//    self.mediapipeGraph.maxFramesInFlight = 2;
 //    NSLog(@"%s, %d, mediapipeGraph(%x)\n", __FUNCTION__, __LINE__, self.mediapipeGraph);
 //    //for camera used
 //    self.cameraSource = [[MPPCameraInputSource alloc] init];
@@ -126,6 +132,8 @@ static int total_log_cnt = 0;
 //      }
 //    }];
 //    NSLog(@"%s, %d, end\n", __FUNCTION__, __LINE__);
+    }
+    return self;
 }
 
 /**
@@ -178,8 +186,8 @@ static int total_log_cnt = 0;
 
     // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
     MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
-    // [newGraph addFrameOutputStream:kOutputStream outputPacketType:MPPPacketTypePixelBuffer];
-    // [newGraph addFrameOutputStream:kLandmarksOutputStream outputPacketType:MPPPacketTypeRaw];
+    [newGraph addFrameOutputStream:kOutputStream outputPacketType:MPPPacketTypePixelBuffer];
+    [newGraph addFrameOutputStream:kLandmarksOutputStream outputPacketType:MPPPacketTypeRaw];
 //    NSLog(@"%s, %d, newGraph(%x)\n", __FUNCTION__, __LINE__, newGraph);
     return newGraph;
 }
@@ -248,6 +256,17 @@ static int total_log_cnt = 0;
           return;
        }
        const auto& multi_face_landmarks = packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
+#if 0
+        NSMutableArray<Landmark *> *result = [NSMutableArray array];
+        const auto& landmarks = multi_face_landmarks[0];
+        for (int i = 0; i < landmarks.landmark_size(); ++i) {
+            Landmark *landmark = [[Landmark alloc] initWithX:landmarks.landmark(i).x()
+                                                           y:landmarks.landmark(i).y()
+                                                           z:landmarks.landmark(i).z()];
+            [result addObject:landmark];
+        }
+        [_delegate faceExpression:self didOutputLandmarks: result];
+#else
 //    NSLog(@"[TS:%lld] Number of face instances with landmarks: %lu", packet.Timestamp().Value(),
 //          multi_face_landmarks.size());
      for (int face_index = 0; face_index < multi_face_landmarks.size(); ++face_index) {
@@ -535,8 +554,23 @@ static int total_log_cnt = 0;
                 total_log_cnt = 0;
             }
         }
+#endif
       }
 
+}
+
+@end
+
+@implementation Landmark
+
+- (instancetype)initWithX:(float)x y:(float)y z:(float)z {
+    self = [super init];
+    if (self) {
+        _x = x;
+        _y = y;
+        _z = z;
+    }
+    return self;
 }
 
 @end

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# bazel build --config=ios_fat --copt=-fembed-bitcode mediapipe/examples/ios/facemeshframework:FaceMeshFramework
-# bazel build -c opt --config=ios_arm64 mediapipe/examples/ios/facemeshframework:FaceMeshFramework
+# bazel build --config=ios_fat --copt=-fembed-bitcode mediapipe/examples/ios/facemeshionframework:FaceMeshionFramework
+# bazel build -c opt --config=ios_arm64 mediapipe/examples/ios/facemeshionframework:FaceMeshionFramework
 
 load(
     "@build_bazel_rules_apple//apple:ios.bzl",
@@ -63,6 +63,25 @@ ios_framework(
     ],
 )
 
+## To use the 3D model instead of the default 2D model, add "--define 3D=true" to the
+## bazel build command.
+#config_setting(
+#    name = "use_3d_model",
+#    define_values = {
+#        "3D": "true",
+#    },
+#)
+#
+#genrule(
+#    name = "model",
+#    srcs = select({
+#        "//conditions:default": ["//mediapipe/models:face_landmark.tflite"],
+#        ":use_3d_model": ["//mediapipe/models:hand_landmark_3d.tflite"],
+#    }),
+#    outs = ["hand_landmark.tflite"],
+#    cmd = "cp $< $@",
+#)
+
 objc_library(
     name = "FaceMeshGpuAppLibrary",
     srcs = [
@@ -99,7 +118,9 @@ objc_library(
     ],
     deps = [
         "//mediapipe/objc:mediapipe_framework_ios",
-        "//mediapipe/examples/ios/common_lib:CommonMediaPipeLibrary",
+        "//mediapipe/objc:mediapipe_input_sources_ios",
+        "//mediapipe/objc:mediapipe_layer_renderer",
+        #"//mediapipe/examples/ios/common_lib:CommonMediaPipeLibrary",
     ] + select({
         "//mediapipe:ios_i386": [],
         "//mediapipe:ios_x86_64": [],
