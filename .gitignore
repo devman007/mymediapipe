@@ -20,3 +20,7 @@ mediapipe/examples/ios/Mediapipe.xcodeproj/xcuserdata/yuechuanzhen.xcuserdatad
 provisioning_profile.mobileprovision
 Breakpoints_v2.xcbkptlist
 test/facemeshios/facemeshios/FaceMeshFramework.framework
+test/upperbodyposetracking/.gradle
+test/upperbodyposetracking/.idea
+upperbodyposetracking.iml
+.project
