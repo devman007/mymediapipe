@@ -197,6 +197,11 @@ double getAverage_android(double arr[], int num) {
     return avg;
 }
 
+double getDistance3D(POINTS start, POINTS end) {
+    double ret = fabs(sqrt(pow(start.x - end.x, 2) + pow(start.y - end.y, 2) + pow(start.z - end.z, 2)));
+    return ret;
+}
+
 static FACE g_face;
 static EYEBROWS g_brow;
 static EYES g_eye;

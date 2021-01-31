@@ -38,6 +38,8 @@
 
 - (double)getRound:(double)val Num:(int)round;
 
+- (double)getDistancd3DwithX1:(double)x1 Y1:(double)y1 Z1:(double)z1 X2:(double)x2 Y2:(double)y2 Z2:(double)z2;
+
 @end
 
 @interface Landmark: NSObject

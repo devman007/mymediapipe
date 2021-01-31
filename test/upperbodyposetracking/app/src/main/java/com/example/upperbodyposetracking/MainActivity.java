@@ -357,12 +357,17 @@ public class MainActivity extends AppCompatActivity {
         double right_elbow_nose_w = right_elbow.getX() - nose.getX();
         double right_elbow_nose_h = right_elbow.getY() - nose.getY();
 
-        Vector3D lshoulder = new Vector3D(left_shoulder.getX(), left_shoulder.getY(), left_shoulder.getZ());
-        Vector3D lelbow = new Vector3D(left_elbow.getX(), left_elbow.getY(), left_elbow.getZ());
-        Vector3D lwrist = new Vector3D(left_wrist.getX(), left_wrist.getY(), left_wrist.getZ());
-        double lshoulder_elbow = CalculateDistance.Distance(lshoulder, lelbow);
-        double lwrist_elbow = CalculateDistance.Distance(lwrist, lelbow);
-        Log.i(TAG, "UpperBody: left shoulder_elbow = "+lshoulder_elbow+", wrist_elbow = "+lwrist_elbow);
+        double left_elbow_shoulder = CalculateDistance.Distance(left_elbow.getX(), left_elbow.getY(), left_elbow.getZ(), left_shoulder.getX(), left_shoulder.getY(), left_shoulder.getZ());
+        double left_wrist_elbow = CalculateDistance.Distance(left_wrist.getX(), left_wrist.getY(), left_wrist.getZ(), left_elbow.getX(), left_elbow.getY(), left_elbow.getZ());
+
+        double right_elbow_shoulder = CalculateDistance.Distance(right_elbow.getX(), right_elbow.getY(), right_elbow.getZ(), right_shoulder.getX(), right_shoulder.getY(), right_shoulder.getZ());
+        double right_wrist_elbow = CalculateDistance.Distance(right_wrist.getX(), right_wrist.getY(), right_wrist.getZ(), right_elbow.getX(), right_elbow.getY(), right_elbow.getZ());
+
+        double left_wrist_nose = CalculateDistance.Distance(left_wrist.getX(), left_wrist.getY(), left_wrist.getZ(), nose.getX(), nose.getY(), nose.getZ());
+        double left_elbow_nose = CalculateDistance.Distance(left_elbow.getX(), left_elbow.getY(), left_elbow.getZ(), nose.getX(), nose.getY(), nose.getZ());
+        double right_wrist_nose = CalculateDistance.Distance(right_wrist.getX(), right_wrist.getY(), right_wrist.getZ(), nose.getX(), nose.getY(), nose.getZ());
+        double right_elbow_nose = CalculateDistance.Distance(right_elbow.getX(), right_elbow.getY(), right_elbow.getZ(), nose.getX(), nose.getY(), nose.getZ());
+//        Log.i(TAG, "UpperBody: left shoulder_elbow = "+left_elbow_shoulder+", wrist_elbow = "+left_wrist_elbow);
 
         if(arr_cnt < ARR_CNT) {
             dLeftArr_wrist_elbow_w[arr_cnt] = left_wrist_elbow_w;
@@ -410,11 +415,11 @@ public class MainActivity extends AppCompatActivity {
 //            Log.i(TAG, "UpperBody: right_wrist_nose_w = "+AvgRight_wrist_nose_w+", right_elbow_nose_w = "+AvgRight_elbow_nose_w);
 //            Log.i(TAG, "UpperBody: right_wrist_nose_h = "+AvgRight_wrist_nose_h+", right_elbow_nose_h = "+AvgRight_elbow_nose_h);
 //            Log.i(TAG, "UpperBody: Left_wrist_elbow_w = "+AvgLeft_wrist_elbow_w+", Left_elbow_shoulder_w = "+AvgLeft_elbow_shoulder_w);
-            if((AvgLeft_wrist_nose_h < 0) && (AvgLeft_elbow_nose_h < 0))   {
+            if((AvgLeft_wrist_nose_h < 0) && (AvgLeft_elbow_nose_h < 0) && (AvgLeft_wrist_elbow_h < 0))   {
                 isHighLefthand = true;
             }
             //(Avgleft_wrist_elbow_h > 0) && (AvgLeft_elbow_shoulder_h > 0) &&
-            if((AvgRight_wrist_nose_h < 0) && (AvgRight_elbow_nose_h < 0))   {
+            if((AvgRight_wrist_nose_h < 0) && (AvgRight_elbow_nose_h < 0) && (AvgRight_wrist_elbow_h < 0))   {
                 isHighRighthand = true;
             }
             //(AvgRight_wrist_elbow_h > 0) && (AvgRight_elbow_shoulder_h > 0) &&

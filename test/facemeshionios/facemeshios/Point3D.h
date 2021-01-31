@@ -20,10 +20,10 @@
 //    void SetPoint(double x, double y, double z);
 //    Point3D operator + (const Point3D & point) const;
 //    friend Point3D operator ++ (const Point3D & point);
-//    
+//
 //private:
 //    double x, y, z;
-//    
+//
 //};
 
 #endif //UPPERBODYPOSETRACKING_POINT3D_H

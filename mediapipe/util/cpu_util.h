@@ -93,6 +93,8 @@ double getAverage(DOUBLE arr[], int num);
  * for android
  */
 double getAverage_android(double arr[], int num);
+
+double getDistance3D(POINTS start, POINTS end);
 /**
  * 脸部参数
  * w - 宽
