@@ -22,15 +22,42 @@ licenses(["notice"])
 package(default_visibility = ["//visibility:public"])
 
 mediapipe_simple_subgraph(
+    name = "face_detection_front_by_roi_cpu",
+    graph = "face_detection_front_by_roi_cpu.pbtxt",
+    register_as = "FaceDetectionFrontByRoiCpu",
+    deps = [
+        "//mediapipe/calculators/tensor:image_to_tensor_calculator",
+        "//mediapipe/calculators/tensor:inference_calculator",
+        "//mediapipe/calculators/tensor:tensors_to_detections_calculator",
+        "//mediapipe/calculators/tflite:ssd_anchors_calculator",
+        "//mediapipe/calculators/util:detection_projection_calculator",
+        "//mediapipe/calculators/util:non_max_suppression_calculator",
+    ],
+)
+
+mediapipe_simple_subgraph(
+    name = "face_detection_front_by_roi_gpu",
+    graph = "face_detection_front_by_roi_gpu.pbtxt",
+    register_as = "FaceDetectionFrontByRoiGpu",
+    deps = [
+        "//mediapipe/calculators/tensor:image_to_tensor_calculator",
+        "//mediapipe/calculators/tensor:inference_calculator",
+        "//mediapipe/calculators/tensor:tensors_to_detections_calculator",
+        "//mediapipe/calculators/tflite:ssd_anchors_calculator",
+        "//mediapipe/calculators/util:detection_projection_calculator",
+        "//mediapipe/calculators/util:non_max_suppression_calculator",
+    ],
+)
+
+mediapipe_simple_subgraph(
     name = "face_detection_front_cpu",
     graph = "face_detection_front_cpu.pbtxt",
     register_as = "FaceDetectionFrontCpu",
     deps = [
-        "//mediapipe/calculators/image:image_transformation_calculator",
+        "//mediapipe/calculators/tensor:image_to_tensor_calculator",
+        "//mediapipe/calculators/tensor:inference_calculator",
+        "//mediapipe/calculators/tensor:tensors_to_detections_calculator",
         "//mediapipe/calculators/tflite:ssd_anchors_calculator",
-        "//mediapipe/calculators/tflite:tflite_converter_calculator",
-        "//mediapipe/calculators/tflite:tflite_inference_calculator",
-        "//mediapipe/calculators/tflite:tflite_tensors_to_detections_calculator",
         "//mediapipe/calculators/util:detection_letterbox_removal_calculator",
         "//mediapipe/calculators/util:non_max_suppression_calculator",
     ],
@@ -41,11 +68,10 @@ mediapipe_simple_subgraph(
     graph = "face_detection_front_gpu.pbtxt",
     register_as = "FaceDetectionFrontGpu",
     deps = [
-        "//mediapipe/calculators/image:image_transformation_calculator",
+        "//mediapipe/calculators/tensor:image_to_tensor_calculator",
+        "//mediapipe/calculators/tensor:inference_calculator",
+        "//mediapipe/calculators/tensor:tensors_to_detections_calculator",
         "//mediapipe/calculators/tflite:ssd_anchors_calculator",
-        "//mediapipe/calculators/tflite:tflite_converter_calculator",
-        "//mediapipe/calculators/tflite:tflite_inference_calculator",
-        "//mediapipe/calculators/tflite:tflite_tensors_to_detections_calculator",
         "//mediapipe/calculators/util:detection_letterbox_removal_calculator",
         "//mediapipe/calculators/util:non_max_suppression_calculator",
     ],

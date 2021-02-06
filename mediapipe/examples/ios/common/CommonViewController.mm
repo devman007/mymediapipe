@@ -46,25 +46,26 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 
 + (MPPGraph*)loadGraphFromResource:(NSString*)resource {
   // Load the graph config resource.
-  NSError* configLoadError = nil;
-  NSBundle* bundle = [NSBundle bundleForClass:[self class]];
-  if (!resource || resource.length == 0) {
-    return nil;
-  }
-  NSURL* graphURL = [bundle URLForResource:resource withExtension:@"binarypb"];
-  NSData* data = [NSData dataWithContentsOfURL:graphURL options:0 error:&configLoadError];
-  if (!data) {
-    NSLog(@"Failed to load MediaPipe graph config: %@", configLoadError);
-    return nil;
-  }
+  // NSError* configLoadError = nil;
+  // NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+  // if (!resource || resource.length == 0) {
+  //   return nil;
+  // }
+  // NSURL* graphURL = [bundle URLForResource:resource withExtension:@"binarypb"];
+  // NSData* data = [NSData dataWithContentsOfURL:graphURL options:0 error:&configLoadError];
+  // if (!data) {
+  //   NSLog(@"Failed to load MediaPipe graph config: %@", configLoadError);
+  //   return nil;
+  // }
 
-  // Parse the graph config resource into mediapipe::CalculatorGraphConfig proto object.
-  mediapipe::CalculatorGraphConfig config;
-  config.ParseFromArray(data.bytes, data.length);
+  // // Parse the graph config resource into mediapipe::CalculatorGraphConfig proto object.
+  // mediapipe::CalculatorGraphConfig config;
+  // config.ParseFromArray(data.bytes, data.length);
 
-  // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
-  MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
-  return newGraph;
+  // // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
+  // MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
+  // return newGraph;
+  return nil;
 }
 
 #pragma mark - UIViewController methods
@@ -76,6 +77,8 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
   self.renderer.layer.frame = self.liveView.layer.bounds;
   [self.liveView.layer addSublayer:self.renderer.layer];
   self.renderer.frameScaleMode = MPPFrameScaleModeFillAndCrop;
+
+  self.timestampConverter = [[MPPTimestampConverter alloc] init];
 
   dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
       DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, /*relative_priority=*/0);
@@ -171,9 +174,10 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
     return;
   }
 
-  [self.mediapipeGraph sendPixelBuffer:imageBuffer
-                            intoStream:self.graphInputStream
-                            packetType:MPPPacketTypePixelBuffer];
+  // [self.mediapipeGraph sendPixelBuffer:imageBuffer
+  //                           intoStream:self.graphInputStream
+  //                           packetType:MPPPacketTypePixelBuffer
+  //                            timestamp:[self.timestampConverter timestampForMediaTime:timestamp]];
 }
 
 #pragma mark - MPPGraphDelegate methods

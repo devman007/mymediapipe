@@ -1,5 +1,6 @@
 This directory contains MediaPipe example applications for iOS. Please see [Solutions](https://solutions.mediapipe.dev)for details.
 
+# operation ways, add by jacky.
 # Build FaceDetection
 
 `bazel build -c opt --config=ios_arm64 mediapipe/examples/ios/facedetectiongpu:FaceDetectionGpuApp`

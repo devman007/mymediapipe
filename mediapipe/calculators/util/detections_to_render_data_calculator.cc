@@ -24,7 +24,7 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 // add by jacky
-// #define ENABLE_DETECT_OBJ
+#define ENABLE_DETECT_OBJ
 namespace mediapipe {
 
 namespace {
@@ -84,11 +84,11 @@ class DetectionsToRenderDataCalculator : public CalculatorBase {
   DetectionsToRenderDataCalculator& operator=(
       const DetectionsToRenderDataCalculator&) = delete;
 
-  static ::mediapipe::Status GetContract(CalculatorContract* cc);
+  static mediapipe::Status GetContract(CalculatorContract* cc);
 
-  ::mediapipe::Status Open(CalculatorContext* cc) override;
+  mediapipe::Status Open(CalculatorContext* cc) override;
 
-  ::mediapipe::Status Process(CalculatorContext* cc) override;
+  mediapipe::Status Process(CalculatorContext* cc) override;
 
  private:
   // These utility methods are supposed to be used only by this class. No
@@ -124,7 +124,7 @@ class DetectionsToRenderDataCalculator : public CalculatorBase {
 };
 REGISTER_CALCULATOR(DetectionsToRenderDataCalculator);
 
-::mediapipe::Status DetectionsToRenderDataCalculator::GetContract(
+mediapipe::Status DetectionsToRenderDataCalculator::GetContract(
     CalculatorContract* cc) {
   RET_CHECK(cc->Inputs().HasTag(kDetectionListTag) ||
             cc->Inputs().HasTag(kDetectionsTag) ||
@@ -141,17 +141,17 @@ REGISTER_CALCULATOR(DetectionsToRenderDataCalculator);
     cc->Inputs().Tag(kDetectionsTag).Set<std::vector<Detection>>();
   }
   cc->Outputs().Tag(kRenderDataTag).Set<RenderData>();
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status DetectionsToRenderDataCalculator::Open(
+mediapipe::Status DetectionsToRenderDataCalculator::Open(
     CalculatorContext* cc) {
   cc->SetOffset(TimestampDiff(0));
 
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status DetectionsToRenderDataCalculator::Process(
+mediapipe::Status DetectionsToRenderDataCalculator::Process(
     CalculatorContext* cc) {
   const auto& options = cc->Options<DetectionsToRenderDataCalculatorOptions>();
   const bool has_detection_from_list =
@@ -167,7 +167,7 @@ REGISTER_CALCULATOR(DetectionsToRenderDataCalculator);
                                     !cc->Inputs().Tag(kDetectionTag).IsEmpty();
   if (!options.produce_empty_packet() && !has_detection_from_list &&
       !has_detection_from_vector && !has_single_detection) {
-    return ::mediapipe::OkStatus();
+    return mediapipe::OkStatus();
   }
 
   // TODO: Add score threshold to
@@ -193,7 +193,7 @@ REGISTER_CALCULATOR(DetectionsToRenderDataCalculator);
   cc->Outputs()
       .Tag(kRenderDataTag)
       .Add(render_data.release(), cc->InputTimestamp());
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
 void DetectionsToRenderDataCalculator::SetRenderAnnotationColorThickness(

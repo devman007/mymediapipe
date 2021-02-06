@@ -19,4 +19,13 @@
             android:text="相机连接失败" />
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/showCapture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:text=""
+        android:visibility="visible"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

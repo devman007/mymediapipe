@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# bazel build --config=ios_fat --copt=-fembed-bitcode mediapipe/examples/ios/handtrackinggpu:HandTrackingFramework
-# bazel build -c opt --config=ios_arm64 mediapipe/examples/ios/handtrackinggpu:HandTrackingFramework
+# bazel build --config=ios_fat --copt=-fembed-bitcode mediapipe/examples/ios/handtrackingframework:HandTrackingFramework
+# bazel build -c opt --config=ios_arm64 mediapipe/examples/ios/handtrackingframework:HandTrackingFramework
 
 load(
     "@build_bazel_rules_apple//apple:ios.bzl",

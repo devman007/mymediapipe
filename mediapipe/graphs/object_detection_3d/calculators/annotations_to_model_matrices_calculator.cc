@@ -24,10 +24,10 @@
 #include "mediapipe/framework/calculator_options.pb.h"
 #include "mediapipe/framework/port/ret_check.h"
 #include "mediapipe/framework/port/status.h"
-#include "mediapipe/graphs/object_detection_3d/calculators/annotation_data.pb.h"
 #include "mediapipe/graphs/object_detection_3d/calculators/annotations_to_model_matrices_calculator.pb.h"
-#include "mediapipe/graphs/object_detection_3d/calculators/box.h"
 #include "mediapipe/graphs/object_detection_3d/calculators/model_matrix.pb.h"
+#include "mediapipe/modules/objectron/calculators/annotation_data.pb.h"
+#include "mediapipe/modules/objectron/calculators/box.h"
 #include "mediapipe/util/color.pb.h"
 
 namespace mediapipe {
@@ -66,14 +66,14 @@ class AnnotationsToModelMatricesCalculator : public CalculatorBase {
   AnnotationsToModelMatricesCalculator& operator=(
       const AnnotationsToModelMatricesCalculator&) = delete;
 
-  static ::mediapipe::Status GetContract(CalculatorContract* cc);
+  static mediapipe::Status GetContract(CalculatorContract* cc);
 
-  ::mediapipe::Status Open(CalculatorContext* cc) override;
+  mediapipe::Status Open(CalculatorContext* cc) override;
 
-  ::mediapipe::Status Process(CalculatorContext* cc) override;
+  mediapipe::Status Process(CalculatorContext* cc) override;
 
  private:
-  ::mediapipe::Status GetModelMatricesForAnnotations(
+  mediapipe::Status GetModelMatricesForAnnotations(
       const FrameAnnotation& annotations,
       TimedModelMatrixProtoList* model_matrix_list);
 
@@ -83,7 +83,7 @@ class AnnotationsToModelMatricesCalculator : public CalculatorBase {
 };
 REGISTER_CALCULATOR(AnnotationsToModelMatricesCalculator);
 
-::mediapipe::Status AnnotationsToModelMatricesCalculator::GetContract(
+mediapipe::Status AnnotationsToModelMatricesCalculator::GetContract(
     CalculatorContract* cc) {
   RET_CHECK(cc->Inputs().HasTag(kAnnotationTag)) << "No input stream found.";
   if (cc->Inputs().HasTag(kAnnotationTag)) {
@@ -93,34 +93,48 @@ REGISTER_CALCULATOR(AnnotationsToModelMatricesCalculator);
   if (cc->Outputs().HasTag(kModelMatricesTag)) {
     cc->Outputs().Tag(kModelMatricesTag).Set<TimedModelMatrixProtoList>();
   }
-  return ::mediapipe::OkStatus();
+
+  if (cc->InputSidePackets().HasTag("MODEL_SCALE")) {
+    cc->InputSidePackets().Tag("MODEL_SCALE").Set<float[]>();
+  }
+
+  if (cc->InputSidePackets().HasTag("MODEL_TRANSFORMATION")) {
+    cc->InputSidePackets().Tag("MODEL_TRANSFORMATION").Set<float[]>();
+  }
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status AnnotationsToModelMatricesCalculator::Open(
+mediapipe::Status AnnotationsToModelMatricesCalculator::Open(
     CalculatorContext* cc) {
   RET_CHECK(cc->Inputs().HasTag(kAnnotationTag));
 
   cc->SetOffset(TimestampDiff(0));
   options_ = cc->Options<AnnotationsToModelMatricesCalculatorOptions>();
 
-  if (options_.model_scale_size() == 3) {
+  if (cc->InputSidePackets().HasTag("MODEL_SCALE")) {
+    model_scale_ = Eigen::Map<const Eigen::Vector3f>(
+        cc->InputSidePackets().Tag("MODEL_SCALE").Get<float[]>());
+  } else if (options_.model_scale_size() == 3) {
     model_scale_ =
         Eigen::Map<const Eigen::Vector3f>(options_.model_scale().data());
   } else {
     model_scale_.setOnes();
   }
 
-  if (options_.model_transformation_size() == 16) {
+  if (cc->InputSidePackets().HasTag("MODEL_TRANSFORMATION")) {
+    model_transformation_ = Eigen::Map<const Matrix4fRM>(
+        cc->InputSidePackets().Tag("MODEL_TRANSFORMATION").Get<float[]>());
+  } else if (options_.model_transformation_size() == 16) {
     model_transformation_ =
         Eigen::Map<const Matrix4fRM>(options_.model_transformation().data());
   } else {
     model_transformation_.setIdentity();
   }
 
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status AnnotationsToModelMatricesCalculator::Process(
+mediapipe::Status AnnotationsToModelMatricesCalculator::Process(
     CalculatorContext* cc) {
   auto model_matrices = std::make_unique<TimedModelMatrixProtoList>();
 
@@ -128,22 +142,21 @@ REGISTER_CALCULATOR(AnnotationsToModelMatricesCalculator);
       cc->Inputs().Tag(kAnnotationTag).Get<FrameAnnotation>();
 
   if (!GetModelMatricesForAnnotations(annotations, model_matrices.get()).ok()) {
-    return ::mediapipe::InvalidArgumentError(
-        "Error in GetModelMatricesForBoxes");
+    return mediapipe::InvalidArgumentError("Error in GetModelMatricesForBoxes");
   }
   cc->Outputs()
       .Tag(kModelMatricesTag)
       .Add(model_matrices.release(), cc->InputTimestamp());
 
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status
+mediapipe::Status
 AnnotationsToModelMatricesCalculator::GetModelMatricesForAnnotations(
     const FrameAnnotation& annotations,
     TimedModelMatrixProtoList* model_matrix_list) {
   if (model_matrix_list == nullptr) {
-    return ::mediapipe::InvalidArgumentError("model_matrix_list is nullptr");
+    return mediapipe::InvalidArgumentError("model_matrix_list is nullptr");
   }
   model_matrix_list->clear_model_matrix();
 
@@ -203,7 +216,7 @@ AnnotationsToModelMatricesCalculator::GetModelMatricesForAnnotations(
       }
     }
   }
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
 }  // namespace mediapipe

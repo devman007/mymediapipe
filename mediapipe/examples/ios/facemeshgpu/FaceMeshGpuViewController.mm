@@ -26,6 +26,7 @@ static const char* kLandmarksOutputStream = "multi_face_landmarks";
 // Max number of faces to detect/process.
 static const int kNumFaces = 1;
 
+//add by jacky.
 #define AVG_CNT         10
 #define DETECT_TIMES    2
 #define POINT_NUM       4  //输入线性拟和点

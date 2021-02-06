@@ -116,6 +116,7 @@ mediapipe_proto_library(
     deps = [
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
+        "//mediapipe/framework/formats:classification_proto",
     ],
 )
 
@@ -129,12 +130,23 @@ mediapipe_proto_library(
     ],
 )
 
+mediapipe_proto_library(
+    name = "flow_limiter_calculator_proto",
+    srcs = ["flow_limiter_calculator.proto"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//mediapipe/framework:calculator_options_proto",
+        "//mediapipe/framework:calculator_proto",
+    ],
+)
+
 cc_library(
     name = "add_header_calculator",
     srcs = ["add_header_calculator.cc"],
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/port:logging",
         "//mediapipe/framework/port:status",
     ],
@@ -225,15 +237,26 @@ cc_library(
     name = "concatenate_vector_calculator",
     srcs = ["concatenate_vector_calculator.cc"],
     hdrs = ["concatenate_vector_calculator.h"],
+    copts = select({
+        # Needed for "//mediapipe/framework/formats:tensor" compatibility on Apple
+        # platforms for Metal pulled in via the tensor.h header.
+        "//mediapipe:apple": [
+            "-x objective-c++",
+            "-fobjc-arc",  # enable reference-counting
+        ],
+        "//conditions:default": [],
+    }),
     visibility = ["//visibility:public"],
     deps = [
         ":concatenate_vector_calculator_cc_proto",
-        "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:classification_cc_proto",
         "//mediapipe/framework/formats:landmark_cc_proto",
+        "//mediapipe/framework/formats:tensor",
         "//mediapipe/framework/port:integral_types",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
+        "//mediapipe/framework:calculator_framework",
+        "//mediapipe/util:render_data_cc_proto",
         "@org_tensorflow//tensorflow/lite:framework",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
@@ -264,6 +287,7 @@ cc_library(
     deps = [
         ":concatenate_vector_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/formats:landmark_cc_proto",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
@@ -371,6 +395,7 @@ cc_library(
     ],
     deps = [
         "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/port:status",
     ],
     alwayslink = 1,
@@ -384,7 +409,7 @@ cc_library(
     ],
     deps = [
         "//mediapipe/framework:calculator_framework",
-        "//mediapipe/framework:timestamp",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/formats:matrix",
         "//mediapipe/framework/port:status",
         "@eigen_archive//:eigen",
@@ -400,7 +425,7 @@ cc_library(
     ],
     deps = [
         "//mediapipe/framework:calculator_framework",
-        "//mediapipe/framework:timestamp",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/formats:matrix",
         "//mediapipe/framework/port:status",
         "@eigen_archive//:eigen",
@@ -416,6 +441,7 @@ cc_library(
     ],
     deps = [
         "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/stream_handler:mux_input_stream_handler",
     ],
@@ -584,6 +610,7 @@ cc_library(
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework:packet",
         "//mediapipe/framework:timestamp",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
         "//mediapipe/framework/stream_handler:immediate_input_stream_handler",
@@ -596,6 +623,7 @@ cc_library(
     srcs = ["flow_limiter_calculator.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        ":flow_limiter_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework:packet",
         "//mediapipe/framework:timestamp",
@@ -771,6 +799,7 @@ cc_test(
     srcs = ["flow_limiter_calculator_test.cc"],
     deps = [
         ":flow_limiter_calculator",
+        ":flow_limiter_calculator_cc_proto",
         "//mediapipe/calculators/core:counting_source_calculator",
         "//mediapipe/calculators/core:pass_through_calculator",
         "//mediapipe/framework:calculator_framework",
@@ -782,6 +811,8 @@ cc_test(
         "//mediapipe/framework/port:integral_types",
         "//mediapipe/framework/port:parse_text_proto",
         "//mediapipe/framework/stream_handler:immediate_input_stream_handler",
+        "//mediapipe/framework/tool:simulation_clock",
+        "//mediapipe/framework/tool:simulation_clock_executor",
         "//mediapipe/framework/tool:sink",
         "@com_google_absl//absl/time",
     ],
@@ -791,14 +822,23 @@ cc_library(
     name = "split_vector_calculator",
     srcs = ["split_vector_calculator.cc"],
     hdrs = ["split_vector_calculator.h"],
+    copts = select({
+        "//mediapipe:apple": [
+            "-x objective-c++",
+            "-fobjc-arc",  # enable reference-counting
+        ],
+        "//conditions:default": [],
+    }),
     visibility = ["//visibility:public"],
     deps = [
         ":split_vector_calculator_cc_proto",
         "//mediapipe/framework/formats:detection_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:landmark_cc_proto",
+        "//mediapipe/framework/formats:classification_cc_proto",
         "//mediapipe/framework/formats:rect_cc_proto",
         "//mediapipe/framework/formats:matrix",
+        "//mediapipe/framework/formats:tensor",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
         "//mediapipe/util:resource_util",
@@ -923,6 +963,7 @@ cc_library(
     deps = [
         ":sequence_shift_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/port:status",
     ],
     alwayslink = 1,
@@ -972,6 +1013,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/formats:matrix",
         "//mediapipe/framework/port:integral_types",
         "//mediapipe/framework/port:logging",
@@ -1007,6 +1049,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/api2:node",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
     ],
@@ -1060,6 +1103,7 @@ cc_library(
         ":constant_side_packet_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework:collection_item_id",
+        "//mediapipe/framework/formats:classification_cc_proto",
         "//mediapipe/framework/port:integral_types",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",

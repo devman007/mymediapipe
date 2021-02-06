@@ -18,7 +18,9 @@
 
 #include "mediapipe/framework/formats/classification.pb.h"
 #include "mediapipe/framework/formats/landmark.pb.h"
+#include "mediapipe/framework/formats/tensor.h"
 #include "mediapipe/framework/port/integral_types.h"
+#include "mediapipe/util/render_data.pb.h"
 #include "tensorflow/lite/interpreter.h"
 
 #if !defined(MEDIAPIPE_DISABLE_GL_COMPUTE)
@@ -64,6 +66,9 @@ typedef ConcatenateVectorCalculator<TfLiteTensor>
     ConcatenateTfLiteTensorVectorCalculator;
 REGISTER_CALCULATOR(ConcatenateTfLiteTensorVectorCalculator);
 
+typedef ConcatenateVectorCalculator<Tensor> ConcatenateTensorVectorCalculator;
+REGISTER_CALCULATOR(ConcatenateTensorVectorCalculator);
+
 typedef ConcatenateVectorCalculator<::mediapipe::NormalizedLandmark>
     ConcatenateLandmarkVectorCalculator;
 REGISTER_CALCULATOR(ConcatenateLandmarkVectorCalculator);
@@ -81,5 +86,9 @@ typedef ConcatenateVectorCalculator<::tflite::gpu::gl::GlBuffer>
     ConcatenateGlBufferVectorCalculator;
 REGISTER_CALCULATOR(ConcatenateGlBufferVectorCalculator);
 #endif
+
+typedef ConcatenateVectorCalculator<mediapipe::RenderData>
+    ConcatenateRenderDataVectorCalculator;
+REGISTER_CALCULATOR(ConcatenateRenderDataVectorCalculator);
 
 }  // namespace mediapipe

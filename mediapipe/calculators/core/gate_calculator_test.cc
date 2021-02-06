@@ -25,7 +25,7 @@ namespace {
 class GateCalculatorTest : public ::testing::Test {
  protected:
   // Helper to run a graph and return status.
-  static ::mediapipe::Status RunGraph(const std::string& proto) {
+  static mediapipe::Status RunGraph(const std::string& proto) {
     auto runner = absl::make_unique<CalculatorRunner>(
         ParseTextProtoOrDie<CalculatorGraphConfig::Node>(proto));
     return runner->Run();
@@ -328,50 +328,6 @@ TEST_F(GateCalculatorTest, AllowInitialNoStateTransition) {
   const std::vector<Packet>& output =
       runner()->Outputs().Get("STATE_CHANGE", 0).packets;
   ASSERT_EQ(0, output.size());
-}
-
-TEST_F(GateCalculatorTest, TestOverrideDecisionBySidePacketSignal) {
-  SetRunner(R"(
-        calculator: "GateCalculator"
-        input_stream: "test_input"
-        input_stream: "ALLOW:gating_stream"
-        input_side_packet: "ALLOW:gating_packet"
-        output_stream: "test_output"
-        options: {
-          [mediapipe.GateCalculatorOptions.ext] {
-            side_input_has_precedence: true
-          }
-        }
-  )");
-
-  constexpr int64 kTimestampValue0 = 42;
-  runner()->MutableSidePackets()->Tag("ALLOW") = Adopt(new bool(false));
-  RunTimeStep(kTimestampValue0, "ALLOW", true);
-
-  const std::vector<Packet>& output = runner()->Outputs().Get("", 0).packets;
-  ASSERT_EQ(0, output.size());
-}
-
-TEST_F(GateCalculatorTest, TestOverrideDecisionByStreamSignal) {
-  SetRunner(R"(
-        calculator: "GateCalculator"
-        input_stream: "test_input"
-        input_stream: "ALLOW:gating_stream"
-        input_side_packet: "ALLOW:gating_packet"
-        output_stream: "test_output"
-        options: {
-          [mediapipe.GateCalculatorOptions.ext] {
-            side_input_has_precedence: false
-          }
-        }
-  )");
-
-  constexpr int64 kTimestampValue0 = 42;
-  runner()->MutableSidePackets()->Tag("ALLOW") = Adopt(new bool(false));
-  RunTimeStep(kTimestampValue0, "ALLOW", true);
-
-  const std::vector<Packet>& output = runner()->Outputs().Get("", 0).packets;
-  ASSERT_EQ(1, output.size());
 }
 
 }  // namespace

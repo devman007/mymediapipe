@@ -20,7 +20,7 @@
 #include "mediapipe/util/render_data.pb.h"
 
 // add by jacky
-// #define ENABLE_RECT_LINE
+#define ENABLE_RECT_LINE
 
 namespace mediapipe {
 
@@ -40,7 +40,12 @@ RenderAnnotation::Rectangle* NewRect(
   annotation->mutable_color()->set_b(options.color().b());
   annotation->set_thickness(options.thickness());
 
-  return options.filled()
+  return options.oval() ? options.filled()
+                              ? annotation->mutable_filled_oval()
+                                    ->mutable_oval()
+                                    ->mutable_rectangle()
+                              : annotation->mutable_oval()->mutable_rectangle()
+         : options.filled()
              ? annotation->mutable_filled_rectangle()->mutable_rectangle()
              : annotation->mutable_rectangle();
 }
@@ -99,18 +104,18 @@ void SetRect(bool normalized, double xmin, double ymin, double width,
 // }
 class RectToRenderDataCalculator : public CalculatorBase {
  public:
-  static ::mediapipe::Status GetContract(CalculatorContract* cc);
+  static mediapipe::Status GetContract(CalculatorContract* cc);
 
-  ::mediapipe::Status Open(CalculatorContext* cc) override;
+  mediapipe::Status Open(CalculatorContext* cc) override;
 
-  ::mediapipe::Status Process(CalculatorContext* cc) override;
+  mediapipe::Status Process(CalculatorContext* cc) override;
 
  private:
   RectToRenderDataCalculatorOptions options_;
 };
 REGISTER_CALCULATOR(RectToRenderDataCalculator);
 
-::mediapipe::Status RectToRenderDataCalculator::GetContract(
+mediapipe::Status RectToRenderDataCalculator::GetContract(
     CalculatorContract* cc) {
   RET_CHECK_EQ((cc->Inputs().HasTag(kNormRectTag) ? 1 : 0) +
                    (cc->Inputs().HasTag(kRectTag) ? 1 : 0) +
@@ -135,18 +140,18 @@ REGISTER_CALCULATOR(RectToRenderDataCalculator);
   }
   cc->Outputs().Tag(kRenderDataTag).Set<RenderData>();
 
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status RectToRenderDataCalculator::Open(CalculatorContext* cc) {
+mediapipe::Status RectToRenderDataCalculator::Open(CalculatorContext* cc) {
   cc->SetOffset(TimestampDiff(0));
 
   options_ = cc->Options<RectToRenderDataCalculatorOptions>();
 
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status RectToRenderDataCalculator::Process(CalculatorContext* cc) {
+mediapipe::Status RectToRenderDataCalculator::Process(CalculatorContext* cc) {
   auto render_data = absl::make_unique<RenderData>();
 
   if (cc->Inputs().HasTag(kNormRectTag) &&
@@ -190,7 +195,7 @@ REGISTER_CALCULATOR(RectToRenderDataCalculator);
       .Tag(kRenderDataTag)
       .Add(render_data.release(), cc->InputTimestamp());
 
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
 }  // namespace mediapipe

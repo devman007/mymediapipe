@@ -23,10 +23,12 @@
     "mediapipe/examples/ios/handdetectiongpu",
     "mediapipe/examples/ios/handtrackingframework",
     "mediapipe/examples/ios/handtrackinggpu",
+    "mediapipe/examples/ios/holistictrackinggpu",
     "mediapipe/examples/ios/iristrackinggpu",
     "mediapipe/examples/ios/multihandtrackinggpu",
     "mediapipe/examples/ios/objectdetectioncpu",
     "mediapipe/examples/ios/objectdetectiongpu",
+    "mediapipe/examples/ios/posetrackinggpu",
     "mediapipe/examples/ios/upperbodyposetrackinggpu"
   ],
   "projectName" : "Mediapipe",

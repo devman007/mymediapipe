@@ -279,10 +279,14 @@ public class MainActivity extends AppCompatActivity {
     static double[] dLeftArr_wrist_elbow_h = new double[ARR_CNT];
     static double[] dLeftArr_elbow_shoulder_w = new double[ARR_CNT];
     static double[] dLeftArr_elbow_shoulder_h = new double[ARR_CNT];
+    static double[] dLeftArr_wrist_shoulder_w = new double[ARR_CNT];
+    static double[] dLeftArr_wrist_shoulder_h = new double[ARR_CNT];
     static double[] dRightArr_wrist_elbow_w = new double[ARR_CNT];
     static double[] dRightArr_wrist_elbow_h = new double[ARR_CNT];
     static double[] dRightArr_elbow_shoulder_w = new double[ARR_CNT];
     static double[] dRightArr_elbow_shoulder_h = new double[ARR_CNT];
+    static double[] dRightArr_wrist_shoulder_w = new double[ARR_CNT];
+    static double[] dRightArr_wrist_shoulder_h = new double[ARR_CNT];
     static double[] dLeftArr_wrist_nose_w = new double[ARR_CNT];
     static double[] dLeftArr_wrist_nose_h = new double[ARR_CNT];
     static double[] dLeftArr_elbow_nose_w = new double[ARR_CNT];
@@ -296,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
         String landmarksString = "";
         boolean isHighLefthand = false;
         boolean isHighRighthand = false;
+        boolean isLeftRightAcross = false;
         int cnt = landmarks.getLandmarkCount();
 //        for (LandmarkProto.NormalizedLandmark landmark : landmarks.getLandmarkList()) {
 //            landmarksString += "\tLandmark ["
@@ -338,12 +343,18 @@ public class MainActivity extends AppCompatActivity {
         //左肘 - 左肩
         double left_elbow_shoulder_w = left_elbow.getX() - left_shoulder.getX();
         double left_elbow_shoulder_h = left_elbow.getY() - left_shoulder.getY();
+        //左手腕 - 左肩
+        double left_wrist_shoulder_w = left_wrist.getX() - left_shoulder.getX();
+        double left_wrist_shoulder_h = left_wrist.getY() - left_shoulder.getY();
         //右手腕 - 右肘
         double right_wrist_elbow_w = right_wrist.getX() - right_elbow.getX();
         double right_wrist_elbow_h = right_wrist.getY() - right_elbow.getY();
         //右肘 - 右肩
         double right_elbow_shoulder_w = right_elbow.getX() - right_shoulder.getX();
         double right_elbow_shoulder_h = right_elbow.getY() - right_shoulder.getY();
+        //右手腕 - 右肩
+        double right_wrist_shoulder_w = right_wrist.getX() - right_shoulder.getX();
+        double right_wrist_shoulder_h = right_wrist.getY() - right_shoulder.getY();
         //左手腕 - 鼻子
         double left_wrist_nose_w = left_wrist.getX() - nose.getX();
         double left_wrist_nose_h = left_wrist.getY() - nose.getY();
@@ -375,9 +386,13 @@ public class MainActivity extends AppCompatActivity {
             dLeftArr_elbow_shoulder_w[arr_cnt] = left_elbow_shoulder_w;
             dLeftArr_elbow_shoulder_h[arr_cnt] = left_elbow_shoulder_h;
             dRightArr_wrist_elbow_w[arr_cnt] = right_wrist_elbow_w;
+            dLeftArr_wrist_shoulder_w[arr_cnt] = left_wrist_shoulder_w;
+            dLeftArr_wrist_shoulder_h[arr_cnt] = left_wrist_shoulder_h;
             dRightArr_wrist_elbow_h[arr_cnt] = right_wrist_elbow_h;
             dRightArr_elbow_shoulder_w[arr_cnt] = right_elbow_shoulder_w;
             dRightArr_elbow_shoulder_h[arr_cnt] = right_elbow_shoulder_h;
+            dRightArr_wrist_shoulder_w[arr_cnt] = right_wrist_shoulder_w;
+            dRightArr_wrist_shoulder_h[arr_cnt] = right_wrist_shoulder_h;
             dLeftArr_wrist_nose_w[arr_cnt] = left_wrist_nose_w;
             dLeftArr_wrist_nose_h[arr_cnt] = left_wrist_nose_h;
             dLeftArr_elbow_nose_w[arr_cnt] = left_elbow_nose_w;
@@ -388,8 +403,8 @@ public class MainActivity extends AppCompatActivity {
             dRightArr_elbow_nose_h[arr_cnt] = right_elbow_nose_h;
         }
         arr_cnt++;
-        double AvgLeft_wrist_elbow_w, AvgLeft_elbow_shoulder_w, AvgRight_wrist_elbow_w, AvgRight_elbow_shoulder_w;
-        double AvgLeft_wrist_elbow_h, AvgLeft_elbow_shoulder_h, AvgRight_wrist_elbow_h, AvgRight_elbow_shoulder_h;
+        double AvgLeft_wrist_elbow_w, AvgLeft_elbow_shoulder_w, AvgRight_wrist_elbow_w, AvgRight_elbow_shoulder_w, AvgLeft_wrist_shoulder_w, AvgRight_wrist_shoulder_w;
+        double AvgLeft_wrist_elbow_h, AvgLeft_elbow_shoulder_h, AvgRight_wrist_elbow_h, AvgRight_elbow_shoulder_h, AvgLeft_wrist_shoulder_h, AvgRight_wrist_shoulder_h;
         double AvgLeft_wrist_nose_w, AvgLeft_wrist_nose_h, AvgLeft_elbow_nose_w, AvgLeft_elbow_nose_h;
         double AvgRight_wrist_nose_w, AvgRight_wrist_nose_h, AvgRight_elbow_nose_w, AvgRight_elbow_nose_h;
         if(arr_cnt >= ARR_CNT) {
@@ -397,10 +412,14 @@ public class MainActivity extends AppCompatActivity {
             AvgLeft_wrist_elbow_h = getAverage(dLeftArr_wrist_elbow_h);
             AvgLeft_elbow_shoulder_w = getAverage(dLeftArr_elbow_shoulder_w);
             AvgLeft_elbow_shoulder_h = getAverage(dLeftArr_elbow_shoulder_h);
+            AvgLeft_wrist_shoulder_w = getAverage(dLeftArr_wrist_shoulder_w);
+            AvgLeft_wrist_shoulder_h = getAverage(dLeftArr_wrist_shoulder_h);
             AvgRight_wrist_elbow_w = getAverage(dRightArr_wrist_elbow_w);
             AvgRight_wrist_elbow_h = getAverage(dRightArr_wrist_elbow_h);
             AvgRight_elbow_shoulder_w = getAverage(dRightArr_elbow_shoulder_w);
             AvgRight_elbow_shoulder_h = getAverage(dRightArr_elbow_shoulder_h);
+            AvgRight_wrist_shoulder_w = getAverage(dRightArr_wrist_shoulder_w);
+            AvgRight_wrist_shoulder_h = getAverage(dRightArr_wrist_shoulder_h);
             AvgLeft_wrist_nose_w = getAverage(dLeftArr_wrist_nose_w);
             AvgLeft_wrist_nose_h = getAverage(dLeftArr_wrist_nose_h);
             AvgLeft_elbow_nose_w = getAverage(dLeftArr_elbow_nose_w);
@@ -410,6 +429,8 @@ public class MainActivity extends AppCompatActivity {
             AvgRight_elbow_nose_w = getAverage(dRightArr_elbow_nose_w);
             AvgRight_elbow_nose_h = getAverage(dRightArr_elbow_nose_h);
 
+            Log.i(TAG, "UpperBody: Left wrist_elbow_w = "+AvgLeft_wrist_elbow_w+", elbow_shoulder_w = "+AvgLeft_elbow_shoulder_w+", wrist_shoulder_w = "+AvgLeft_wrist_shoulder_w);
+            Log.i(TAG, "UpperBody: Right wrist_elbow_w = "+AvgRight_wrist_elbow_w+", elbow_shoulder_w = "+AvgRight_elbow_shoulder_w+", wrist_shoulder_w = "+AvgRight_wrist_shoulder_w);
 //            Log.i(TAG, "UpperBody: left_wrist_nose_w = "+AvgLeft_wrist_nose_w+", left_elbow_nose_w = "+AvgLeft_elbow_nose_w);
 //            Log.i(TAG, "UpperBody: left_wrist_nose_h = "+AvgLeft_wrist_nose_h+", left_elbow_nose_h = "+AvgLeft_elbow_nose_h);
 //            Log.i(TAG, "UpperBody: right_wrist_nose_w = "+AvgRight_wrist_nose_w+", right_elbow_nose_w = "+AvgRight_elbow_nose_w);
@@ -422,6 +443,10 @@ public class MainActivity extends AppCompatActivity {
             if((AvgRight_wrist_nose_h < 0) && (AvgRight_elbow_nose_h < 0) && (AvgRight_wrist_elbow_h < 0))   {
                 isHighRighthand = true;
             }
+            if((AvgLeft_wrist_elbow_w < 0) && (AvgLeft_elbow_shoulder_w < 0) && (AvgLeft_wrist_shoulder_w < 0) &&
+                    (AvgRight_wrist_elbow_w > 0) && (AvgRight_elbow_shoulder_w > 0) && (AvgRight_wrist_shoulder_w > 0)) {
+                isLeftRightAcross = true;
+            }
             //(AvgRight_wrist_elbow_h > 0) && (AvgRight_elbow_shoulder_h > 0) &&
 
             if(isHighLefthand && !isHighRighthand) {
@@ -429,7 +454,13 @@ public class MainActivity extends AppCompatActivity {
             } else if(!isHighLefthand && isHighRighthand) {
                 landmarksString = "举右手";
             } else if(isHighLefthand && isHighRighthand) {
-                landmarksString = "举双手";
+                if(isLeftRightAcross) {
+                    landmarksString = "双手上举并交叉";
+                } else {
+                    landmarksString = "双手上举";
+                }
+            } else if(isLeftRightAcross) {
+                landmarksString = "双手前交叉";
             } else {
                 landmarksString = "";
             }

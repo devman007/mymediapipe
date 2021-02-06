@@ -29,6 +29,7 @@
     AVCaptureVideoPreviewLayer  *videoPreviewLayer;
 }
 @property(nonatomic, assign)UIImageView        *capVideoBACK;
+@property(nonatomic, assign)UILabel            *handPoseLabel;
 
 @end
 
@@ -46,6 +47,20 @@
     
     [self setupCaptureSession];
     
+    self.handPoseLabel = [[UILabel alloc] init];
+    CGFloat width = self.view.frame.size.width;
+    CGFloat height= self.view.frame.size.height;
+    CGFloat x     = (width - 200)/2;
+    CGFloat y     = 30;
+    self.handPoseLabel.frame = CGRectMake(x, y, 200, 30);
+    self.handPoseLabel.textAlignment = NSTextAlignmentCenter;
+    self.handPoseLabel.textColor = [UIColor greenColor];
+    self.handPoseLabel.numberOfLines = 1;
+    self.handPoseLabel.font = [UIFont systemFontOfSize:30.f];
+    self.handPoseLabel.font = [UIFont boldSystemFontOfSize:25.f];
+    self.handPoseLabel.font = [UIFont italicSystemFontOfSize:20.f];
+    self.handPoseLabel.text = @"";
+    [self.view addSubview:self.handPoseLabel];
     handTracker = [[HandTracker alloc] init];
     if(handTracker != nil) {
         [handTracker startGraph];
@@ -245,6 +260,13 @@ bool IsThumbConnectFinger_1(Landmark* point1, Landmark* point2) {
     UIImage *image = [self getUIImageFromCVPixelBuffer:pixelBuffer];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.capVideoBACK.image = image;
+    });
+}
+
+- (void)handTracker: (HandTracker*)handTracker Type:(int)type Name:(NSString*)name {
+    NSLog(@"handTracker type = %d, name = %@\n", type, name);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.handPoseLabel.text = name;
     });
 }
 

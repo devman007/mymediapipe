@@ -3,10 +3,13 @@ package com.example.iristracking;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.util.Size;
 import android.view.GestureDetector;
@@ -77,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
 //    private static final String BINARY_GRAPH_NAME = "hand_tracking_mobile_gpu.binarypb";
     private static final String INPUT_VIDEO_STREAM_NAME = "input_video";
     private static final String OUTPUT_VIDEO_STREAM_NAME = "output_video";
+    private static final String LEFT_IRIS_DEPTH_MM = "left_iris_depth_mm";
+    private static final String RIGHT_IRIS_DEPTH_MM = "right_iris_depth_mm";
 
 //    //
 //    // hand tracking
@@ -103,10 +108,32 @@ public class MainActivity extends AppCompatActivity {
     private static final boolean FLIP_FRAMES_VERTICALLY = true;
     private static final boolean USE_FRONT_CAMERA = true;
 
+    private static TextView ctlshowCapture;
+
+    @SuppressLint("HandlerLeak")
+    static Handler textHandle = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1) {
+                //update ui
+                Bundle bundle = msg.getData();
+                String s = bundle.getString("msg");
+                ctlshowCapture.setText(s);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 用于显示信息的控件
+        ctlshowCapture = (TextView)findViewById(R.id.showCapture);
+        ctlshowCapture.setTextColor(Color.GREEN);
+        ctlshowCapture.setTextSize(25);
+        ctlshowCapture.setText("");
 
         previewDisplayView = new SurfaceView(this);
         setupPreviewDisplayView();
@@ -145,6 +172,19 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                 });
+//            //尝试获取iris depth，failed
+//        processor.addPacketCallback(LEFT_IRIS_DEPTH_MM,
+//                (packet)->{
+//                    float left_iris_depth = PacketGetter.getFloat32(packet);
+//                    Log.v(TAG,"left depth in cm is: " + left_iris_depth/10);
+//                    String capText = "左: "+left_iris_depth;
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("msg", capText);
+//                    Message msg = Message.obtain();
+//                    msg.what = 1;
+//                    msg.setData(bundle);
+//                    textHandle.sendMessageDelayed(msg, 1000);
+//                });
         //}
     }
 
@@ -253,14 +293,14 @@ public class MainActivity extends AppCompatActivity {
     private static String getLandmarksDebugString(LandmarkProto.NormalizedLandmarkList landmarks) {
         int landmarkIndex = 0;
         String landmarksString = "";
-        for (LandmarkProto.NormalizedLandmark landmark : landmarks.getLandmarkList()) {
-            landmarksString += "\t\tLandmark["
-                            + landmarkIndex   + "]: ("
-                            + landmark.getX() + ", "
-                            + landmark.getY() + ", "
-                            + landmark.getZ() + ")\n";
-            ++landmarkIndex;
-        }
+//        for (LandmarkProto.NormalizedLandmark landmark : landmarks.getLandmarkList()) {
+//            landmarksString += "\t\tLandmark["
+//                            + landmarkIndex   + "]: ("
+//                            + landmark.getX() + ", "
+//                            + landmark.getY() + ", "
+//                            + landmark.getZ() + ")\n";
+//            ++landmarkIndex;
+//        }
 //        //实例数据
 //        Left 0, x(0.302470), y(0.777250), z(0.003873)
 //        Left 1, x(0.301649), y(0.758543), z(0.003890)
@@ -329,6 +369,13 @@ public class MainActivity extends AppCompatActivity {
 
         float left_iris_depth = CalculateDepth(left_iris.getLandmark(0), mFocalLength, left_iris_size, size.getWidth(), size.getHeight());
         float right_iris_depth = CalculateDepth(right_iris.getLandmark(0), mFocalLength, right_iris_size, size.getWidth(), size.getHeight());
+        String capText = "左: "+(int)(left_iris_depth/10)+"\t右: "+(int)(right_iris_depth/10);
+        Bundle bundle = new Bundle();
+        bundle.putString("msg", capText);
+        Message msg = Message.obtain();
+        msg.what = 1;
+        msg.setData(bundle);
+        textHandle.sendMessageDelayed(msg, 1000);
         Log.i(TAG, "getLandmarkDebug: left_iris_size = "+left_iris_size +", right_iris_size = "+right_iris_size+", left_iris_depth = "+left_iris_depth+", right_iris_depth = "+right_iris_depth);
         return landmarksString;
     }

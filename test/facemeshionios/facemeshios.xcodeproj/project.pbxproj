@@ -20,6 +20,7 @@
 		D497CE0325A3006D0075D6A0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D497CDFF25A3006D0075D6A0 /* AVFoundation.framework */; };
 		D4BB1DD225B04BB600970A99 /* FaceMeshionFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4BB1DD125B04BB600970A99 /* FaceMeshionFramework.framework */; };
 		D4BB1DD325B04BB600970A99 /* FaceMeshionFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D4BB1DD125B04BB600970A99 /* FaceMeshionFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D4BF170425BAA38500918CC8 /* Point3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4BF170325BAA38500918CC8 /* Point3D.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -54,6 +55,8 @@
 		D497CDFE25A3006D0075D6A0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D497CDFF25A3006D0075D6A0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D4BB1DD125B04BB600970A99 /* FaceMeshionFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FaceMeshionFramework.framework; path = facemeshios/FaceMeshionFramework.framework; sourceTree = "<group>"; };
+		D4BF170225BAA38500918CC8 /* Point3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point3D.h; sourceTree = "<group>"; };
+		D4BF170325BAA38500918CC8 /* Point3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Point3D.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +95,8 @@
 		D497CDE125A2FD870075D6A0 /* facemeshios */ = {
 			isa = PBXGroup;
 			children = (
+				D4BF170325BAA38500918CC8 /* Point3D.cpp */,
+				D4BF170225BAA38500918CC8 /* Point3D.h */,
 				D497CDE225A2FD870075D6A0 /* AppDelegate.h */,
 				D497CDE325A2FD870075D6A0 /* AppDelegate.m */,
 				D497CDE525A2FD870075D6A0 /* SceneDelegate.h */,
@@ -190,6 +195,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4BF170425BAA38500918CC8 /* Point3D.cpp in Sources */,
 				D497CDEA25A2FD870075D6A0 /* ViewController.m in Sources */,
 				D497CDE425A2FD870075D6A0 /* AppDelegate.m in Sources */,
 				D497CDF525A2FD890075D6A0 /* main.m in Sources */,

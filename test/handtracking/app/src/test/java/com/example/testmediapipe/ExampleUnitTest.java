@@ -1,4 +1,4 @@
-package com.example.faceeffect;
+package com.example.handtracking;
 
 import org.junit.Test;
 

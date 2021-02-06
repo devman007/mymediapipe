@@ -13,10 +13,7 @@
 # limitations under the License.
 #
 
-load(
-    "//mediapipe/framework/port:build_config.bzl",
-    "mediapipe_cc_proto_library",
-)
+load("//mediapipe/framework/port:build_config.bzl", "mediapipe_proto_library")
 load(
     "//mediapipe/framework/tool:mediapipe_graph.bzl",
     "data_as_c_string",
@@ -44,9 +41,10 @@ cc_library(
     ],
 )
 
-proto_library(
+mediapipe_proto_library(
     name = "calculator_graph_template_proto",
     srcs = ["calculator_graph_template.proto"],
+    def_py_proto = False,
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework:calculator_options_proto",
@@ -55,43 +53,14 @@ proto_library(
     ],
 )
 
-java_proto_library(
-    name = "calculator_graph_template_java_proto",
-    visibility = ["//visibility:public"],
-    deps = [":calculator_graph_template_proto"],
-)
-
-java_lite_proto_library(
-    name = "calculator_graph_template_java_proto_lite",
-    strict_deps = 0,
-    visibility = ["//visibility:public"],
-    deps = [":calculator_graph_template_proto"],
-)
-
-proto_library(
+mediapipe_proto_library(
     name = "source_proto",
     srcs = ["source.proto"],
     visibility = ["//visibility:public"],
-    deps = ["//mediapipe/framework:calculator_proto"],
-)
-
-mediapipe_cc_proto_library(
-    name = "calculator_graph_template_cc_proto",
-    srcs = ["calculator_graph_template.proto"],
-    cc_deps = [
-        "//mediapipe/framework:calculator_cc_proto",
-        "//mediapipe/framework/deps:proto_descriptor_cc_proto",
+    deps = [
+        "//mediapipe/framework:calculator_options_proto",
+        "//mediapipe/framework:calculator_proto",
     ],
-    visibility = ["//visibility:public"],
-    deps = [":calculator_graph_template_proto"],
-)
-
-mediapipe_cc_proto_library(
-    name = "source_cc_proto",
-    srcs = ["source.proto"],
-    cc_deps = ["//mediapipe/framework:calculator_cc_proto"],
-    visibility = ["//visibility:public"],
-    deps = [":source_proto"],
 )
 
 cc_binary(
@@ -163,6 +132,7 @@ cc_library(
     visibility = ["//mediapipe/framework:mediapipe_internal"],
     deps = [
         "//mediapipe/framework:calculator_cc_proto",
+        "//mediapipe/framework:input_stream_shard",
         "//mediapipe/framework:packet",
         "//mediapipe/framework:packet_generator_cc_proto",
         "//mediapipe/framework:packet_set",
@@ -484,12 +454,12 @@ cc_library(
         ":status_util",
         "//mediapipe/framework:calculator_cc_proto",
         "//mediapipe/framework:calculator_contract",
+        "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework:legacy_calculator_support",
         "//mediapipe/framework:packet_generator",
         "//mediapipe/framework:packet_generator_cc_proto",
         "//mediapipe/framework:packet_set",
         "//mediapipe/framework:packet_type",
-        "//mediapipe/framework/port:core_proto",
         "//mediapipe/framework/port:map_util",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
@@ -551,20 +521,14 @@ data_as_c_string(
     outs = ["test_binarypb.inc"],
 )
 
-proto_library(
+mediapipe_proto_library(
     name = "node_chain_subgraph_proto",
     srcs = ["node_chain_subgraph.proto"],
+    visibility = ["//mediapipe:__subpackages__"],
     deps = [
+        "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
-)
-
-mediapipe_cc_proto_library(
-    name = "node_chain_subgraph_cc_proto",
-    srcs = ["node_chain_subgraph.proto"],
-    cc_deps = ["//mediapipe/framework:calculator_cc_proto"],
-    visibility = ["//mediapipe:__subpackages__"],
-    deps = [":node_chain_subgraph_proto"],
 )
 
 cc_test(
@@ -634,6 +598,123 @@ cc_library(
             "//mediapipe/framework/port:file_helpers",
         ],
     }),
+)
+
+cc_library(
+    name = "container_util",
+    srcs = ["container_util.cc"],
+    hdrs = ["container_util.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":name_util",
+        "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/port:ret_check",
+        "//mediapipe/framework/port:status",
+        "//mediapipe/framework/tool:switch_container_cc_proto",
+    ],
+)
+
+cc_library(
+    name = "switch_demux_calculator",
+    srcs = ["switch_demux_calculator.cc"],
+    visibility = [
+        "//visibility:public",
+    ],
+    deps = [
+        ":container_util",
+        ":options_util",
+        "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework:collection_item_id",
+        "//mediapipe/framework/deps:mathutil",
+        "//mediapipe/framework/formats:video_stream_header",
+        "//mediapipe/framework/port:integral_types",
+        "//mediapipe/framework/port:logging",
+        "//mediapipe/framework/port:ret_check",
+        "//mediapipe/framework/port:status",
+        "@com_google_absl//absl/strings",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "switch_mux_calculator",
+    srcs = ["switch_mux_calculator.cc"],
+    visibility = [
+        "//visibility:public",
+    ],
+    deps = [
+        ":container_util",
+        ":options_util",
+        "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework:collection_item_id",
+        "//mediapipe/framework:input_stream_shard",
+        "//mediapipe/framework:output_stream_shard",
+        "//mediapipe/framework/deps:mathutil",
+        "//mediapipe/framework/formats:video_stream_header",
+        "//mediapipe/framework/port:integral_types",
+        "//mediapipe/framework/port:logging",
+        "//mediapipe/framework/port:ret_check",
+        "//mediapipe/framework/port:status",
+        "@com_google_absl//absl/strings",
+    ],
+    alwayslink = 1,
+)
+
+mediapipe_proto_library(
+    name = "switch_container_proto",
+    srcs = ["switch_container.proto"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//mediapipe/framework:calculator_options_proto",
+        "//mediapipe/framework:calculator_proto",
+    ],
+)
+
+cc_library(
+    name = "switch_container",
+    srcs = ["switch_container.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":container_util",
+        ":name_util",
+        ":subgraph_expansion",
+        ":switch_demux_calculator",
+        ":switch_mux_calculator",
+        "//mediapipe/framework:calculator_cc_proto",
+        "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework:mediapipe_options_cc_proto",
+        "//mediapipe/framework:stream_handler_cc_proto",
+        "//mediapipe/framework:subgraph",
+        "//mediapipe/framework/port:ret_check",
+        "//mediapipe/framework/port:status",
+        "//mediapipe/framework/stream_handler:sync_set_input_stream_handler_cc_proto",
+        "//mediapipe/framework/tool:switch_container_cc_proto",
+    ],
+    alwayslink = 1,
+)
+
+cc_test(
+    name = "switch_container_test",
+    size = "small",
+    srcs = ["switch_container_test.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":node_chain_subgraph_cc_proto",
+        ":subgraph_expansion",
+        ":switch_container",
+        "//mediapipe/calculators/core:pass_through_calculator",
+        "//mediapipe/framework:calculator_cc_proto",
+        "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework:subgraph",
+        "//mediapipe/framework:test_calculators",
+        "//mediapipe/framework/deps:message_matchers",
+        "//mediapipe/framework/port:gtest_main",
+        "//mediapipe/framework/port:logging",
+        "//mediapipe/framework/port:parse_text_proto",
+        "//mediapipe/framework/port:ret_check",
+        "//mediapipe/framework/port:status",
+        "//mediapipe/framework/stream_handler:immediate_input_stream_handler",
+    ],
 )
 
 exports_files(

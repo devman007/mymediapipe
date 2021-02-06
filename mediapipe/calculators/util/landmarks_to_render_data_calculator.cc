@@ -25,7 +25,7 @@
 #include "mediapipe/util/color.pb.h"
 #include "mediapipe/util/render_data.pb.h"
 // add by jacky
-// #define ENABLE_FINGER_LINE
+#define ENABLE_FINGER_LINE
 namespace mediapipe {
 
 namespace {
@@ -115,12 +115,14 @@ void AddConnectionsWithDepth(const LandmarkListType& landmarks,
   for (int i = 0; i < landmark_connections.size(); i += 2) {
     const auto& ld0 = landmarks.landmark(landmark_connections[i]);
     const auto& ld1 = landmarks.landmark(landmark_connections[i + 1]);
-    if (utilize_visibility && (ld0.visibility() < visibility_threshold ||
-                               ld1.visibility() < visibility_threshold)) {
+    if (utilize_visibility &&
+        ((ld0.has_visibility() && ld0.visibility() < visibility_threshold) ||
+         (ld1.has_visibility() && ld1.visibility() < visibility_threshold))) {
       continue;
     }
-    if (utilize_presence && (ld0.presence() < presence_threshold ||
-                             ld1.presence() < presence_threshold)) {
+    if (utilize_presence &&
+        ((ld0.has_presence() && ld0.presence() < presence_threshold) ||
+         (ld1.has_presence() && ld1.presence() < presence_threshold))) {
       continue;
     }
     const int gray_val1 =
@@ -165,12 +167,14 @@ void AddConnections(const LandmarkListType& landmarks,
   for (int i = 0; i < landmark_connections.size(); i += 2) {
     const auto& ld0 = landmarks.landmark(landmark_connections[i]);
     const auto& ld1 = landmarks.landmark(landmark_connections[i + 1]);
-    if (utilize_visibility && (ld0.visibility() < visibility_threshold ||
-                               ld1.visibility() < visibility_threshold)) {
+    if (utilize_visibility &&
+        ((ld0.has_visibility() && ld0.visibility() < visibility_threshold) ||
+         (ld1.has_visibility() && ld1.visibility() < visibility_threshold))) {
       continue;
     }
-    if (utilize_presence && (ld0.presence() < presence_threshold ||
-                             ld1.presence() < presence_threshold)) {
+    if (utilize_presence &&
+        ((ld0.has_presence() && ld0.presence() < presence_threshold) ||
+         (ld1.has_presence() && ld1.presence() < presence_threshold))) {
       continue;
     }
     AddConnectionToRenderData<LandmarkType>(ld0, ld1, connection_color,
@@ -189,7 +193,7 @@ RenderAnnotation* AddPointRenderData(const Color& landmark_color,
 
 }  // namespace
 
-::mediapipe::Status LandmarksToRenderDataCalculator::GetContract(
+mediapipe::Status LandmarksToRenderDataCalculator::GetContract(
     CalculatorContract* cc) {
   RET_CHECK(cc->Inputs().HasTag(kLandmarksTag) ||
             cc->Inputs().HasTag(kNormLandmarksTag))
@@ -209,11 +213,10 @@ RenderAnnotation* AddPointRenderData(const Color& landmark_color,
     cc->Inputs().Tag(kRenderScaleTag).Set<float>();
   }
   cc->Outputs().Tag(kRenderDataTag).Set<RenderData>();
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status LandmarksToRenderDataCalculator::Open(
-    CalculatorContext* cc) {
+mediapipe::Status LandmarksToRenderDataCalculator::Open(CalculatorContext* cc) {
   cc->SetOffset(TimestampDiff(0));
   options_ = cc->Options<LandmarksToRenderDataCalculatorOptions>();
 
@@ -225,20 +228,20 @@ RenderAnnotation* AddPointRenderData(const Color& landmark_color,
     landmark_connections_.push_back(options_.landmark_connections(i));
   }
 
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status LandmarksToRenderDataCalculator::Process(
+mediapipe::Status LandmarksToRenderDataCalculator::Process(
     CalculatorContext* cc) {
   // Check that landmarks are not empty and skip rendering if so.
   // Don't emit an empty packet for this timestamp.
   if (cc->Inputs().HasTag(kLandmarksTag) &&
       cc->Inputs().Tag(kLandmarksTag).IsEmpty()) {
-    return ::mediapipe::OkStatus();
+    return mediapipe::OkStatus();
   }
   if (cc->Inputs().HasTag(kNormLandmarksTag) &&
       cc->Inputs().Tag(kNormLandmarksTag).IsEmpty()) {
-    return ::mediapipe::OkStatus();
+    return mediapipe::OkStatus();
   }
 
   auto render_data = absl::make_unique<RenderData>();
@@ -279,12 +282,12 @@ RenderAnnotation* AddPointRenderData(const Color& landmark_color,
     for (int i = 0; i < landmarks.landmark_size(); ++i) {
       const Landmark& landmark = landmarks.landmark(i);
 
-      if (options_.utilize_visibility() &&
+      if (options_.utilize_visibility() && landmark.has_visibility() &&
           landmark.visibility() < options_.visibility_threshold()) {
         continue;
       }
 
-      if (options_.utilize_presence() &&
+      if (options_.utilize_presence() && landmark.has_presence() &&
           landmark.presence() < options_.presence_threshold()) {
         continue;
       }
@@ -333,11 +336,11 @@ RenderAnnotation* AddPointRenderData(const Color& landmark_color,
     for (int i = 0; i < landmarks.landmark_size(); ++i) {
       const NormalizedLandmark& landmark = landmarks.landmark(i);
 
-      if (options_.utilize_visibility() &&
+      if (options_.utilize_visibility() && landmark.has_visibility() &&
           landmark.visibility() < options_.visibility_threshold()) {
         continue;
       }
-      if (options_.utilize_presence() &&
+      if (options_.utilize_presence() && landmark.has_presence() &&
           landmark.presence() < options_.presence_threshold()) {
         continue;
       }
@@ -364,7 +367,7 @@ RenderAnnotation* AddPointRenderData(const Color& landmark_color,
   cc->Outputs()
       .Tag(kRenderDataTag)
       .Add(render_data.release(), cc->InputTimestamp());
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
 REGISTER_CALCULATOR(LandmarksToRenderDataCalculator);

@@ -1,4 +1,4 @@
-package com.example.faceeffect;
+package com.example.handtracking;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.example.faceeffect", appContext.getPackageName());
+        assertEquals("com.example.handtracking", appContext.getPackageName());
     }
 }

@@ -2,8 +2,9 @@ bazel-*
 mediapipe/MediaPipe.xcodeproj
 mediapipe/MediaPipe.tulsiproj/*.tulsiconf-user
 mediapipe/provisioning_profile.mobileprovision
+.configure.bazelrc
+.user.bazelrc
 org.eclipse.buildship.core.prefs
-*.aar
 app.iml
 .vscode
 test/facemesh/app/build
@@ -24,3 +25,6 @@ test/upperbodyposetracking/.gradle
 test/upperbodyposetracking/.idea
 upperbodyposetracking.iml
 .project
+.idea
+test/iristracking/.idea
+test/handtracking/.idea

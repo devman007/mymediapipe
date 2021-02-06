@@ -26,6 +26,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:textColor="@color/colorAccent"
-        android:textSize="40sp" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:textSize="30sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

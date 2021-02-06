@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "absl/container/node_hash_map.h"
 #include "mediapipe/calculators/util/detection_label_id_to_text_calculator.pb.h"
 #include "mediapipe/framework/calculator_framework.h"
 #include "mediapipe/framework/formats/detection.pb.h"
@@ -46,25 +47,25 @@ namespace mediapipe {
 // }
 class DetectionLabelIdToTextCalculator : public CalculatorBase {
  public:
-  static ::mediapipe::Status GetContract(CalculatorContract* cc);
+  static mediapipe::Status GetContract(CalculatorContract* cc);
 
-  ::mediapipe::Status Open(CalculatorContext* cc) override;
-  ::mediapipe::Status Process(CalculatorContext* cc) override;
+  mediapipe::Status Open(CalculatorContext* cc) override;
+  mediapipe::Status Process(CalculatorContext* cc) override;
 
  private:
-  std::unordered_map<int, std::string> label_map_;
+  absl::node_hash_map<int, std::string> label_map_;
 };
 REGISTER_CALCULATOR(DetectionLabelIdToTextCalculator);
 
-::mediapipe::Status DetectionLabelIdToTextCalculator::GetContract(
+mediapipe::Status DetectionLabelIdToTextCalculator::GetContract(
     CalculatorContract* cc) {
   cc->Inputs().Index(0).Set<std::vector<Detection>>();
   cc->Outputs().Index(0).Set<std::vector<Detection>>();
 
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status DetectionLabelIdToTextCalculator::Open(
+mediapipe::Status DetectionLabelIdToTextCalculator::Open(
     CalculatorContext* cc) {
   cc->SetOffset(TimestampDiff(0));
 
@@ -89,10 +90,10 @@ REGISTER_CALCULATOR(DetectionLabelIdToTextCalculator);
       label_map_[i] = options.label(i);
     }
   }
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
-::mediapipe::Status DetectionLabelIdToTextCalculator::Process(
+mediapipe::Status DetectionLabelIdToTextCalculator::Process(
     CalculatorContext* cc) {
   std::vector<Detection> output_detections;
   for (const auto& input_detection :
@@ -114,7 +115,7 @@ REGISTER_CALCULATOR(DetectionLabelIdToTextCalculator);
   cc->Outputs().Index(0).AddPacket(
       MakePacket<std::vector<Detection>>(output_detections)
           .At(cc->InputTimestamp()));
-  return ::mediapipe::OkStatus();
+  return mediapipe::OkStatus();
 }
 
 }  // namespace mediapipe
