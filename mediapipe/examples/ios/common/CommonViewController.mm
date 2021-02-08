@@ -45,27 +45,26 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 #pragma mark - MediaPipe graph methods
 
 + (MPPGraph*)loadGraphFromResource:(NSString*)resource {
-  // Load the graph config resource.
-  // NSError* configLoadError = nil;
-  // NSBundle* bundle = [NSBundle bundleForClass:[self class]];
-  // if (!resource || resource.length == 0) {
-  //   return nil;
-  // }
-  // NSURL* graphURL = [bundle URLForResource:resource withExtension:@"binarypb"];
-  // NSData* data = [NSData dataWithContentsOfURL:graphURL options:0 error:&configLoadError];
-  // if (!data) {
-  //   NSLog(@"Failed to load MediaPipe graph config: %@", configLoadError);
-  //   return nil;
-  // }
+//   Load the graph config resource.
+   NSError* configLoadError = nil;
+   NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+   if (!resource || resource.length == 0) {
+     return nil;
+   }
+   NSURL* graphURL = [bundle URLForResource:resource withExtension:@"binarypb"];
+   NSData* data = [NSData dataWithContentsOfURL:graphURL options:0 error:&configLoadError];
+   if (!data) {
+     NSLog(@"Failed to load MediaPipe graph config: %@", configLoadError);
+     return nil;
+   }
 
-  // // Parse the graph config resource into mediapipe::CalculatorGraphConfig proto object.
-  // mediapipe::CalculatorGraphConfig config;
-  // config.ParseFromArray(data.bytes, data.length);
+   // Parse the graph config resource into mediapipe::CalculatorGraphConfig proto object.
+   mediapipe::CalculatorGraphConfig config;
+   config.ParseFromArray(data.bytes, data.length);
 
-  // // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
-  // MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
-  // return newGraph;
-  return nil;
+   // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
+   MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
+   return newGraph;
 }
 
 #pragma mark - UIViewController methods
@@ -174,10 +173,10 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
     return;
   }
 
-  // [self.mediapipeGraph sendPixelBuffer:imageBuffer
-  //                           intoStream:self.graphInputStream
-  //                           packetType:MPPPacketTypePixelBuffer
-  //                            timestamp:[self.timestampConverter timestampForMediaTime:timestamp]];
+   [self.mediapipeGraph sendPixelBuffer:imageBuffer
+                             intoStream:self.graphInputStream
+                             packetType:MPPPacketTypePixelBuffer
+                              timestamp:[self.timestampConverter timestampForMediaTime:timestamp]];
 }
 
 #pragma mark - MPPGraphDelegate methods

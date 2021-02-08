@@ -12,6 +12,9 @@ mediapipe_aar(
 #--fat_apk_cpu=arm64-v8a,armeabi-v7a,x86_84,x86,
 #--linkopt="-s"
 #--define 3D=true 
+#build:macos --cxxopt=-std=c++17
+#build:macos --host_cxxopt=-std=c++17
+#--host_force_python=PY3
 #bazel clean --expunge
 #build aar
 #GLOG_logtostderr=1 bazel build -c opt --host_crosstool_top=@bazel_tools//tools/cpp:toolchain --fat_apk_cpu=armeabi-v7a mediapipe/examples/android/src/java/com/google/mediapipe/apps/build_aar/hand_tracking:mediapipe_hand_tracking

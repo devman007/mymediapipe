@@ -126,7 +126,7 @@ bool IsThumbConnectFinger_1(mediapipe::NormalizedLandmark point1, mediapipe::Nor
             fromStream:(const std::string&)streamName {
     if (streamName == kLandmarksOutputStream) {
         if (packet.IsEmpty()) { return; }
-        // const auto landmarks = packet.Get<std::vector<mediapipe::NormalizedLandmarkList>>();//packet.Get<mediapipe::NormalizedLandmarkList>();//
+        // const auto& landmarks = packet.Get<std::vector<mediapipe::NormalizedLandmarkList>>();//packet.Get<mediapipe::NormalizedLandmarkList>();//
         
         //        for (int i = 0; i < landmarks.landmark_size(); ++i) {
         //            NSLog(@"\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
@@ -147,6 +147,7 @@ bool IsThumbConnectFinger_1(mediapipe::NormalizedLandmark point1, mediapipe::Nor
         bool IsFinger_2 = false;
         bool IsFinger_3 = false;
         bool IsFinger_4 = false;
+        bool IsThumbConnFinger1 = false;
 
 //         if (landmarks.landmark(2).x() < landmarks.landmark(9).x()) {
 //             if (landmarks.landmark(3).x() < landmarks.landmark(2).x() && landmarks.landmark(4).x() < landmarks.landmark(2).x()) {
@@ -171,66 +172,69 @@ bool IsThumbConnectFinger_1(mediapipe::NormalizedLandmark point1, mediapipe::Nor
 //         if (landmarks.landmark(19).y() < landmarks.landmark(18).y() && landmarks.landmark(19).y() > landmarks.landmark(20).y()) {
 //             IsFinger_4 = true;
 //         }
+//        if(IsThumbConnectFinger_1(landmarks.landmark(4), landmarks.landmark(8))) {
+//            IsThumbConnFinger1 = true;
+//        }
 
-//         if (IsThumb && IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4) {
-//             NSString* str = @"handTracker -- Five\n";
-//             NSLog(str);
-//             NumberFinger5++;
-//     //        return str;
-//         } else if (IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && IsFinger_4) {
-//             NSString* str = @"handTracker -- Six\n";
-//             NSLog(str);
-//             NumberFinger6++;
-//     //        return str;
-//         } else if (!IsThumb && IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4) {
-//             NSString* str = @"handTracker -- Four\n";
-//             NSLog(str);
-//             NumberFinger4++;
-//     //        return str;
-//         } else if (IsThumb && IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
-//             NSString* str = @"handTracker -- Three\n";
-//             NSLog(str);
-//             NumberFinger3++;
-//     //        return str;
-//         } else if (IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
-//             NSString* str = @"handTracker -- Two\n";
-//             NSLog(str);
-//             NumberFinger2++;
-//     //        return str;
-//         } else if ((!IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) ||
-//                     (!IsThumb && !IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) ||
-//                     (!IsThumb && !IsFinger_1 && !IsFinger_2 && IsFinger_3 && !IsFinger_4) ||
-//                     (!IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && IsFinger_4)) {
-//             NSString* str = @"handTracker -- One\n";
-//             NSLog(str);
-//             NumberFinger1++;
-//     //        return str;
-//         } else if (!IsThumb && IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
-//             NSString* str = @"handTracker -- Yeah\n";
-//             NSLog(str);
-//             NumberFingerYeah++;
-//     //        return str;
-//         } else if (!IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
-//             NSString* str = @"handTracker -- Fist\n";
-//             NSLog(str);
-//             NumberFingerFist++;
-//     //        return str;
-//         } else if (IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
-//             NSString* str = @"handTracker -- Wonderful\n";
-//             NSLog(str);
-//             NumberFingerWonderful++;
-//     //        return str;
-//         } else if(IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && IsFinger_4) {
-//             NumberFingerSpiderMan++;
-//         } else if (!IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4 && IsThumbConnectFinger_1(landmarks.landmark(4), landmarks.landmark(8))) {
-//             NSString* str = @"handTracker -- OK\n";
-//             NSLog(str);
-//     //        return str;
-//             NumberFingerOK++;
-//         } else {
-//     //        return @"";
-//             NumberFingerUnknown++;
-//         }
+        if (IsThumb && IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4) {
+            NSString* str = @"handTracker -- Five\n";
+            NSLog(str);
+            NumberFinger5++;
+    //        return str;
+        } else if (IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && IsFinger_4) {
+            NSString* str = @"handTracker -- Six\n";
+            NSLog(str);
+            NumberFinger6++;
+    //        return str;
+        } else if (!IsThumb && IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4) {
+            NSString* str = @"handTracker -- Four\n";
+            NSLog(str);
+            NumberFinger4++;
+    //        return str;
+        } else if (IsThumb && IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+            NSString* str = @"handTracker -- Three\n";
+            NSLog(str);
+            NumberFinger3++;
+    //        return str;
+        } else if (IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+            NSString* str = @"handTracker -- Two\n";
+            NSLog(str);
+            NumberFinger2++;
+    //        return str;
+        } else if ((!IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) ||
+                    (!IsThumb && !IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) ||
+                    (!IsThumb && !IsFinger_1 && !IsFinger_2 && IsFinger_3 && !IsFinger_4) ||
+                    (!IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && IsFinger_4)) {
+            NSString* str = @"handTracker -- One\n";
+            NSLog(str);
+            NumberFinger1++;
+    //        return str;
+        } else if (!IsThumb && IsFinger_1 && IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+            NSString* str = @"handTracker -- Yeah\n";
+            NSLog(str);
+            NumberFingerYeah++;
+    //        return str;
+        } else if (!IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+            NSString* str = @"handTracker -- Fist\n";
+            NSLog(str);
+            NumberFingerFist++;
+    //        return str;
+        } else if (IsThumb && !IsFinger_1 && !IsFinger_2 && !IsFinger_3 && !IsFinger_4) {
+            NSString* str = @"handTracker -- Wonderful\n";
+            NSLog(str);
+            NumberFingerWonderful++;
+    //        return str;
+        } else if(IsThumb && IsFinger_1 && !IsFinger_2 && !IsFinger_3 && IsFinger_4) {
+            NumberFingerSpiderMan++;
+        } else if (!IsFinger_1 && IsFinger_2 && IsFinger_3 && IsFinger_4 && IsThumbConnFinger1) {
+            NSString* str = @"handTracker -- OK\n";
+            NSLog(str);
+    //        return str;
+            NumberFingerOK++;
+        } else {
+    //        return @"";
+            NumberFingerUnknown++;
+        }
         
         tickNumber++;
         if(tickNumber >= TICKTOTALNUMBER) {

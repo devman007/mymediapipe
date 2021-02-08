@@ -35,12 +35,12 @@ static const char* kLandmarksOutputStream = "hand_landmarks";
 - (NSString*)mediapipeGraph:(MPPGraph*)graph
      didOutputPacket:(const ::mediapipe::Packet&)packet
           fromStream:(const std::string&)streamName {
-//   if (streamName == kLandmarksOutputStream) {
-//     if (packet.IsEmpty()) {
-//       NSLog(@"[TS:%lld] No hand landmarks", packet.Timestamp().Value());
-//       return @"";
-//     }
-//     const auto& landmarks = packet.Get<::mediapipe::NormalizedLandmarkList>();
+   if (streamName == kLandmarksOutputStream) {
+     if (packet.IsEmpty()) {
+       NSLog(@"[TS:%lld] No hand landmarks", packet.Timestamp().Value());
+       return @"";
+     }
+//     const auto& landmarks = packet.Get<mediapipe::NormalizedLandmarkList>();
 //     NSLog(@"[TS:%lld] Number of landmarks on hand: %d", packet.Timestamp().Value(),
 //           landmarks.landmark_size());
 // //    for (int i = 0; i < landmarks.landmark_size(); ++i) {
@@ -121,7 +121,7 @@ static const char* kLandmarksOutputStream = "hand_landmarks";
 //     } else {
 //         return @"";
 //     }
-//   }
+   }
 }
 
 // double getDistance(double a_x, double a_y, double b_x, double b_y) {

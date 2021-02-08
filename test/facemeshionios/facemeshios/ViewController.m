@@ -348,11 +348,13 @@ static double dis_eye_mouth_arr[AVG_CNT];
                                      X2:landmarks[334].x Y2:landmarks[334].y Z2:landmarks[334].z] +
                                 [faceExpression getDistancd3DwithX1:landmarks[10].x Y1:landmarks[10].y Z1:landmarks[10].z
                                      X2:landmarks[296].x Y2:landmarks[296].y Z2:landmarks[296].z];
+
     double brow_hight = brow_left_height + brow_right_height;
     //2.2、眉毛高度与识别框高度之比: 眉毛抬高(惊奇、恐惧、悲伤), 眉毛压低(厌恶, 愤怒)
     double brow_hight_rate = brow_hight/16;
     double brow_width_rate = brow_width/8;
     double brow_h_w = brow_hight_rate/brow_width_rate;
+
     //左眉拟合曲线(53-52-65-55-70-63-105-66)
     double brow_line_points_x[POINT_NUM];
     brow_line_points_x[0] = landmarks[55].x;
@@ -499,7 +501,7 @@ static double dis_eye_mouth_arr[AVG_CNT];
         } else if(dis_eye_mouth_avg > 1) {
             eye_mouth_rate = (dis_eye_mouth_avg * 5.0);
         }
-        NSLog(@"faceEC: eye_h_w(%f), mouth_h_w(%f), brow_line(%f), mouth_pull(%f), dis_eye_mouth(%f)\n", eye_h_w, mouth_h_w, brow_line_avg, mouth_pull_down_avg, eye_mouth_rate);
+//        NSLog(@"faceEC: eye_h_w(%f), mouth_h_w(%f), brow_line(%f), mouth_pull(%f), dis_eye_mouth(%f)\n", eye_h_w, mouth_h_w, brow_line_avg, mouth_pull_down_avg, eye_mouth_rate);
 //        NSLog(@"faceEC: face(%f) w = %f, h = %f\n", face_ratio, face_width, face_height);
 //        NSLog(@"faceEC: brow(%f) w = %f, h = %f\n", brow_line_rate, brow_width_rate, brow_hight_rate);
 //        NSLog(@"faceEC: eye(%f) w = %f, h = %f\n", eye_h_w, eye_width, eye_height);

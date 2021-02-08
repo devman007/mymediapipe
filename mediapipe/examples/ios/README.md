@@ -19,6 +19,14 @@ This directory contains MediaPipe example applications for iOS. Please see [Solu
 
 `bazel build --config=ios_arm64 --copt=-fembed-bitcode mediapipe/examples/ios/handtrackinggpu:HandTrackingFramework`
 
+## build parameters
+`build:macos --cxxopt=-std=c++17`
+`build:macos --host_cxxopt=-std=c++17`
+`--host_force_python=PY3`
+`--fat_apk_cpu=arm64-v8a,armeabi-v7a,x86_84,x86`
+`--linkopt="-s"`
+`--define 3D=true`
+
 ### comment: rename BUILD-app with BUILD if build app, else rename BUILD-lib with BUILD then build framework.
 
 # Get Sign
